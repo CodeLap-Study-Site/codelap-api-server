@@ -1,0 +1,4 @@
+rootProject.name = 'CodeLap-api-server'
+include 'common'
+include 'api'
+include 'integration'
