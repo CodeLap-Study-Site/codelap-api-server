@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.4'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
 subprojects {
@@ -56,14 +57,35 @@ project(":api") {
         implementation 'org.flywaydb:flyway-mysql'
         implementation 'org.springframework.boot:spring-boot-starter-security'
         testImplementation 'org.springframework.security:spring-security-test'
+        testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+        testImplementation 'org.springframework.restdocs:spring-restdocs-core'
+    }
+
+    configurations {
+        apply plugin: 'org.asciidoctor.jvm.convert'
     }
 
     bootJar {
         enabled = true
     }
 
-    tasks.named('test') {
+    ext {
+        snippetsDir = file(getBuildDir().name + '/generated-snippets')
+    }
+
+    test {
         useJUnitPlatform()
+        outputs.dir snippetsDir
+    }
+
+    asciidoctor {
+        dependsOn test
+        inputs.dir snippetsDir
+    }
+
+    bootJar {
+        enabled = true
+        dependsOn asciidoctor
     }
 }
 
