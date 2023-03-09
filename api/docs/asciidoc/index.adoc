@@ -1,0 +1,26 @@
+= CodeLap API Document
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+[[EX]]
+== 예제 API
+
+=== Request
+include::{snippets}/domain/do/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/domain/do/request-body.adoc[]
+
+=== Response
+include::{snippets}/domain/do/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/domain/do/response-body.adoc[]
