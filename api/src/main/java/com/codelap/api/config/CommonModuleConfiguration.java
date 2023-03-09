@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EntityScan(basePackages = "com.codelap.job.common")
+@EntityScan(basePackages = "com.codelap.common")
 @EnableJpaRepositories(basePackages = {"com.codelap.common"})
 @ComponentScans({
         @ComponentScan(value = "com.codelap.common"),

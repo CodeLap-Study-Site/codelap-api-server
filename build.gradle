@@ -14,6 +14,7 @@ subprojects {
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'java'
+    apply plugin: 'org.asciidoctor.jvm.convert'
 
     configurations {
         compileOnly {
@@ -59,10 +60,6 @@ project(":api") {
         testImplementation 'org.springframework.security:spring-security-test'
         testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
         testImplementation 'org.springframework.restdocs:spring-restdocs-core'
-    }
-
-    configurations {
-        apply plugin: 'org.asciidoctor.jvm.convert'
     }
 
     bootJar {
