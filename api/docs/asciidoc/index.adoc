@@ -10,17 +10,17 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
-[[EX]]
-== 예제 API
+[[UserCreate]]
+== 유저 생성 API
 
 === Request
-include::{snippets}/domain/do/curl-request.adoc[]
+include::{snippets}/user/create/curl-request.adoc[]
 
 === RequestBody
-include::{snippets}/domain/do/request-body.adoc[]
+include::{snippets}/user/create/request-body.adoc[]
 
 === Response
-include::{snippets}/domain/do/http-response.adoc[]
+include::{snippets}/user/create/http-response.adoc[]
 
 === ResponseBody
-include::{snippets}/domain/do/response-body.adoc[]
+include::{snippets}/user/create/response-body.adoc[]
