@@ -22,4 +22,11 @@ public class UserController {
     ) {
         userService.create(req.name(), req.age(), req.career().toCareer());
     }
+
+    @PostMapping("/update")
+    public void update(
+            @RequestBody UserUpdateRequest req
+    ) {
+        userService.update(req.userId(), req.name(), req.age(), req.career().toCareer());
+    }
 }
