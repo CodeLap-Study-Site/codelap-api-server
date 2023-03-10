@@ -55,7 +55,6 @@ public class User {
         require(nonNull(career));
         require(Strings.isNotBlank(password));
 
-
         return new User(name, age, career, password);
     }
 

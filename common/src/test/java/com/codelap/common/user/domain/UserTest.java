@@ -54,7 +54,7 @@ class UserTest {
     void 유저_생성_실패__직무가_널() {
         assertThatIllegalArgumentException().isThrownBy(() -> User.create("name", 10, null, "abcd"));
     }
-    
+
     @Test
     void 유저_수정_성공() {
         UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);
