@@ -6,10 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.logging.log4j.util.Strings;
 
 import java.time.OffsetDateTime;
 
+import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
 import static com.codelap.common.user.domain.UserStatus.CREATED;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -32,6 +34,7 @@ public class User {
     @Embedded
     private UserCareer career;
 
+    @Setter
     private UserStatus status = CREATED;
 
     private final OffsetDateTime createdAt = OffsetDateTime.now();
@@ -50,5 +53,17 @@ public class User {
         require(nonNull(career));
 
         return new User(name, age, career);
+    }
+
+    public void update(String name, int age, UserCareer career){
+        require(Strings.isNotBlank(name));
+        require(age > MIN_AGE);
+        require(nonNull(career));
+
+        check(status == CREATED);
+
+        this.name = name;
+        this.age = age;
+        this.career = career;
     }
 }
