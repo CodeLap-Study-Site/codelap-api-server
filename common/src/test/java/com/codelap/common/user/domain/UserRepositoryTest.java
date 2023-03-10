@@ -20,7 +20,7 @@ class UserRepositoryTest {
     void 유저_생성_성공() {
         UserCareer career = UserCareer.create("직무", 1);
 
-        User user = User.create("name", 10, career);
+        User user = User.create("name", 10, career, "abcd", "abcd");
 
         user = userRepository.save(user);
 

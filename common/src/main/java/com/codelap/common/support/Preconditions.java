@@ -1,5 +1,6 @@
 package com.codelap.common.support;
 
+
 import java.util.Objects;
 
 public class Preconditions {
@@ -29,6 +30,12 @@ public class Preconditions {
     public static void check(boolean expression, String message) {
         if (!expression) {
             throw new IllegalStateException(message);
+        }
+    }
+
+    public static void passwordCheck(String password, String checkPassword){
+        if (!password.equals(checkPassword)){
+            throw new IllegalStateException();
         }
     }
 }

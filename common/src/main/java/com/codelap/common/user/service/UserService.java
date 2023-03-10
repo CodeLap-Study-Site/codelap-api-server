@@ -5,7 +5,7 @@ import com.codelap.common.user.domain.UserCareer;
 
 public interface UserService {
 
-    User create(String name, int age, UserCareer career);
+    User create(String name, int age, UserCareer career, String password, String checkPassword);
 
     void update(Long userId, String name, int age, UserCareer career);
 }

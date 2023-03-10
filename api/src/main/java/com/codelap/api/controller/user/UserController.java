@@ -22,7 +22,7 @@ public class UserController {
     public void create(
             @RequestBody UserCreateRequest req
     ) {
-        userService.create(req.name(), req.age(), req.career().toCareer());
+        userService.create(req.name(), req.age(), req.career().toCareer(), req.password(), req.checkPassword());
     }
 
     @PostMapping("/update")

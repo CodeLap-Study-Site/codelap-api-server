@@ -29,7 +29,7 @@ class UserControllerTest extends ApiTest {
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
-        user = userRepository.save(User.create("name", 10, career));
+        user = userRepository.save(User.create("name", 10, career, "abcd", "abcd"));
     }
 
 
@@ -37,7 +37,7 @@ class UserControllerTest extends ApiTest {
     void 유저_생성_성공() throws Exception {
         UserCreateRequestUserCareerDto dto = new UserCreateRequestUserCareerDto("직무", 10);
 
-        UserCreateRequest req = new UserCreateRequest("name", 10, dto);
+        UserCreateRequest req = new UserCreateRequest("name", 10, dto, "abcd", "abcd");
 
         mockMvc.perform(post("/user")
                         .contentType(APPLICATION_JSON)

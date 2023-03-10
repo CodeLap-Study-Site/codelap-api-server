@@ -7,7 +7,9 @@ public class UserCreateDto {
     public record UserCreateRequest(
             String name,
             int age,
-            UserCreateRequestUserCareerDto career
+            UserCreateRequestUserCareerDto career,
+            String password,
+            String checkPassword
     ){}
 
     public record UserCreateRequestUserCareerDto(
