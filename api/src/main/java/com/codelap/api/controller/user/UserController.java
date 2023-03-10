@@ -1,6 +1,8 @@
 package com.codelap.api.controller.user;
 
 import com.codelap.api.controller.user.dto.UserCreateDto.UserCreateRequest;
+import com.codelap.api.controller.user.dto.UserUpdateDto;
+import com.codelap.api.controller.user.dto.UserUpdateDto.UserUpdateRequest;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.service.UserService;
 import lombok.RequiredArgsConstructor;
