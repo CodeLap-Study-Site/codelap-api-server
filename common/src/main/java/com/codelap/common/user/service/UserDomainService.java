@@ -20,4 +20,11 @@ public class UserDomainService implements UserService {
 
         return userRepository.save(user);
     }
+
+    @Override
+    public void update(Long userId, String name, int age, UserCareer career) {
+        User user = userRepository.findById(userId).orElseThrow();
+
+        user.update(name, age, career);
+    }
 }
