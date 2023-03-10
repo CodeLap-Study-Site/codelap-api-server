@@ -33,9 +33,4 @@ public class Preconditions {
         }
     }
 
-    public static void passwordCheck(String password, String checkPassword){
-        if (!password.equals(checkPassword)){
-            throw new IllegalStateException();
-        }
-    }
 }

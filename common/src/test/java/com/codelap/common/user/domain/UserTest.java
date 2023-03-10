@@ -13,24 +13,23 @@ import static org.assertj.core.api.Assertions.*;
 class UserTest {
 
     private User user;
-    String checkPassword = "abcd";
+
 
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
-        user = User.create("name", 10, career, "abcd", "abcd");
+        user = User.create("name", 10, career, "abcd");
     }
 
     @Test
     void 유저_생성_성공() {
         UserCareer career = UserCareer.create("직무", 1);
 
-        var user = User.create("name", 10, career, "abcd", checkPassword);
+        var user = User.create("name", 10, career, "abcd");
 
         assertThat(user.getName()).isEqualTo("name");
         assertThat(user.getAge()).isEqualTo(10);
         assertThat(user.getPassword()).isEqualTo("abcd");
-        assertThat(user.getPassword()).isEqualTo(checkPassword);
         assertThat(user.getCareer()).isSameAs(career);
         assertThat(user.getStatus()).isSameAs(CREATED);
         assertThat(user.getCreatedAt()).isNotNull();
@@ -41,31 +40,21 @@ class UserTest {
     void 유저_생성_실패__이름이_공백_혹은_널(String name) {
         UserCareer career = UserCareer.create("직무", 1);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> User.create(name, 10, career, "abcd", checkPassword));
+        assertThatIllegalArgumentException().isThrownBy(() -> User.create(name, 10, career, "abcd"));
     }
 
     @Test
     void 유저_생성_실패__나이가_최소값_보다_작음() {
         UserCareer career = UserCareer.create("직무", 1);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> User.create("name", MIN_AGE - 1, career, "abcd", checkPassword));
+        assertThatIllegalArgumentException().isThrownBy(() -> User.create("name", MIN_AGE - 1, career, "abcd"));
     }
 
     @Test
     void 유저_생성_실패__직무가_널() {
-        assertThatIllegalArgumentException().isThrownBy(() -> User.create("name", 10, null, "abcd", checkPassword));
+        assertThatIllegalArgumentException().isThrownBy(() -> User.create("name", 10, null, "abcd"));
     }
-
-    @Test
-    void 유저_생성_실패__패스워드가_불일치(){
-        UserCareer career = UserCareer.create("직무", 1);
-
-        // assertThat(user.getPassword()).isEqualTo("abcd");
-        // 실패 사유 : 회원이 생성되기 전에 예외가 터지게 되어서 테스트가 실패함.
-
-        assertThatIllegalStateException().isThrownBy(() -> User.create("name", 10, career, "abcde", checkPassword));
-    }
-
+    
     @Test
     void 유저_수정_성공() {
         UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);

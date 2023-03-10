@@ -49,13 +49,11 @@ public class User {
         this.password = password;
     }
 
-    public static User create(String name, int age, UserCareer career, String password, String checkPassword) {
+    public static User create(String name, int age, UserCareer career, String password) {
         require(Strings.isNotBlank(name));
         require(age > MIN_AGE);
         require(nonNull(career));
         require(Strings.isNotBlank(password));
-        // 패스워드와, 재입력한 패스워드가 같은지 확인하는 메서드가 필요.
-        passwordCheck(password, checkPassword);
 
 
         return new User(name, age, career, password);
