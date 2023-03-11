@@ -14,7 +14,6 @@ class UserTest {
 
     private User user;
 
-
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
@@ -101,5 +100,43 @@ class UserTest {
         assertThatIllegalStateException().isThrownBy(() ->
                 user.update("updatedName", 11, updateCareer)
         );
+    }
+
+    @Test
+    void 유저_비밀번호_변경_성공() {
+        user.changePassword(user.getPassword(), "newPassword");
+
+        assertThat(user.getPassword()).isEqualTo("newPassword");
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 유저_비밀번호_변경_실패__입력받은_기존_비밀번호가_널이거나_공백(String changePassword) {
+        assertThatIllegalArgumentException().isThrownBy(() -> user.changePassword(changePassword, "newPassword"));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 유저_비밀번호_변경_실패__입력받은_새로운_비밀번호가_널이거나_공백(String changePassword) {
+        assertThatIllegalArgumentException().isThrownBy(() -> user.changePassword(user.getPassword(), changePassword));
+    }
+
+    @Test
+    void 유저_비밀번호_변경_실패__생성됨_상태가_아님() {
+        user.setStatus(DELETED);
+
+        assertThatIllegalStateException().isThrownBy(() ->
+                user.changePassword(user.getPassword(), "changePassword")
+        );
+    }
+
+    @Test
+    void 유저_비밀번호_변경_실패__입력받은_비밀번호와_기존_비밀번호가_다름() {
+        assertThatIllegalArgumentException().isThrownBy(() -> user.changePassword("fakePassword", "newPassword"));
+    }
+
+    @Test
+    void 유저_비밀번호_변경_실패__입력받은_비밀번호와_새로운_비밀번호가_같음() {
+        assertThatIllegalArgumentException().isThrownBy(() -> user.changePassword(user.getPassword(), "abcd"));
     }
 }
