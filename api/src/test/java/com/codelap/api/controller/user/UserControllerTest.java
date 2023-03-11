@@ -37,7 +37,7 @@ class UserControllerTest extends ApiTest {
     void 유저_생성_성공() throws Exception {
         UserCreateRequestUserCareerDto dto = new UserCreateRequestUserCareerDto("직무", 10);
 
-        UserCreateRequest req = new UserCreateRequest("name", 10, "abcd", dto);
+        UserCreateRequest req = new UserCreateRequest("name", 10,"abcd", dto);
 
         mockMvc.perform(post("/user")
                         .contentType(APPLICATION_JSON)

@@ -69,4 +69,16 @@ public class User {
         this.age = age;
         this.career = career;
     }
+
+    public void changePassword(String password, String newPassword) {
+        require(Strings.isNotBlank(password));
+        require(Strings.isNotBlank(newPassword));
+
+        check(status == CREATED);
+
+        require(this.password.equals(password));
+        require(!this.password.equals(newPassword));
+
+        this.password = newPassword;
+    }
 }
