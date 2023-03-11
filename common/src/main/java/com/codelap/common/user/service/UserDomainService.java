@@ -15,8 +15,8 @@ public class UserDomainService implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public User create(String name, int age, UserCareer career, String password) {
-        User user = User.create(name, age, career, password);
+    public User create(String name, int age, UserCareer career, String password, String email) {
+        User user = User.create(name, age, career, password, email);
 
         return userRepository.save(user);
     }
