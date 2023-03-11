@@ -41,7 +41,7 @@ include::{snippets}/user/update/http-response.adoc[]
 include::{snippets}/user/update/response-body.adoc[]
 
 [[UserChangePassword]]
-== 유저 수정 API
+== 유저 비밀번호 변경 API
 
 === Request
 include::{snippets}/user/change-password/curl-request.adoc[]
@@ -56,7 +56,7 @@ include::{snippets}/user/change-password/http-response.adoc[]
 include::{snippets}/user/change-password/response-body.adoc[]
 
 [[UserDelete]]
-== 유저 수정 API
+== 유저 삭제 API
 
 === Request
 include::{snippets}/user/delete/curl-request.adoc[]
