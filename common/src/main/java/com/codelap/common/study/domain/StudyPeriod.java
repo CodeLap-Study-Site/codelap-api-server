@@ -1,6 +1,7 @@
 package com.codelap.common.study.domain;
 
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
@@ -10,6 +11,7 @@ import static com.codelap.common.support.Preconditions.require;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PROTECTED;
 
+@Getter
 @Embeddable
 @NoArgsConstructor(access = PROTECTED)
 public class StudyPeriod {
