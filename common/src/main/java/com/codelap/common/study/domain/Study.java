@@ -4,13 +4,16 @@ import com.codelap.common.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.logging.log4j.util.Strings;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.codelap.common.study.domain.StudyStatus.DELETED;
 import static com.codelap.common.study.domain.StudyStatus.OPENED;
+import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -47,6 +50,7 @@ public class Study {
     @ManyToMany
     private List<User> members = new ArrayList<>();
 
+    @Setter
     @Enumerated(STRING)
     private StudyStatus status = OPENED;
 
@@ -75,5 +79,23 @@ public class Study {
         require(nonNull(leader));
 
         return new Study(name, info, maxMembersSize, difficulty, period, needCareer, leader);
+    }
+
+    public void update(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer) {
+        require(Strings.isNotBlank(name));
+        require(Strings.isNotBlank(info));
+        require(maxMembersSize >= MIN_MEMBERS_SIZE);
+        require(nonNull(difficulty));
+        require(nonNull(period));
+        require(nonNull(needCareer));
+
+        check(status != DELETED);
+
+        this.name = name;
+        this.info = info;
+        this.maxMembersSize = maxMembersSize;
+        this.difficulty = difficulty;
+        this.period = period;
+        this.needCareer = needCareer;
     }
 }
