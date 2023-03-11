@@ -54,7 +54,7 @@ class UserControllerTest extends ApiTest {
     void 유저_수정_성공() throws Exception {
         UserUpdateRequestUserCareerDto dto = new UserUpdateRequestUserCareerDto("직무", 10);
 
-        UserUpdateRequest req = new UserUpdateRequest(user.getId(), "updatedName", 11, dto);
+        UserUpdateRequest req = new UserUpdateRequest(user.getId(), "updatedName", 11, "abcd", dto);
 
         mockMvc.perform(post("/user/update")
                         .contentType(APPLICATION_JSON)

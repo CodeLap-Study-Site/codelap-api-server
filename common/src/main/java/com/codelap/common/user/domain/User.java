@@ -58,10 +58,12 @@ public class User {
         return new User(name, age, career, password);
     }
 
-    public void update(String name, int age, UserCareer career) {
+    public void update(String name, int age, String password, UserCareer career) {
         require(Strings.isNotBlank(name));
         require(age > MIN_AGE);
+        require(Strings.isNotBlank(password));
         require(nonNull(career));
+
 
         check(status == CREATED);
 

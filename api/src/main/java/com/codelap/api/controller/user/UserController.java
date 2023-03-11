@@ -29,6 +29,6 @@ public class UserController {
     public void update(
             @RequestBody UserUpdateRequest req
     ) {
-        userService.update(req.userId(), req.name(), req.age(), req.career().toCareer());
+        userService.update(req.userId(), req.name(), req.age(), req.password(), req.career().toCareer());
     }
 }

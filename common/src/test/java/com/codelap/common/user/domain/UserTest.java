@@ -59,10 +59,11 @@ class UserTest {
     void 유저_수정_성공() {
         UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);
 
-        user.update("updateName", 11, updateCareer);
+        user.update("updateName", 11, "abcd", updateCareer);
 
         assertThat(user.getName()).isEqualTo("updateName");
         assertThat(user.getAge()).isEqualTo(11);
+        assertThat(user.getPassword()).isEqualTo("abcd");
         assertThat(user.getCareer()).isSameAs(updateCareer);
     }
 
@@ -72,7 +73,7 @@ class UserTest {
         UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);
 
         assertThatIllegalArgumentException().isThrownBy(() ->
-                user.update(updateName, 11, updateCareer)
+                user.update(updateName, 11, "abcd", updateCareer)
         );
     }
 
@@ -81,14 +82,21 @@ class UserTest {
         UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);
 
         assertThatIllegalArgumentException().isThrownBy(() ->
-                user.update("updatedName", MIN_AGE - 1, updateCareer)
+                user.update("updatedName", MIN_AGE - 1, "abcd", updateCareer)
         );
+    }
+
+    @Test
+    void 유저_수정_실패__비밀번호가_널이거나_공백() {
+        UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> user.update("updatedName", 11, null, updateCareer));
     }
 
     @Test
     void 유저_수정_실패__직무가_널() {
         assertThatIllegalArgumentException().isThrownBy(() ->
-                user.update("updatedName", 11, null)
+                user.update("updatedName", 11, "abcd", null)
         );
     }
 
@@ -99,7 +107,7 @@ class UserTest {
         UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);
 
         assertThatIllegalStateException().isThrownBy(() ->
-                user.update("updatedName", 11, updateCareer)
+                user.update("updatedName", 11, "abcd", updateCareer)
         );
     }
 }

@@ -22,9 +22,9 @@ public class UserDomainService implements UserService {
     }
 
     @Override
-    public void update(Long userId, String name, int age, UserCareer career) {
+    public void update(Long userId, String name, int age, String password, UserCareer career) {
         User user = userRepository.findById(userId).orElseThrow();
 
-        user.update(name, age, career);
+        user.update(name, age, password, career);
     }
 }

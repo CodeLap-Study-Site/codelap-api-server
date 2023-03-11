@@ -41,10 +41,11 @@ class UserDomainServiceTest extends BaseServiceTest {
     void 유저_수정() {
         UserCareer updatedCareer = UserCareer.create("업데이트된_직무", 11);
 
-        userService.update(user.getId(), "updatedName", 11, updatedCareer);
+        userService.update(user.getId(), "updatedName", 11, "abcd", updatedCareer);
 
         assertThat(user.getName()).isEqualTo("updatedName");
         assertThat(user.getAge()).isEqualTo(11);
+        assertThat(user.getPassword()).isEqualTo("abcd");
         assertThat(user.getCareer()).isSameAs(updatedCareer);
     }
 }

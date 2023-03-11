@@ -8,6 +8,7 @@ public class UserUpdateDto {
             Long userId,
             String name,
             int age,
+            String password,
             UserUpdateRequestUserCareerDto career
     ) {
     }
