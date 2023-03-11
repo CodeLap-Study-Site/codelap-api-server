@@ -27,4 +27,13 @@ public class UserDomainService implements UserService {
 
         user.update(name, age, career);
     }
+
+    @Override
+    public void changePassword(Long userId, String password, String newPassword) {
+        User user = userRepository.findById(userId).orElseThrow();
+
+        user.changePassword(password, newPassword);
+    }
+
+
 }

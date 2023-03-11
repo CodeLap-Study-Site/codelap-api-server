@@ -47,4 +47,11 @@ class UserDomainServiceTest extends BaseServiceTest {
         assertThat(user.getAge()).isEqualTo(11);
         assertThat(user.getCareer()).isSameAs(updatedCareer);
     }
+
+    @Test
+    void 유저_비밀번호_변경() {
+        userService.changePassword(user.getId(), user.getPassword(), "changePassword");
+
+        assertThat(user.getPassword()).isEqualTo("changePassword");
+    }
 }
