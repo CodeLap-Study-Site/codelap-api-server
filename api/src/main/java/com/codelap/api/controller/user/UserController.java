@@ -1,5 +1,6 @@
 package com.codelap.api.controller.user;
 
+import com.codelap.api.controller.user.dto.UserChangePasswordDto;
 import com.codelap.api.controller.user.dto.UserCreateDto.UserCreateRequest;
 import com.codelap.api.controller.user.dto.UserUpdateDto;
 import com.codelap.api.controller.user.dto.UserUpdateDto.UserUpdateRequest;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.codelap.api.controller.user.dto.UserChangePasswordDto.*;
 
 @RestController
 @RequestMapping("/user")
@@ -30,5 +33,12 @@ public class UserController {
             @RequestBody UserUpdateRequest req
     ) {
         userService.update(req.userId(), req.name(), req.age(), req.career().toCareer());
+    }
+
+    @PostMapping("/change-password")
+    public void changePassword(
+            @RequestBody UserChangePasswordRequest req
+    ){
+        userService.changePassword(req.userId(), req.password(), req.newPassword());
     }
 }
