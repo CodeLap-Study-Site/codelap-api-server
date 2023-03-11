@@ -35,5 +35,10 @@ public class UserDomainService implements UserService {
         user.changePassword(password, newPassword);
     }
 
+    @Override
+    public void delete(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
 
+        user.delete();
+    }
 }

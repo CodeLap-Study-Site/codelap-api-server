@@ -10,4 +10,6 @@ public interface UserService {
     void update(Long userId, String name, int age, UserCareer career);
 
     void changePassword(Long userId, String password, String newPassword);
+
+    void delete(Long userId);
 }
