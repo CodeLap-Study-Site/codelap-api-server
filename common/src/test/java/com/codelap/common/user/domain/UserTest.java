@@ -139,4 +139,18 @@ class UserTest {
     void 유저_비밀번호_변경_실패__입력받은_비밀번호와_새로운_비밀번호가_같음() {
         assertThatIllegalArgumentException().isThrownBy(() -> user.changePassword(user.getPassword(), "abcd"));
     }
+
+    @Test
+    void 유저_삭제_성공() {
+        user.delete();
+
+        assertThat(user.getStatus()).isEqualTo(DELETED);
+    }
+
+    @Test
+    void 유저_삭제_실패__이미_삭제됨() {
+        user.delete();
+
+        assertThatIllegalStateException().isThrownBy(() -> user.delete());
+    }
 }

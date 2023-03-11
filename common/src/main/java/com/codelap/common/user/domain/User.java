@@ -13,6 +13,7 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.common.support.Preconditions.*;
 import static com.codelap.common.user.domain.UserStatus.CREATED;
+import static com.codelap.common.user.domain.UserStatus.DELETED;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PROTECTED;
@@ -80,5 +81,11 @@ public class User {
         require(!this.password.equals(newPassword));
 
         this.password = newPassword;
+    }
+
+    public void delete() {
+        check(status != DELETED);
+
+        this.status = DELETED;
     }
 }
