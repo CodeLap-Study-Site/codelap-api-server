@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class StudyTest {
 
     private User leader;
-
     private Study study;
 
     private StudyPeriod period;
@@ -52,13 +51,13 @@ class StudyTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void 스터디_생성_실패__이름이_공백_혹은_널(String name){
+    void 스터디_생성_실패__이름이_공백_혹은_널(String name) {
         assertThatIllegalArgumentException().isThrownBy(() -> create(name, "설명", 4, NORMAL, period, needCareer, leader));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
-    void 스터디_생성_실패__설명이_공백_혹은_널(String info){
+    void 스터디_생성_실패__설명이_공백_혹은_널(String info) {
         assertThatIllegalArgumentException().isThrownBy(() -> create("팀", info, 4, NORMAL, period, needCareer, leader));
     }
 

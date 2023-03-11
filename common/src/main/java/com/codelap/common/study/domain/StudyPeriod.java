@@ -4,7 +4,10 @@ import jakarta.persistence.Embeddable;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
+import static com.codelap.common.support.Preconditions.require;
+import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PROTECTED;
 
 @Embeddable
@@ -20,6 +23,8 @@ public class StudyPeriod {
     }
 
     public static StudyPeriod create(OffsetDateTime startAt, OffsetDateTime endAt) {
+        require(nonNull(startAt));
+        require(nonNull(endAt));
 
         return new StudyPeriod(startAt, endAt);
     }
