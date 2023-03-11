@@ -11,8 +11,7 @@ import org.apache.logging.log4j.util.Strings;
 
 import java.time.OffsetDateTime;
 
-import static com.codelap.common.support.Preconditions.check;
-import static com.codelap.common.support.Preconditions.require;
+import static com.codelap.common.support.Preconditions.*;
 import static com.codelap.common.user.domain.UserStatus.CREATED;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.util.Objects.nonNull;
@@ -31,6 +30,8 @@ public class User {
 
     private int age;
 
+    private String password;
+
     @Embedded
     private UserCareer career;
 
@@ -41,21 +42,23 @@ public class User {
 
     public static int MIN_AGE = 0;
 
-    private User(String name, int age, UserCareer career) {
+    private User(String name, int age, UserCareer career, String password) {
         this.name = name;
         this.age = age;
         this.career = career;
+        this.password = password;
     }
 
-    public static User create(String name, int age, UserCareer career) {
+    public static User create(String name, int age, UserCareer career, String password) {
         require(Strings.isNotBlank(name));
         require(age > MIN_AGE);
         require(nonNull(career));
+        require(Strings.isNotBlank(password));
 
-        return new User(name, age, career);
+        return new User(name, age, career, password);
     }
 
-    public void update(String name, int age, UserCareer career){
+    public void update(String name, int age, UserCareer career) {
         require(Strings.isNotBlank(name));
         require(age > MIN_AGE);
         require(nonNull(career));

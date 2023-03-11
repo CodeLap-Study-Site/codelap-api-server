@@ -23,14 +23,14 @@ class UserDomainServiceTest extends BaseServiceTest {
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
-        user = userRepository.save(User.create("name", 10, career));
+        user = userRepository.save(User.create("name", 10, career, "abcd"));
     }
 
     @Test
     void 유저_생성() {
         UserCareer career = UserCareer.create("직무", 10);
 
-        User user = userService.create("이름", 10, career);
+        User user = userService.create("이름", 10, career, "abcd");
 
         User foundUser = userRepository.findById(user.getId()).orElseThrow();
 

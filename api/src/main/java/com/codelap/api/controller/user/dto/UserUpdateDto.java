@@ -9,13 +9,14 @@ public class UserUpdateDto {
             String name,
             int age,
             UserUpdateRequestUserCareerDto career
-    ){}
+    ) {
+    }
 
     public record UserUpdateRequestUserCareerDto(
             String occupation,
             int year
-    ){
-        public UserCareer toCareer(){
+    ) {
+        public UserCareer toCareer() {
             return UserCareer.create(occupation, year);
         }
     }

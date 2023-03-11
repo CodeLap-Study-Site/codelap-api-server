@@ -1,5 +1,6 @@
 package com.codelap.common.support;
 
+
 import java.util.Objects;
 
 public class Preconditions {
@@ -31,4 +32,5 @@ public class Preconditions {
             throw new IllegalStateException(message);
         }
     }
+
 }

@@ -14,20 +14,22 @@ class UserTest {
 
     private User user;
 
+
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
-        user = User.create("name", 10, career);
+        user = User.create("name", 10, career, "abcd");
     }
 
     @Test
     void 유저_생성_성공() {
         UserCareer career = UserCareer.create("직무", 1);
 
-        var user = User.create("name", 10, career);
+        var user = User.create("name", 10, career, "abcd");
 
         assertThat(user.getName()).isEqualTo("name");
         assertThat(user.getAge()).isEqualTo(10);
+        assertThat(user.getPassword()).isEqualTo("abcd");
         assertThat(user.getCareer()).isSameAs(career);
         assertThat(user.getStatus()).isSameAs(CREATED);
         assertThat(user.getCreatedAt()).isNotNull();
@@ -38,19 +40,19 @@ class UserTest {
     void 유저_생성_실패__이름이_공백_혹은_널(String name) {
         UserCareer career = UserCareer.create("직무", 1);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> User.create(name, 10, career));
+        assertThatIllegalArgumentException().isThrownBy(() -> User.create(name, 10, career, "abcd"));
     }
 
     @Test
     void 유저_생성_실패__나이가_최소값_보다_작음() {
         UserCareer career = UserCareer.create("직무", 1);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> User.create("name", MIN_AGE - 1, career));
+        assertThatIllegalArgumentException().isThrownBy(() -> User.create("name", MIN_AGE - 1, career, "abcd"));
     }
 
     @Test
     void 유저_생성_실패__직무가_널() {
-        assertThatIllegalArgumentException().isThrownBy(() -> User.create("name", 10, null));
+        assertThatIllegalArgumentException().isThrownBy(() -> User.create("name", 10, null, "abcd"));
     }
 
     @Test
