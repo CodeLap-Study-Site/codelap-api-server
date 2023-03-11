@@ -4,10 +4,12 @@ import com.codelap.common.support.BaseServiceTest;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
+import org.assertj.core.util.diff.DeleteDelta;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.codelap.common.user.domain.UserStatus.DELETED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UserDomainServiceTest extends BaseServiceTest {
@@ -53,5 +55,12 @@ class UserDomainServiceTest extends BaseServiceTest {
         userService.changePassword(user.getId(), user.getPassword(), "changePassword");
 
         assertThat(user.getPassword()).isEqualTo("changePassword");
+    }
+
+    @Test
+    void 유저_삭제() {
+        userService.delete(user.getId());
+
+        assertThat(user.getStatus()).isEqualTo(DELETED);
     }
 }
