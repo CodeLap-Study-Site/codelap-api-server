@@ -3,6 +3,7 @@ package com.codelap.api.controller.user;
 import com.codelap.api.controller.user.dto.UserChangePasswordDto;
 import com.codelap.api.controller.user.dto.UserCreateDto.UserCreateRequest;
 import com.codelap.api.controller.user.dto.UserCreateDto.UserCreateRequestUserCareerDto;
+import com.codelap.api.controller.user.dto.UserDeleteDto;
 import com.codelap.api.controller.user.dto.UserUpdateDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.user.domain.User;
@@ -14,13 +15,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.codelap.api.controller.user.dto.UserChangePasswordDto.*;
+import static com.codelap.api.controller.user.dto.UserDeleteDto.*;
 import static com.codelap.api.controller.user.dto.UserUpdateDto.*;
 import static com.codelap.common.user.domain.UserStatus.CREATED;
+import static com.codelap.common.user.domain.UserStatus.DELETED;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -104,5 +108,22 @@ class UserControllerTest extends ApiTest {
                 ));
 
         assertThat(user.getPassword()).isEqualTo("newPassword");
+    }
+
+    @Test
+    void 유저_삭제_성공() throws Exception{
+        UserDeleteRequest req = new UserDeleteRequest(user.getId());
+
+        mockMvc.perform(delete("/user")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("user/delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        assertThat(user.getStatus()).isEqualTo(DELETED);
     }
 }

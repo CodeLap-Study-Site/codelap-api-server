@@ -2,17 +2,16 @@ package com.codelap.api.controller.user;
 
 import com.codelap.api.controller.user.dto.UserChangePasswordDto;
 import com.codelap.api.controller.user.dto.UserCreateDto.UserCreateRequest;
+import com.codelap.api.controller.user.dto.UserDeleteDto;
 import com.codelap.api.controller.user.dto.UserUpdateDto;
 import com.codelap.api.controller.user.dto.UserUpdateDto.UserUpdateRequest;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.codelap.api.controller.user.dto.UserChangePasswordDto.*;
+import static com.codelap.api.controller.user.dto.UserDeleteDto.*;
 
 @RestController
 @RequestMapping("/user")
@@ -40,5 +39,12 @@ public class UserController {
             @RequestBody UserChangePasswordRequest req
     ){
         userService.changePassword(req.userId(), req.password(), req.newPassword());
+    }
+
+    @DeleteMapping
+    public void delete(
+            @RequestBody UserDeleteRequest req
+    ){
+        userService.delete(req.userId());
     }
 }
