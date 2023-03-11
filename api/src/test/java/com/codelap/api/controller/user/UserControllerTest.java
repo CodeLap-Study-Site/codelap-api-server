@@ -1,25 +1,21 @@
 package com.codelap.api.controller.user;
 
-import com.codelap.api.controller.user.dto.UserChangePasswordDto;
 import com.codelap.api.controller.user.dto.UserCreateDto.UserCreateRequest;
 import com.codelap.api.controller.user.dto.UserCreateDto.UserCreateRequestUserCareerDto;
-import com.codelap.api.controller.user.dto.UserDeleteDto;
-import com.codelap.api.controller.user.dto.UserUpdateDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.codelap.api.controller.user.dto.UserChangePasswordDto.*;
-import static com.codelap.api.controller.user.dto.UserDeleteDto.*;
-import static com.codelap.api.controller.user.dto.UserUpdateDto.*;
+import static com.codelap.api.controller.user.dto.UserChangePasswordDto.UserChangePasswordRequest;
+import static com.codelap.api.controller.user.dto.UserDeleteDto.UserDeleteRequest;
+import static com.codelap.api.controller.user.dto.UserUpdateDto.UserUpdateRequest;
+import static com.codelap.api.controller.user.dto.UserUpdateDto.UserUpdateRequestUserCareerDto;
 import static com.codelap.common.user.domain.UserStatus.CREATED;
 import static com.codelap.common.user.domain.UserStatus.DELETED;
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -39,14 +35,14 @@ class UserControllerTest extends ApiTest {
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
-        user = userRepository.save(User.create("name", 10, career, "abcd"));
+        user = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
     }
 
     @Test
     void 유저_생성_성공() throws Exception {
         UserCreateRequestUserCareerDto dto = new UserCreateRequestUserCareerDto("직무", 10);
 
-        UserCreateRequest req = new UserCreateRequest("name", 10,"abcd", dto);
+        UserCreateRequest req = new UserCreateRequest("email", "name", 10, "abcd", dto);
 
         mockMvc.perform(post("/user")
                         .contentType(APPLICATION_JSON)
@@ -94,7 +90,7 @@ class UserControllerTest extends ApiTest {
     }
 
     @Test
-    void 유저_비밀번호_수정_성공() throws Exception{
+    void 유저_비밀번호_수정_성공() throws Exception {
         UserChangePasswordRequest req = new UserChangePasswordRequest(user.getId(), user.getPassword(), "newPassword");
 
         mockMvc.perform(post("/user/change-password")
@@ -111,7 +107,7 @@ class UserControllerTest extends ApiTest {
     }
 
     @Test
-    void 유저_삭제_성공() throws Exception{
+    void 유저_삭제_성공() throws Exception {
         UserDeleteRequest req = new UserDeleteRequest(user.getId());
 
         mockMvc.perform(delete("/user")

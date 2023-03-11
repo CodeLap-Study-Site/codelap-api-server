@@ -5,6 +5,7 @@ import com.codelap.common.user.domain.UserCareer;
 public class UserCreateDto {
 
     public record UserCreateRequest(
+            String email,
             String name,
             int age,
             String password,

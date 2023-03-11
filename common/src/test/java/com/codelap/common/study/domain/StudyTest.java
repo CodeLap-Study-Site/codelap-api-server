@@ -2,7 +2,6 @@ package com.codelap.common.study.domain;
 
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,11 +9,12 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.time.OffsetDateTime;
 
-import static com.codelap.common.study.domain.Study.*;
-import static com.codelap.common.study.domain.StudyDifficulty.*;
+import static com.codelap.common.study.domain.Study.MIN_MEMBERS_SIZE;
+import static com.codelap.common.study.domain.Study.create;
+import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.OPENED;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class StudyTest {
 
@@ -27,7 +27,7 @@ class StudyTest {
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
-        leader = User.create("name", 10, career, "abcd");
+        leader = User.create("name", 10, career, "abcd", "setUp");
 
         period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         needCareer = StudyNeedCareer.create("직무", 1);
