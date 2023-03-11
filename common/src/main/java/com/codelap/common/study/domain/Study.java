@@ -58,6 +58,10 @@ public class Study {
 
     public static int MIN_MEMBERS_SIZE = 1;
 
+    public boolean isLeader(User leader) {
+        return this.leader == leader;
+    }
+
     private Study(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader) {
         this.name = name;
         this.info = info;

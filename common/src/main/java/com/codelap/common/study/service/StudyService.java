@@ -8,4 +8,6 @@ import com.codelap.common.user.domain.User;
 public interface StudyService {
 
     void create(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader);
+
+    void update(Long studyId, Long userId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer);
 }
