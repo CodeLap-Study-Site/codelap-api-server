@@ -1,0 +1,71 @@
+= CodeLap API Document
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+[[UserCreate]]
+== 유저 생성 API
+
+=== Request
+include::{snippets}/user/create/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/user/create/request-body.adoc[]
+
+=== Response
+include::{snippets}/user/create/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/user/create/response-body.adoc[]
+
+[[UserUpdate]]
+== 유저 수정 API
+
+=== Request
+include::{snippets}/user/update/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/user/update/request-body.adoc[]
+
+=== Response
+include::{snippets}/user/update/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/user/update/response-body.adoc[]
+
+[[UserChangePassword]]
+== 유저 수정 API
+
+=== Request
+include::{snippets}/user/change-password/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/user/change-password/request-body.adoc[]
+
+=== Response
+include::{snippets}/user/change-password/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/user/change-password/response-body.adoc[]
+
+[[UserDelete]]
+== 유저 수정 API
+
+=== Request
+include::{snippets}/user/delete/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/user/delete/request-body.adoc[]
+
+=== Response
+include::{snippets}/user/delete/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/user/delete/response-body.adoc[]

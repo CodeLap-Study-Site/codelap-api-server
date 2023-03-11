@@ -57,13 +57,18 @@ project(":api") {
         implementation 'org.flywaydb:flyway-core'
         implementation 'org.flywaydb:flyway-mysql'
         implementation 'org.springframework.boot:spring-boot-starter-security'
+
         testImplementation 'org.springframework.security:spring-security-test'
         testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-        testImplementation 'org.springframework.restdocs:spring-restdocs-core'
+    }
+
+    jar {
+        enabled = false
     }
 
     bootJar {
         enabled = true
+        dependsOn asciidoctor
     }
 
     ext {
@@ -78,11 +83,6 @@ project(":api") {
     asciidoctor {
         dependsOn test
         inputs.dir snippetsDir
-    }
-
-    bootJar {
-        enabled = true
-        dependsOn asciidoctor
     }
 }
 
