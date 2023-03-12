@@ -53,7 +53,7 @@ class StudyDomainServiceTest {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
 
-        studyService.create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+        studyService.create(leader.getId(), "팀", "설명", 4, NORMAL, period, needCareer);
 
         Study foundStudy = studyRepository.findAll().get(0);
 

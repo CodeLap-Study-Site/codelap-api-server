@@ -18,7 +18,9 @@ public class StudyDomainService implements StudyService {
     private final UserRepository userRepository;
 
     @Override
-    public void create(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader) {
+    public void create(Long leaderId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer) {
+        User leader = userRepository.findById(leaderId).orElseThrow();
+
         Study study = Study.create(name, info, maxMembersSize, difficulty, period, needCareer, leader);
 
         studyRepository.save(study);
