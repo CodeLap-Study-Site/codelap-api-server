@@ -1,16 +1,13 @@
 package com.codelap.common.study.domain;
 
-import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
-
-import static com.codelap.common.study.domain.StudyNeedCareer.*;
+import static com.codelap.common.study.domain.StudyNeedCareer.create;
 import static com.codelap.common.user.domain.UserCareer.MIN_YEAR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.junit.jupiter.api.Assertions.*;
 
 class StudyNeedCareerTest {
     @Test

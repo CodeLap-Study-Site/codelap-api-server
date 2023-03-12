@@ -69,3 +69,19 @@ include::{snippets}/user/delete/http-response.adoc[]
 
 === ResponseBody
 include::{snippets}/user/delete/response-body.adoc[]
+
+
+[[StudyCreate]]
+== 스터디 생성 API
+
+=== Request
+include::{snippets}/study/create/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study/create/request-body.adoc[]
+
+=== Response
+include::{snippets}/study/create/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study/create/response-body.adoc[]
