@@ -70,8 +70,8 @@ class StudyDomainServiceTest {
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
         assertThat(foundStudy.getName()).isEqualTo("updateName");
-        assertThat(foundStudy.getInfo()).isEqualTo("updateInfo");
         assertThat(foundStudy.getMaxMembersSize()).isEqualTo(5);
+        assertThat(foundStudy.getInfo()).isEqualTo("updateInfo");
         assertThat(foundStudy.getDifficulty()).isEqualTo(HARD);
         assertThat(foundStudy.getPeriod()).isSameAs(updatePeriod);
         assertThat(foundStudy.getNeedCareer()).isSameAs(updateNeedCareer);

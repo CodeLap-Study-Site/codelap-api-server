@@ -85,3 +85,18 @@ include::{snippets}/study/create/http-response.adoc[]
 
 === ResponseBody
 include::{snippets}/study/create/response-body.adoc[]
+
+[[StudyUpdate]]
+== 스터디 수정 API
+
+=== Request
+include::{snippets}/study/update/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study/update/request-body.adoc[]
+
+=== Response
+include::{snippets}/study/update/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study/update/response-body.adoc[]
