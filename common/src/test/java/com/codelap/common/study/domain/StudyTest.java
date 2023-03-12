@@ -13,6 +13,7 @@ import static com.codelap.common.study.domain.Study.MIN_MEMBERS_SIZE;
 import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
+import static com.codelap.common.study.domain.StudyStatus.*;
 import static com.codelap.common.study.domain.StudyStatus.DELETED;
 import static com.codelap.common.study.domain.StudyStatus.OPENED;
 import static org.assertj.core.api.Assertions.*;
@@ -161,4 +162,58 @@ class StudyTest {
 
         assertThatIllegalStateException().isThrownBy(() -> study.update("updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer));
     }
+
+    @Test
+    void 스터디_참여_성공(){
+        UserCareer career = UserCareer.create("직무", 1);
+        User user = User.create("name", 10, career, "abcd", "setUp");
+        study.addMember(user);
+
+        assertThat(study.getMaxMembersSize()).isGreaterThanOrEqualTo(study.getMembers().size());
+        assertThat(study.getNeedCareer().getYear()).isLessThanOrEqualTo(user.getCareer().getYear());
+        assertThat(study.getNeedCareer().getOccupation()).isEqualTo(user.getCareer().getOccupation());
+        assertThat(study.getStatus()).isEqualTo(OPENED);
+    }
+
+    @Test
+    void 스터디_참여_실패__최대정원_최대값_보다_큼(){
+        UserCareer career = UserCareer.create("직무", 1);
+        User user1 = User.create("name", 10, career, "abcd", "user1");
+        User user2 = User.create("name", 20, career, "abcd", "user2");
+        User user3 = User.create("name", 30, career, "abcd", "user3");
+        User user4 = User.create("name", 40, career, "abcd", "user4");
+
+        study.addMember(user1);
+        study.addMember(user2);
+        study.addMember(user3);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> study.addMember(user4));
+    }
+
+    @Test
+    void 스터디_참여_실패__경력이_최소값_보다_작을때(){
+        UserCareer career = UserCareer.create("직무", 0);
+        User user = User.create("name", 10, career, "abcd", "setUp");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> study.addMember(user));
+    }
+
+    @Test
+    void 스터디_참여_실패__직무가_요구직무와_다를때(){
+        UserCareer career = UserCareer.create("differentOccupation", 1);
+        User user = User.create("name", 10, career, "abcd", "setUp");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> study.addMember(user));
+    }
+
+    @Test
+    void 스터디_참여_실패__삭제됨_상태() {
+        study.setStatus(DELETED);
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User user = User.create("name", 10, career, "abcd", "setUp");
+
+        assertThatIllegalStateException().isThrownBy(() -> study.addMember(user));
+    }
+
 }
