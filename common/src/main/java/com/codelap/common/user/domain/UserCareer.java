@@ -25,7 +25,7 @@ public class UserCareer {
 
     public static UserCareer create(String occupation, int year) {
         require(Strings.isNotBlank(occupation));
-        require(year > MIN_YEAR);
+        require(year >= MIN_YEAR);
 
         return new UserCareer(occupation, year);
     }
