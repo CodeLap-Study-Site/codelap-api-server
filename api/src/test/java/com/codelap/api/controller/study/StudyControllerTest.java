@@ -2,6 +2,8 @@ package com.codelap.api.controller.study;
 
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyNeedCareer;
+import com.codelap.common.study.domain.StudyPeriod;
 import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
@@ -13,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.OffsetDateTime;
 
 import static com.codelap.api.controller.study.dto.StudyCreateDto.*;
+import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
+import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.OPENED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -65,6 +69,45 @@ class StudyControllerTest extends ApiTest {
         assertThat(foundStudy.getPeriod().getEndAt()).isNotNull();
         assertThat(foundStudy.getNeedCareer().getOccupation()).isEqualTo("직무");
         assertThat(foundStudy.getNeedCareer().getYear()).isEqualTo(10);
+        assertThat(foundStudy.getStatus()).isEqualTo(OPENED);
+        assertThat(foundStudy.getCreatedAt()).isNotNull();
+        assertThat(foundStudy.getLeader()).isSameAs(leader);
+        assertThat(foundStudy.getMembers()).containsExactly(leader);
+    }
+
+    @Test
+    void 스터디_수정_성공() throws Exception {
+        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+
+        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
+
+        StudyUpdateRequestStudyPeriodDto periodDto = new StudyUpdateRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+        StudyUpdateRequestStudyNeedCareerDto careerDto = new StudyUpdateRequestStudyNeedCareerDto("updateOccupation", 5);
+
+        StudyUpdateRequest req = new StudyUpdateRequest(leader.getId(), study.getId(), "updateTeam", "updateInfo", 5, HARD, periodDto, careerDto);
+
+        mockMvc.perform(post("/study/update")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study/update",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        Study foundStudy = studyRepository.findAll().get(0);
+
+        assertThat(foundStudy.getId()).isNotNull();
+        assertThat(foundStudy.getName()).isEqualTo("updateTeam");
+        assertThat(foundStudy.getInfo()).isEqualTo("updateInfo");
+        assertThat(foundStudy.getMaxMembersSize()).isEqualTo(5);
+        assertThat(foundStudy.getDifficulty()).isEqualTo(HARD);
+        assertThat(foundStudy.getPeriod().getStartAt()).isNotNull();
+        assertThat(foundStudy.getPeriod().getEndAt()).isNotNull();
+        assertThat(foundStudy.getNeedCareer().getOccupation()).isEqualTo("updateOccupation");
+        assertThat(foundStudy.getNeedCareer().getYear()).isEqualTo(5);
         assertThat(foundStudy.getStatus()).isEqualTo(OPENED);
         assertThat(foundStudy.getCreatedAt()).isNotNull();
         assertThat(foundStudy.getLeader()).isSameAs(leader);
