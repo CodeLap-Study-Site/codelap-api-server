@@ -118,13 +118,11 @@ public class Study {
 
     public void changeLeader(User user){
         require(this.members.contains(user));
-        require(leader.equals(user));
-        require(!this.leader.equals(user));
+        require(!leader.equals(user));
         require(nonNull(user));
-        require(members.size() > MIN_MEMBERS_SIZE);
 
         check(status != DELETED);
 
-        this.leader = leader;
+        this.leader = user;
     }
 }

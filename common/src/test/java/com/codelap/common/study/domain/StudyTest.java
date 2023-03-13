@@ -213,14 +213,48 @@ class StudyTest {
     }
 
 
-//    @Test
-//    void 스터디_리더_변경_성공() {
-//        UserCareer career = UserCareer.create("직무", 1);
-//
-//        User changeLeader = User.create("changeLeader", 10, career, "abcd", "setUp");
-//
-//        study.changeLeader(changeLeader);
-//
-//        assertThat(study.getMembers().contains(changeLeader));
-//    }
+    @Test
+    void 스터디_리더_변경_성공() {
+        UserCareer career = UserCareer.create("직무", 1);
+
+        User user = User.create("changeLeader", 10, career, "abcd", "setUp");
+        study.addMember(user);
+
+        study.changeLeader(user);
+
+        assertThat(study.isLeader(user));
+    }
+
+    @Test
+    void 스터디_리더_변경_실패__소속되지_않은_회원() {
+        UserCareer career = UserCareer.create("직무", 1);
+
+        User user = User.create("changeLeader", 10, career, "abcd", "setUp");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> study.changeLeader(user));
+    }
+
+    @Test
+    void 스터디_리더_변경_실패__똑같은_방장으로_변경() {
+        UserCareer career = UserCareer.create("직무", 1);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> study.changeLeader(leader));
+    }
+
+    @Test
+    void 스터디_리더_변경_실패__회원이_널() {
+        assertThatIllegalArgumentException().isThrownBy(() -> study.changeLeader(null));
+    }
+
+    @Test
+    void 스터디_리더_변경_실패__삭제됨_상태() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User user = User.create("name", 10, career, "abcd", "setUp");
+
+        study.addMember(user);
+
+        study.setStatus(DELETED);
+
+        assertThatIllegalStateException().isThrownBy(() -> study.changeLeader(user));
+    }
 }
