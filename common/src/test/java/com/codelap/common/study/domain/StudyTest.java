@@ -25,8 +25,6 @@ class StudyTest {
     private StudyPeriod period;
     private StudyNeedCareer needCareer;
 
-    private int maxMembersSize;
-
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
@@ -176,8 +174,12 @@ class StudyTest {
 
     @Test
     void 스터디_참여_실패__최대정원_최대값_보다_큼() {
-        maxMembersSize = 4;
+        int maxMembersSize = 4;
+
+        Study study = create("팀", "설명", maxMembersSize, NORMAL, period, needCareer, leader);
+
         UserCareer career = UserCareer.create("직무", 1);
+
         User user1 = User.create("name", 10, career, "abcd", "user1");
         User user2 = User.create("name", 20, career, "abcd", "user2");
         User user3 = User.create("name", 30, career, "abcd", "user3");
