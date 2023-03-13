@@ -106,4 +106,13 @@ public class Study {
         this.period = period;
         this.needCareer = needCareer;
     }
+
+    public void addMember(User user) {
+        require(maxMembersSize > members.size());
+        require(!members.contains(user));
+
+        check(status != DELETED);
+
+        members.add(user);
+    }
 }
