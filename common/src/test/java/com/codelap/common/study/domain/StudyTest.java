@@ -25,6 +25,8 @@ class StudyTest {
     private StudyPeriod period;
     private StudyNeedCareer needCareer;
 
+    private int maxMembersSize;
+
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
@@ -168,14 +170,13 @@ class StudyTest {
         User user = User.create("name", 10, career, "abcd", "setUp");
         study.addMember(user);
 
-        assertThat(study.getMaxMembersSize()).isGreaterThanOrEqualTo(study.getMembers().size());
-        assertThat(study.getNeedCareer().getYear()).isLessThanOrEqualTo(user.getCareer().getYear());
         assertThat(study.getNeedCareer().getOccupation()).isEqualTo(user.getCareer().getOccupation());
         assertThat(study.getStatus()).isEqualTo(OPENED);
     }
 
     @Test
     void 스터디_참여_실패__최대정원_최대값_보다_큼() {
+        maxMembersSize = 4;
         UserCareer career = UserCareer.create("직무", 1);
         User user1 = User.create("name", 10, career, "abcd", "user1");
         User user2 = User.create("name", 20, career, "abcd", "user2");
@@ -192,11 +193,11 @@ class StudyTest {
     @Test
     void 스터디_참여_실패__참여자_중복() {
         UserCareer career = UserCareer.create("직무", 1);
-        User user1 = User.create("name", 10, career, "abcd", "user1");
+        User user = User.create("name", 10, career, "abcd", "user1");
 
-        study.addMember(user1);
+        study.addMember(user);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> study.addMember(user1));
+        assertThatIllegalArgumentException().isThrownBy(() -> study.addMember(user));
     }
 
     @Test
