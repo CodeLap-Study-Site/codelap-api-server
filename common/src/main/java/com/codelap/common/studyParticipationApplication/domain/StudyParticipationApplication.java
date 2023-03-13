@@ -1,10 +1,7 @@
 package com.codelap.common.studyParticipationApplication.domain;
 
 import com.codelap.common.study.domain.Study;
-import com.codelap.common.study.domain.StudyStatus;
-import com.codelap.common.support.Preconditions;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +11,6 @@ import org.apache.logging.log4j.util.Strings;
 import static com.codelap.common.study.domain.StudyStatus.*;
 import static com.codelap.common.studyParticipationApplication.domain.ApplicationStatus.*;
 import static com.codelap.common.support.Preconditions.*;
-import static com.codelap.common.user.domain.UserStatus.CREATED;
 import static com.codelap.common.user.domain.UserStatus.DELETED;
 import static jakarta.persistence.EnumType.*;
 import static jakarta.persistence.GenerationType.*;
@@ -40,6 +36,8 @@ public class StudyParticipationApplication {
     private ApplicationStatus applicationStatus = REQUESTED;
 
     private String message;
+
+    private String refuseMessage;
 
     private StudyParticipationApplication(User user, Study study, String message) {
         this.user = user;

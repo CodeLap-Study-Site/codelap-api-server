@@ -2,7 +2,7 @@ package com.codelap.common.studyParticipationApplication.domain;
 
 public enum ApplicationStatus {
     REQUESTED,
-    ACCEPTED,
+    APPROVED,
     REJECTED,
     CANCELED,
     DELETED
