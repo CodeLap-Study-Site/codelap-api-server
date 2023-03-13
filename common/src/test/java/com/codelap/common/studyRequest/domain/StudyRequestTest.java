@@ -68,4 +68,13 @@ class StudyRequestTest {
 
         assertThatIllegalArgumentException().isThrownBy(() -> StudyRequest.create(user, study, message));
     }
+
+    @Test
+    void 스터디_참가_신청_실패__이미_있는_회원() {
+        User user = User.create("candidate", 10, career, "abcd", "email");
+
+        study.addMember(user);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> StudyRequest.create(user, study, "message"));
+    }
 }
