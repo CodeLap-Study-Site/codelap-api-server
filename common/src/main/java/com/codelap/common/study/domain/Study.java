@@ -105,8 +105,6 @@ public class Study {
 
     public void addMember(User user) {
         require(maxMembersSize > members.size());
-        require(needCareer.getYear() <= user.getCareer().getYear());
-        require(needCareer.getOccupation().equals(user.getCareer().getOccupation()));
         require(!members.contains(user));
 
         check(status != DELETED);
