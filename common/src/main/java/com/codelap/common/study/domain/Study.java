@@ -48,18 +48,22 @@ public class Study {
     private User leader;
 
     @ManyToMany
-    private List<User> members = new ArrayList<>();
+    private final List<User> members = new ArrayList<>();
 
     @Setter
     @Enumerated(STRING)
     private StudyStatus status = OPENED;
 
-    private OffsetDateTime createdAt = OffsetDateTime.now();
+    private final OffsetDateTime createdAt = OffsetDateTime.now();
 
     public static int MIN_MEMBERS_SIZE = 1;
 
     public boolean isLeader(User leader) {
         return this.leader == leader;
+    }
+
+    public boolean containsMember(User user) {
+        return this.members.contains(user);
     }
 
     private Study(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader) {
