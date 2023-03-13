@@ -161,4 +161,15 @@ class StudyTest {
 
         assertThatIllegalStateException().isThrownBy(() -> study.update("updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer));
     }
+
+//    @Test
+//    void 스터디_리더_변경_성공() {
+//        UserCareer career = UserCareer.create("직무", 1);
+//
+//        User changeLeader = User.create("changeLeader", 10, career, "abcd", "setUp");
+//
+//        study.changeLeader(changeLeader);
+//
+//        assertThat(study.getMembers().contains(changeLeader));
+//    }
 }
