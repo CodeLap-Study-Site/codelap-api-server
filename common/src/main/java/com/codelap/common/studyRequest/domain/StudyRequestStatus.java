@@ -1,6 +1,6 @@
 package com.codelap.common.studyRequest.domain;
 
-public enum ApplicationStatus {
+public enum StudyRequestStatus {
     REQUESTED,
     APPROVED,
     REJECTED,

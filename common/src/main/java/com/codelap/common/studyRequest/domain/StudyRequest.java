@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.logging.log4j.util.Strings;
 
-import static com.codelap.common.studyRequest.domain.ApplicationStatus.REQUESTED;
+import java.time.OffsetDateTime;
+
+import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REQUESTED;
 import static com.codelap.common.support.Preconditions.require;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -25,17 +27,17 @@ public class StudyRequest {
 
     @ManyToOne
     private User user;
-
     @ManyToOne
     private Study study;
-
-    @Setter
-    @Enumerated(STRING)
-    private ApplicationStatus status = REQUESTED;
-
     private String message;
 
     private String rejectMessage;
+
+    @Setter
+    @Enumerated(STRING)
+    private StudyRequestStatus status = REQUESTED;
+
+    private final OffsetDateTime createdAt = OffsetDateTime.now();
 
     private StudyRequest(User user, Study study, String message) {
         this.user = user;
@@ -47,6 +49,7 @@ public class StudyRequest {
         require(nonNull(user));
         require(nonNull(study));
         require(Strings.isNotBlank(message));
+        require(!study.containsMember(user));
 
         return new StudyRequest(user, study, message);
     }

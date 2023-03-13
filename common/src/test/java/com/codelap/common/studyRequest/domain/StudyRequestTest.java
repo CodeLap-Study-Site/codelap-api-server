@@ -14,6 +14,7 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
+import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REQUESTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
@@ -39,11 +40,13 @@ class StudyRequestTest {
     @Test
     void 스터디_참가_신청_성공() {
         User user = User.create("candidate", 10, career, "abcd", "email");
-        StudyRequest application = StudyRequest.create(user, study, "참여신청");
+        StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
 
-        assertThat(application.getUser()).isEqualTo(user);
-        assertThat(application.getStudy()).isEqualTo(study);
-        assertThat(application.getMessage()).isEqualTo("참여신청");
+        assertThat(studyRequest.getUser()).isEqualTo(user);
+        assertThat(studyRequest.getStudy()).isEqualTo(study);
+        assertThat(studyRequest.getMessage()).isEqualTo("참여신청");
+        assertThat(studyRequest.getStatus()).isEqualTo(REQUESTED);
+        assertThat(studyRequest.getCreatedAt()).isNotNull();
     }
 
     @Test
