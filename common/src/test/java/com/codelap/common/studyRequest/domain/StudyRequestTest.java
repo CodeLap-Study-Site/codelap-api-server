@@ -1,11 +1,10 @@
-package com.codelap.common.studyParticipationApplication.domain;
+package com.codelap.common.studyRequest.domain;
 
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
 import com.codelap.common.study.domain.StudyPeriod;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,11 +14,10 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.studyParticipationApplication.domain.ApplicationStatus.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-class StudyParticipationApplicationTest {
+class StudyRequestTest {
 
     private User leader;
     private Study study;
@@ -39,28 +37,25 @@ class StudyParticipationApplicationTest {
     }
 
     @Test
-    void 스터디_참가_신청_성공(){
+    void 스터디_참가_신청_성공() {
         User user = User.create("candidate", 10, career, "abcd", "email");
-        StudyParticipationApplication application = StudyParticipationApplication.create(user, study, "참여신청", REQUESTED);
+        StudyRequest application = StudyRequest.create(user, study, "참여신청");
 
         assertThat(application.getUser()).isEqualTo(user);
         assertThat(application.getStudy()).isEqualTo(study);
         assertThat(application.getMessage()).isEqualTo("참여신청");
-
-        assertThat(application.getApplicationStatus()).isEqualTo(REQUESTED);
-
     }
 
     @Test
     void 스터디_참가_신청_실패__회원이_널() {
-        assertThatIllegalArgumentException().isThrownBy(() -> StudyParticipationApplication.create(null, study, "참여신청", REQUESTED));
+        assertThatIllegalArgumentException().isThrownBy(() -> StudyRequest.create(null, study, "참여신청"));
     }
 
     @Test
     void 스터디_참가_신청_실패__스터디가_널() {
         User user = User.create("candidate", 10, career, "abcd", "email");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> StudyParticipationApplication.create(user, null, "참여신청", REQUESTED));
+        assertThatIllegalArgumentException().isThrownBy(() -> StudyRequest.create(user, null, "참여신청"));
     }
 
     @ParameterizedTest
@@ -68,16 +63,6 @@ class StudyParticipationApplicationTest {
     void 스터디_참가_신청_실패__메세지가_공백_혹은_널(String message) {
         User user = User.create("candidate", 10, career, "abcd", "email");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> StudyParticipationApplication.create(user, study, message, REQUESTED));
-    }
-
-    @Test
-    void 스터디_참가_신청_실패__요청됨_상태가_아님() {
-        User user = User.create("candidate", 10, career, "abcd", "email");
-
-        StudyParticipationApplication studyParticipationApplication = new StudyParticipationApplication();
-        studyParticipationApplication.setApplicationStatus(DELETED);
-
-        assertThatIllegalStateException().isThrownBy(() -> StudyParticipationApplication.create(user, study, "참여신청", null));
+        assertThatIllegalArgumentException().isThrownBy(() -> StudyRequest.create(user, study, message));
     }
 }

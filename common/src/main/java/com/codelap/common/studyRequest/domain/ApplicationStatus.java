@@ -1,4 +1,4 @@
-package com.codelap.common.studyParticipationApplication.domain;
+package com.codelap.common.studyRequest.domain;
 
 public enum ApplicationStatus {
     REQUESTED,
