@@ -10,7 +10,7 @@ import org.apache.logging.log4j.util.Strings;
 
 import java.time.OffsetDateTime;
 
-import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REJECTED;
+import static com.codelap.common.studyRequest.domain.StudyRequestStatus.APPROVED;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REQUESTED;
 import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
@@ -56,12 +56,9 @@ public class StudyRequest {
         return new StudyRequest(user, study, message);
     }
 
-    public void reject(String rejectMessage) {
-        require(Strings.isNotBlank(rejectMessage));
-
+    public void approve() {
         check(status == REQUESTED);
 
-        this.status = REJECTED;
-        this.rejectMessage = rejectMessage;
+        this.status = APPROVED;
     }
 }
