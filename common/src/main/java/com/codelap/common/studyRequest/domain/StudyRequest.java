@@ -12,6 +12,7 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.APPROVED;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REQUESTED;
+import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -55,9 +56,9 @@ public class StudyRequest {
         return new StudyRequest(user, study, message);
     }
 
-    public void approve(User user, Study study) {
-        this.status = APPROVED;
+    public void approve() {
+        check(status == REQUESTED);
 
-        study.addMember(user);
+        this.status = APPROVED;
     }
 }

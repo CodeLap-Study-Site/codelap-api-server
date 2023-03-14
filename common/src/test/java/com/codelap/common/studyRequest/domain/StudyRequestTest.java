@@ -8,15 +8,18 @@ import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
+import static com.codelap.common.studyRequest.domain.StudyRequestStatus.APPROVED;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REQUESTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
 class StudyRequestTest {
 
@@ -83,8 +86,22 @@ class StudyRequestTest {
         User user = User.create("candidate", 10, career, "abcd", "email");
         StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
 
-        studyRequest.approve(user, study);
+        studyRequest.approve();
 
-        assertThat(study.containsMember(user));
+        assertThat(studyRequest.getStatus()).isEqualTo(APPROVED);
     }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyRequestStatus.class, names = {"REQUESTED"}, mode = EXCLUDE)
+    void 스터디_참가_신청_실패__이미_있는_회원(StudyRequestStatus status) {
+        User user = User.create("candidate", 10, career, "abcd", "email");
+        StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
+
+        study.addMember(user);
+
+        studyRequest.setStatus(status);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> StudyRequest.create(user, study, "message"));
+    }
+
 }
