@@ -8,18 +8,17 @@ import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.StudyStatus.CLOSED;
-import static com.codelap.common.study.domain.StudyStatus.DELETED;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REJECTED;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REQUESTED;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
 class StudyRequestTest {
 
@@ -86,28 +85,28 @@ class StudyRequestTest {
         User user = User.create("candidate", 10, career, "abcd", "email");
         StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
 
-        studyRequest.reject(user, study, "rejectMessage");
+        studyRequest.reject("rejectMessage");
 
         assertThat(studyRequest.getStatus()).isEqualTo(REJECTED);
     }
 
-    @Test
-    void 스터디_참가_신청_거절_실패__스터디가_닫힘_상태() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 스터디_참가_신청_거절_실패__거절_메세지가_널이거나_공백(String messeage) {
         User user = User.create("candidate", 10, career, "abcd", "email");
-        StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
+        StudyRequest studyRequest = StudyRequest.create(user, study, "messeage");
 
-        study.setStatus(CLOSED);
-
-        assertThatIllegalArgumentException().isThrownBy(() -> studyRequest.reject(user, study, "거절"));
+        assertThatIllegalArgumentException().isThrownBy(() -> studyRequest.reject(messeage));
     }
 
-    @Test
-    void 스터디_참가_신청_거절_실패__스터디가_삭제됨_상태() {
+    @ParameterizedTest
+    @EnumSource(value = StudyRequestStatus.class, names = {"REQUESTED"}, mode = EXCLUDE)
+    void 스터디_참가_신청_거절_실패__요청됨_상태가_아님(StudyRequestStatus status) {
         User user = User.create("candidate", 10, career, "abcd", "email");
         StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
 
-        study.setStatus(DELETED);
+        studyRequest.setStatus(status);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> studyRequest.reject(user, study, "거절"));
+        assertThatIllegalStateException().isThrownBy(() -> studyRequest.reject("rejectMessage"));
     }
 }
