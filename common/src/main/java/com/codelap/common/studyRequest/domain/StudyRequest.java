@@ -10,8 +10,6 @@ import org.apache.logging.log4j.util.Strings;
 
 import java.time.OffsetDateTime;
 
-import static com.codelap.common.study.domain.StudyStatus.CLOSED;
-import static com.codelap.common.study.domain.StudyStatus.DELETED;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.APPROVED;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REQUESTED;
 import static com.codelap.common.support.Preconditions.require;
@@ -58,9 +56,6 @@ public class StudyRequest {
     }
 
     public void approve(User user, Study study) {
-        require(!study.getStatus().equals(CLOSED));
-        require(!study.getStatus().equals(DELETED));
-
         this.status = APPROVED;
 
         study.addMember(user);

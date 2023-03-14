@@ -14,8 +14,6 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.StudyStatus.CLOSED;
-import static com.codelap.common.study.domain.StudyStatus.DELETED;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REQUESTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -88,25 +86,5 @@ class StudyRequestTest {
         studyRequest.approve(user, study);
 
         assertThat(study.containsMember(user));
-    }
-
-    @Test
-    void 스터디_참가_신청_수락__실패_스터디가_닫힘_상태() {
-        User user = User.create("candidate", 10, career, "abcd", "email");
-        StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
-
-        study.setStatus(CLOSED);
-
-        assertThatIllegalArgumentException().isThrownBy(() -> studyRequest.approve(user, study));
-    }
-
-    @Test
-    void 스터디_참가_신청_수락__실패_스터디가_삭제됨_상태() {
-        User user = User.create("candidate", 10, career, "abcd", "email");
-        StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
-
-        study.setStatus(DELETED);
-
-        assertThatIllegalArgumentException().isThrownBy(() -> studyRequest.approve(user, study));
     }
 }
