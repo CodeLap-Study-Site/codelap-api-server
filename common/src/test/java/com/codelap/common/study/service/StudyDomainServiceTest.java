@@ -89,4 +89,27 @@ class StudyDomainServiceTest {
                 studyService.update(study.getId(), fakeLeader.getId(), "updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer)
         );
     }
+
+    @Test
+    void 스터디_멤버_추가_성공() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User user = userRepository.save(User.create("name", 10, career, "abcd", "user"));
+
+        studyService.addMember(study.getId(), user.getId(), leader.getId());
+
+        Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
+
+        assertThat(foundStudy.getMembers()).contains(user);
+    }
+
+    @Test
+    void 스터디_멤버_추가_실패__사용자가_스터디의_주인이_아님() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User user = userRepository.save(User.create("name", 10, career, "abcd", "user"));
+        User fakeLeader = userRepository.save(User.create("name", 10, career, "abcd", "fakeLeader"));
+
+        assertThatIllegalArgumentException().isThrownBy(() ->
+                studyService.addMember(study.getId(), user.getId(), fakeLeader.getId())
+        );
+    }
 }
