@@ -8,15 +8,17 @@ import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
+import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REJECTED;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REQUESTED;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
 class StudyRequestTest {
 
@@ -76,5 +78,35 @@ class StudyRequestTest {
         study.addMember(user);
 
         assertThatIllegalArgumentException().isThrownBy(() -> StudyRequest.create(user, study, "message"));
+    }
+
+    @Test
+    void 스터디_참가_신청_거절_성공() {
+        User user = User.create("candidate", 10, career, "abcd", "email");
+        StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
+
+        studyRequest.reject("rejectMessage");
+
+        assertThat(studyRequest.getStatus()).isEqualTo(REJECTED);
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 스터디_참가_신청_거절_실패__거절_메세지가_널이거나_공백(String messeage) {
+        User user = User.create("candidate", 10, career, "abcd", "email");
+        StudyRequest studyRequest = StudyRequest.create(user, study, "messeage");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyRequest.reject(messeage));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyRequestStatus.class, names = {"REQUESTED"}, mode = EXCLUDE)
+    void 스터디_참가_신청_거절_실패__요청됨_상태가_아님(StudyRequestStatus status) {
+        User user = User.create("candidate", 10, career, "abcd", "email");
+        StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
+
+        studyRequest.setStatus(status);
+
+        assertThatIllegalStateException().isThrownBy(() -> studyRequest.reject("rejectMessage"));
     }
 }
