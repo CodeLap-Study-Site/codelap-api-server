@@ -116,9 +116,9 @@ public class Study {
         members.add(user);
     }
 
-    public void changeLeader(User user){
-        require(this.members.contains(user));
-        require(!leader.equals(user));
+    public void changeLeader(User user) {
+        require(containsMember(user));
+        require(leader != user);
         require(nonNull(user));
 
         check(status != DELETED);
