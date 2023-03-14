@@ -34,8 +34,6 @@ public class StudyDomainService implements StudyService {
         require(study.isLeader(leader));
 
         study.update(name, info, maxMembersSize, difficulty, period, needCareer);
-
-
     }
 
     @Override
