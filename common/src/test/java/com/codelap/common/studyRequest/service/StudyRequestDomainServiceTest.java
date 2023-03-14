@@ -6,7 +6,6 @@ import com.codelap.common.study.domain.StudyPeriod;
 import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.studyRequest.domain.StudyRequest;
 import com.codelap.common.studyRequest.domain.StudyRequestRepository;
-import com.codelap.common.studyRequest.domain.StudyRequestStatus;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
@@ -19,8 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.studyRequest.domain.StudyRequestStatus.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest

@@ -34,5 +34,18 @@ public class StudyDomainService implements StudyService {
         require(study.isLeader(leader));
 
         study.update(name, info, maxMembersSize, difficulty, period, needCareer);
+
+
+    }
+
+    @Override
+    public void addMember(Long studyId, Long userId, Long leaderId) {
+        Study study = studyRepository.findById(studyId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
+        User leader = userRepository.findById(leaderId).orElseThrow();
+
+        require(study.isLeader(leader));
+
+        study.addMember(user);
     }
 }
