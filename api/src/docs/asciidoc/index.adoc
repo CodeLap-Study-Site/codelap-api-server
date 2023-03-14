@@ -102,17 +102,17 @@ include::{snippets}/study/update/http-response.adoc[]
 include::{snippets}/study/update/response-body.adoc[]
 
 
-[[StudyRequestCreate]]
+[[Study-requestCreate]]
 == 스터디참가신청 생성 API
 
 === Request
-include::{snippets}/StudyRequest/create/curl-request.adoc[]
+include::{snippets}/Study-request/create/curl-request.adoc[]
 
 === RequestBody
-include::{snippets}/StudyRequest/create/request-body.adoc[]
+include::{snippets}/Study-request/create/request-body.adoc[]
 
 === Response
-include::{snippets}/StudyRequest/create/http-response.adoc[]
+include::{snippets}/Study-request/create/http-response.adoc[]
 
 === ResponseBody
-include::{snippets}/StudyRequest/create/response-body.adoc[]
+include::{snippets}/Study-request/create/response-body.adoc[]
