@@ -115,4 +115,14 @@ public class Study {
 
         members.add(user);
     }
+
+    public void changeLeader(User user) {
+        require(containsMember(user));
+        require(leader != user);
+        require(nonNull(user));
+
+        check(status != DELETED);
+
+        this.leader = user;
+    }
 }
