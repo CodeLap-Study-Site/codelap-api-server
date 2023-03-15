@@ -63,4 +63,27 @@ class StudyRequestDomainServiceTest {
 
         assertThat(studyRequest.getId()).isNotNull();
     }
+
+    @Test
+    void 스터디_참가_신청_수락_성공() {
+        studyRequestService.create(user.getId(), study.getId(), "참가신청");
+
+        StudyRequest studyRequest = studyRequestRepository.findAll().get(0);
+
+        studyRequestService.approve(studyRequest.getId(), leader.getId(), study.getId());
+
+        assertThat(studyRequestRepository.findAll().get(0).getStatus()).isEqualTo(APPROVED);
+    }
+
+    @Test
+    void 스터디_참가_신청_수락_실패__스터디의_리더가_아님() {
+        studyRequestService.create(user.getId(), study.getId(), "참가신청");
+
+        StudyRequest studyRequest = studyRequestRepository.findAll().get(0);
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "fakeLeader"));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyRequestService.approve(studyRequest.getId(), fakeLeader.getId(), study.getId()));
+    }
 }

@@ -36,4 +36,15 @@ public class StudyRequestDomainService implements StudyRequestService {
 
         studyRequestRepository.save(studyRequest);
     }
+
+    @Override
+    public void approve(Long studyRequestId, Long leaderId, Long studyId) {
+        Study study = studyRepository.findById(studyId).orElseThrow();
+
+        require(study.isLeader(userRepository.findById(leaderId).orElseThrow()));
+
+        StudyRequest studyRequest = studyRequestRepository.findById(studyRequestId).orElseThrow();
+
+        studyRequest.approve();
+    }
 }
