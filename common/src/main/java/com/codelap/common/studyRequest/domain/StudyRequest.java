@@ -55,7 +55,9 @@ public class StudyRequest {
         return new StudyRequest(user, study, message);
     }
 
-    public void approve() {
+    public void approve(User leader) {
+        require(this.study.isLeader(leader));
+
         check(status == REQUESTED);
 
         this.status = APPROVED;
