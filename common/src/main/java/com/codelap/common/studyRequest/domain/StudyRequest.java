@@ -10,8 +10,7 @@ import org.apache.logging.log4j.util.Strings;
 
 import java.time.OffsetDateTime;
 
-import static com.codelap.common.studyRequest.domain.StudyRequestStatus.APPROVED;
-import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REQUESTED;
+import static com.codelap.common.studyRequest.domain.StudyRequestStatus.*;
 import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
 import static jakarta.persistence.EnumType.STRING;
@@ -60,5 +59,14 @@ public class StudyRequest {
         check(status == REQUESTED);
 
         this.status = APPROVED;
+    }
+
+    public void reject(String rejectMessage) {
+        require(Strings.isNotBlank(rejectMessage));
+
+        check(status == REQUESTED);
+
+        this.status = REJECTED;
+        this.rejectMessage = rejectMessage;
     }
 }
