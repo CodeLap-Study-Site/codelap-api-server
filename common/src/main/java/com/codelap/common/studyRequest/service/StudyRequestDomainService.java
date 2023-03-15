@@ -32,7 +32,7 @@ public class StudyRequestDomainService implements StudyRequestService {
     }
 
     @Override
-    public void approve(Long studyRequestId, Long leaderId, Long studyId) {
+    public void approve(Long studyRequestId, Long leaderId) {
         User leader = userRepository.findById(leaderId).orElseThrow();
         StudyRequest studyRequest = studyRequestRepository.findById(studyRequestId).orElseThrow();
 

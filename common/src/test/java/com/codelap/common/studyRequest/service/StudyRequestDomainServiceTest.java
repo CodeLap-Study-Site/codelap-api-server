@@ -70,7 +70,7 @@ class StudyRequestDomainServiceTest {
 
         StudyRequest studyRequest = studyRequestRepository.findAll().get(0);
 
-        studyRequestService.approve(studyRequest.getId(), leader.getId(), study.getId());
+        studyRequestService.approve(studyRequest.getId(), leader.getId());
 
         assertThat(studyRequestRepository.findAll().get(0).getStatus()).isEqualTo(APPROVED);
     }
@@ -84,6 +84,6 @@ class StudyRequestDomainServiceTest {
         UserCareer career = UserCareer.create("직무", 1);
         User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "fakeLeader"));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> studyRequestService.approve(studyRequest.getId(), fakeLeader.getId(), study.getId()));
+        assertThatIllegalArgumentException().isThrownBy(() -> studyRequestService.approve(studyRequest.getId(), fakeLeader.getId()));
     }
 }
