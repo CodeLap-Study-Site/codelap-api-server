@@ -84,14 +84,24 @@ class StudyRequestTest {
         User user = User.create("candidate", 10, career, "abcd", "email");
         StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
 
-        studyRequest.approve();
+        studyRequest.approve(leader);
 
         assertThat(studyRequest.getStatus()).isEqualTo(APPROVED);
     }
 
+    @Test
+    void 스터디_참가_신청_수락_실패__승인한_사람이_리더가_아님(){
+        User user = User.create("candidate", 10, career, "abcd", "email");
+        StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
+
+        User fakeLeader = User.create("fakeLeader", 10, career, "abcd", "fakeEmail");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyRequest.approve(fakeLeader));
+    }
+
     @ParameterizedTest
     @EnumSource(value = StudyRequestStatus.class, names = {"REQUESTED"}, mode = EXCLUDE)
-    void 스터디_참가_신청_실패__이미_있는_회원(StudyRequestStatus status) {
+    void 스터디_참가_신청_수락_실패__이미_있는_회원(StudyRequestStatus status) {
         User user = User.create("candidate", 10, career, "abcd", "email");
         StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
 
@@ -99,7 +109,7 @@ class StudyRequestTest {
 
         studyRequest.setStatus(status);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> StudyRequest.create(user, study, "message"));
+        assertThatIllegalStateException().isThrownBy(() -> studyRequest.approve(leader));
     }
 
     @Test
