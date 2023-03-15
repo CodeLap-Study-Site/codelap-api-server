@@ -40,6 +40,10 @@ public class StudyRequest {
 
     private final OffsetDateTime createdAt = OffsetDateTime.now();
 
+    public boolean isLeader(User leader) {
+        return this.study.getLeader() == leader;
+    }
+
     private StudyRequest(User user, Study study, String message) {
         this.user = user;
         this.study = study;

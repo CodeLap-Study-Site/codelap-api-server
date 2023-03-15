@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import static com.codelap.common.support.Preconditions.require;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -27,5 +29,15 @@ public class StudyRequestDomainService implements StudyRequestService {
         StudyRequest studyRequest = StudyRequest.create(user, study, message);
 
         studyRequestRepository.save(studyRequest);
+    }
+
+    @Override
+    public void approve(Long studyRequestId, Long leaderId) {
+        User leader = userRepository.findById(leaderId).orElseThrow();
+        StudyRequest studyRequest = studyRequestRepository.findById(studyRequestId).orElseThrow();
+
+        require(studyRequest.isLeader(leader));
+
+        studyRequest.approve();
     }
 }
