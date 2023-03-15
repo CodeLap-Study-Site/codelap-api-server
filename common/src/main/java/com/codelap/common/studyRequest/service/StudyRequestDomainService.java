@@ -4,18 +4,12 @@ import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.studyRequest.domain.StudyRequest;
 import com.codelap.common.studyRequest.domain.StudyRequestRepository;
-import com.codelap.common.studyRequest.domain.StudyRequestStatus;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
-import static com.codelap.common.study.domain.StudyStatus.OPENED;
-import static com.codelap.common.studyRequest.domain.StudyRequestStatus.*;
-import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
 
 @Service
@@ -39,11 +33,10 @@ public class StudyRequestDomainService implements StudyRequestService {
 
     @Override
     public void approve(Long studyRequestId, Long leaderId, Long studyId) {
-        Study study = studyRepository.findById(studyId).orElseThrow();
-
-        require(study.isLeader(userRepository.findById(leaderId).orElseThrow()));
-
+        User leader = userRepository.findById(leaderId).orElseThrow();
         StudyRequest studyRequest = studyRequestRepository.findById(studyRequestId).orElseThrow();
+
+        require(studyRequest.isLeader(leader));
 
         studyRequest.approve();
     }
