@@ -18,7 +18,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
+import static com.codelap.common.studyRequest.domain.StudyRequestStatus.APPROVED;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 @Transactional
 @SpringBootTest
@@ -38,11 +40,12 @@ class StudyRequestDomainServiceTest {
 
     private Study study;
     private User user;
+    private User leader;
 
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
-        User leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
+        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);

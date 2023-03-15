@@ -4,11 +4,19 @@ import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.studyRequest.domain.StudyRequest;
 import com.codelap.common.studyRequest.domain.StudyRequestRepository;
+import com.codelap.common.studyRequest.domain.StudyRequestStatus;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
+
+import static com.codelap.common.study.domain.StudyStatus.OPENED;
+import static com.codelap.common.studyRequest.domain.StudyRequestStatus.*;
+import static com.codelap.common.support.Preconditions.check;
+import static com.codelap.common.support.Preconditions.require;
 
 @Service
 @Transactional
