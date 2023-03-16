@@ -13,8 +13,7 @@ import static com.codelap.common.study.domain.Study.MIN_MEMBERS_SIZE;
 import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.StudyStatus.DELETED;
-import static com.codelap.common.study.domain.StudyStatus.OPENED;
+import static com.codelap.common.study.domain.StudyStatus.*;
 import static org.assertj.core.api.Assertions.*;
 
 class StudyTest {
@@ -256,5 +255,33 @@ class StudyTest {
         study.setStatus(DELETED);
 
         assertThatIllegalStateException().isThrownBy(() -> study.changeLeader(user));
+    }
+
+    @Test
+    void 스터디_상태_진행으로_변경_성공() {
+        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+
+        study.changeStudyStatus(study, leader);
+
+        assertThat(study.getStatus()).isEqualTo(IN_PROGRESS);
+    }
+
+    @Test
+    void 스터디_상태_진행으로_변경_실패__리더가_아님() {
+        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeLeader = User.create("name", 10, career, "abcd", "email");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> study.changeStudyStatus(study, fakeLeader));
+    }
+
+    @Test
+    void 스터디_상태_진행으로_변경_실패__상태가_오픈이_아님() {
+        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+
+        study.setStatus(CLOSED);
+
+        assertThatIllegalStateException().isThrownBy(() -> study.changeStudyStatus(study, leader));
     }
 }

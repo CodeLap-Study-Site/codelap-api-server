@@ -11,8 +11,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.codelap.common.study.domain.StudyStatus.DELETED;
-import static com.codelap.common.study.domain.StudyStatus.OPENED;
+import static com.codelap.common.study.domain.StudyStatus.*;
 import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
 import static jakarta.persistence.EnumType.STRING;
@@ -124,5 +123,13 @@ public class Study {
         check(status != DELETED);
 
         this.leader = user;
+    }
+
+    public void changeStudyStatus(Study study, User leader) {
+        require(study.isLeader(leader));
+
+        check(status == OPENED);
+
+        this.status = IN_PROGRESS;
     }
 }
