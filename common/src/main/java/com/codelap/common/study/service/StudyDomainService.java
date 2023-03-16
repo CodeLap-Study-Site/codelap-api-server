@@ -52,6 +52,8 @@ public class StudyDomainService implements StudyService {
         Study study = studyRepository.findById(studyId).orElseThrow();
         User user = userRepository.findById(userId).orElseThrow();
 
-        study.proceed(study, user);
+        require(study.isLeader(user));
+
+        study.proceed();
     }
 }

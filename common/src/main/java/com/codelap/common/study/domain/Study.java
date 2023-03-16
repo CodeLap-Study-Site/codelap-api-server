@@ -125,9 +125,7 @@ public class Study {
         this.leader = user;
     }
 
-    public void proceed(Study study, User leader) {
-        require(study.isLeader(leader));
-
+    public void proceed() {
         check(status == OPENED);
 
         this.status = IN_PROGRESS;

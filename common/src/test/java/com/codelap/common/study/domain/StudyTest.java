@@ -263,19 +263,9 @@ class StudyTest {
     void 스터디_진행_성공() {
         Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
 
-        study.proceed(study, leader);
+        study.proceed();
 
         assertThat(study.getStatus()).isEqualTo(IN_PROGRESS);
-    }
-
-    @Test
-    void 스터디_진행_실패__리더가_아님() {
-        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
-
-        UserCareer career = UserCareer.create("직무", 1);
-        User fakeLeader = User.create("name", 10, career, "abcd", "email");
-
-        assertThatIllegalArgumentException().isThrownBy(() -> study.proceed(study, fakeLeader));
     }
 
     @ParameterizedTest
@@ -285,6 +275,6 @@ class StudyTest {
 
         study.setStatus(status);
 
-        assertThatIllegalStateException().isThrownBy(() -> study.proceed(study, leader));
+        assertThatIllegalStateException().isThrownBy(() -> study.proceed());
     }
 }

@@ -116,8 +116,16 @@ class StudyDomainServiceTest {
 
     @Test
     void 스터디_진행_성공() {
-        study.proceed(study, leader);
+        studyService.proceed(study.getId(), leader.getId());
 
         assertThat(study.getStatus()).isEqualTo(IN_PROGRESS);
+    }
+
+    @Test
+    void 스터디_진행_실패__리더가_아님() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "email"));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyService.proceed(study.getId(), fakeLeader.getId()));
     }
 }
