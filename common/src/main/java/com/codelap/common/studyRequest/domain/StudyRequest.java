@@ -44,6 +44,10 @@ public class StudyRequest {
         return this.study.getLeader() == leader;
     }
 
+    public boolean containsMember(User user) {
+        return this.study.getMembers().contains(user);
+    }
+
     private StudyRequest(User user, Study study, String message) {
         this.user = user;
         this.study = study;

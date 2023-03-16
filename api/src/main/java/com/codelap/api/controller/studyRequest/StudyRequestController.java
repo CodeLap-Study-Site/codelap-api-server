@@ -1,5 +1,6 @@
 package com.codelap.api.controller.studyRequest;
 
+import com.codelap.api.service.studyrequest.StudyRequestAppService;
 import com.codelap.common.studyRequest.service.StudyRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import static com.codelap.api.controller.studyRequest.dto.StudyRequestCreateDto.
 public class StudyRequestController {
 
     private final StudyRequestService studyRequestService;
+    private final StudyRequestAppService studyRequestAppService;
 
     @PostMapping
     public void create(
@@ -28,6 +30,6 @@ public class StudyRequestController {
     public void approve(
             @RequestBody StudyRequestApproveRequest dto
     ) {
-        studyRequestService.approve(dto.studyRequestId(), dto.leaderId());
+        studyRequestAppService.approve(dto.studyRequestId(), dto.leaderId());
     }
 }

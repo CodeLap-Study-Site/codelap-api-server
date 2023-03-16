@@ -101,21 +101,6 @@ include::{snippets}/study/update/http-response.adoc[]
 === ResponseBody
 include::{snippets}/study/update/response-body.adoc[]
 
-[[Study-requestApprove]]
-== 스터디 멤버 추가 API
-
-=== Request
-include::{snippets}/study/add-member/curl-request.adoc[]
-
-=== RequestBody
-include::{snippets}/study/add-member/request-body.adoc[]
-
-=== Response
-include::{snippets}/study/add-member/http-response.adoc[]
-
-=== ResponseBody
-include::{snippets}/study/add-member/response-body.adoc[]
-
 [[StudyProceed]]
 == 스터디 진행중 API
 
