@@ -15,9 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.OffsetDateTime;
 
 import static com.codelap.api.controller.study.dto.StudyCreateDto.*;
+import static com.codelap.api.controller.study.dto.StudyProceedRequest.StudyProceedRequestDto;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
+import static com.codelap.common.study.domain.StudyStatus.IN_PROGRESS;
 import static com.codelap.common.study.domain.StudyStatus.OPENED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -112,5 +114,29 @@ class StudyControllerTest extends ApiTest {
         assertThat(foundStudy.getCreatedAt()).isNotNull();
         assertThat(foundStudy.getLeader()).isSameAs(leader);
         assertThat(foundStudy.getMembers()).containsExactly(leader);
+    }
+
+    @Test
+    void 스터디_진행_성공() throws Exception {
+        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+
+        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
+
+        StudyProceedRequestDto req = new StudyProceedRequestDto(study.getId(), leader.getId());
+
+        mockMvc.perform(post("/study/proceed")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study/proceed",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
+
+        assertThat(foundStudy.getStatus()).isEqualTo(IN_PROGRESS);
     }
 }
