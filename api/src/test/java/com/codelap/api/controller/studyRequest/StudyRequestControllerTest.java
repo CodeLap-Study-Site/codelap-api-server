@@ -40,6 +40,7 @@ class StudyRequestControllerTest extends ApiTest {
     private User leader;
     private User user;
     private Study study;
+    private StudyRequest studyRequest;
 
     @BeforeEach
     void setUp() {
@@ -52,6 +53,8 @@ class StudyRequestControllerTest extends ApiTest {
         study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader));
 
         user = userRepository.save(User.create("candidate", 10, career, "abcd", "email"));
+
+        studyRequest = studyRequestRepository.save(StudyRequest.create(user, study, "message"));
     }
 
     @Test
@@ -70,11 +73,30 @@ class StudyRequestControllerTest extends ApiTest {
 
         StudyRequest foundStudyRequest = studyRequestRepository.findAll().get(0);
 
-        Assertions.assertThat(foundStudyRequest.getId()).isNotNull();
-        Assertions.assertThat(foundStudyRequest.getStudy()).isSameAs(study);
-        Assertions.assertThat(foundStudyRequest.getUser()).isSameAs(user);
-        Assertions.assertThat(foundStudyRequest.getMessage()).isEqualTo(req.message());
-        Assertions.assertThat(foundStudyRequest.getCreatedAt()).isNotNull();
-        Assertions.assertThat(foundStudyRequest.getStatus()).isEqualTo(REQUESTED);
+        assertThat(foundStudyRequest.getId()).isNotNull();
+        assertThat(foundStudyRequest.getStudy()).isSameAs(study);
+        assertThat(foundStudyRequest.getUser()).isSameAs(user);
+        assertThat(foundStudyRequest.getMessage()).isEqualTo(req.message());
+        assertThat(foundStudyRequest.getCreatedAt()).isNotNull();
+        assertThat(foundStudyRequest.getStatus()).isEqualTo(REQUESTED);
+    }
+
+    @Test
+    void 스터디_참가_요청_승인_성공() throws Exception {
+        StudyRequestApproveRequest req = new StudyRequestApproveRequest(studyRequest.getId(), leader.getId());
+
+        mockMvc.perform(post("/study-request/approve")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study-request/approve",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        StudyRequest foundStudyRequest = studyRequestRepository.findAll().get(0);
+
+        assertThat(foundStudyRequest.getStatus()).isEqualTo(APPROVED);
     }
 }
