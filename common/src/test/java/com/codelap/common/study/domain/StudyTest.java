@@ -5,6 +5,7 @@ import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.time.OffsetDateTime;
@@ -15,6 +16,7 @@ import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
 class StudyTest {
 
@@ -258,7 +260,7 @@ class StudyTest {
     }
 
     @Test
-    void 스터디_상태_진행으로_변경_성공() {
+    void 스터디_진행_성공() {
         Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
 
         study.proceed(study, leader);
@@ -267,7 +269,7 @@ class StudyTest {
     }
 
     @Test
-    void 스터디_상태_진행으로_변경_실패__리더가_아님() {
+    void 스터디_진행_실패__리더가_아님() {
         Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
 
         UserCareer career = UserCareer.create("직무", 1);
@@ -276,11 +278,12 @@ class StudyTest {
         assertThatIllegalArgumentException().isThrownBy(() -> study.proceed(study, fakeLeader));
     }
 
-    @Test
-    void 스터디_상태_진행으로_변경_실패__상태가_오픈이_아님() {
+    @ParameterizedTest
+    @EnumSource(value = StudyStatus.class, names = {"OPENED"}, mode = EXCLUDE)
+    void 스터디_진행_실패__상태가_오픈이_아님(StudyStatus status) {
         Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
 
-        study.setStatus(CLOSED);
+        study.setStatus(status);
 
         assertThatIllegalStateException().isThrownBy(() -> study.proceed(study, leader));
     }
