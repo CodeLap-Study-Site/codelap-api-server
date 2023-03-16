@@ -5,6 +5,7 @@ import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.time.OffsetDateTime;
@@ -13,9 +14,9 @@ import static com.codelap.common.study.domain.Study.MIN_MEMBERS_SIZE;
 import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.StudyStatus.DELETED;
-import static com.codelap.common.study.domain.StudyStatus.OPENED;
+import static com.codelap.common.study.domain.StudyStatus.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
 class StudyTest {
 
@@ -256,5 +257,34 @@ class StudyTest {
         study.setStatus(DELETED);
 
         assertThatIllegalStateException().isThrownBy(() -> study.changeLeader(user));
+    }
+
+    @Test
+    void 스터디_진행_성공() {
+        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+
+        study.proceed(study, leader);
+
+        assertThat(study.getStatus()).isEqualTo(IN_PROGRESS);
+    }
+
+    @Test
+    void 스터디_진행_실패__리더가_아님() {
+        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeLeader = User.create("name", 10, career, "abcd", "email");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> study.proceed(study, fakeLeader));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyStatus.class, names = {"OPENED"}, mode = EXCLUDE)
+    void 스터디_진행_실패__상태가_오픈이_아님(StudyStatus status) {
+        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+
+        study.setStatus(status);
+
+        assertThatIllegalStateException().isThrownBy(() -> study.proceed(study, leader));
     }
 }
