@@ -101,6 +101,21 @@ include::{snippets}/study/update/http-response.adoc[]
 === ResponseBody
 include::{snippets}/study/update/response-body.adoc[]
 
+[[StudyProceed]]
+== 스터디 진행중 API
+
+=== Request
+include::{snippets}/study/proceed/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study/proceed/request-body.adoc[]
+
+=== Response
+include::{snippets}/study/proceed/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study/proceed/response-body.adoc[]
+
 
 [[Study-requestCreate]]
 == 스터디참가신청 생성 API
