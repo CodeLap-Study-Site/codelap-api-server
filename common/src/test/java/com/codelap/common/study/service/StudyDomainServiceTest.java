@@ -17,6 +17,7 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
+import static com.codelap.common.study.domain.StudyStatus.IN_PROGRESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
@@ -111,5 +112,12 @@ class StudyDomainServiceTest {
         assertThatIllegalArgumentException().isThrownBy(() ->
                 studyService.addMember(study.getId(), user.getId(), fakeLeader.getId())
         );
+    }
+
+    @Test
+    void 스터디_진행_성공() {
+        study.proceed(study, leader);
+
+        assertThat(study.getStatus()).isEqualTo(IN_PROGRESS);
     }
 }
