@@ -125,7 +125,7 @@ public class Study {
         this.leader = user;
     }
 
-    public void changeStudyStatus(Study study, User leader) {
+    public void proceed(Study study, User leader) {
         require(study.isLeader(leader));
 
         check(status == OPENED);

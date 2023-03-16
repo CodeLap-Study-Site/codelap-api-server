@@ -261,7 +261,7 @@ class StudyTest {
     void 스터디_상태_진행으로_변경_성공() {
         Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
 
-        study.changeStudyStatus(study, leader);
+        study.proceed(study, leader);
 
         assertThat(study.getStatus()).isEqualTo(IN_PROGRESS);
     }
@@ -273,7 +273,7 @@ class StudyTest {
         UserCareer career = UserCareer.create("직무", 1);
         User fakeLeader = User.create("name", 10, career, "abcd", "email");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> study.changeStudyStatus(study, fakeLeader));
+        assertThatIllegalArgumentException().isThrownBy(() -> study.proceed(study, fakeLeader));
     }
 
     @Test
@@ -282,6 +282,6 @@ class StudyTest {
 
         study.setStatus(CLOSED);
 
-        assertThatIllegalStateException().isThrownBy(() -> study.changeStudyStatus(study, leader));
+        assertThatIllegalStateException().isThrownBy(() -> study.proceed(study, leader));
     }
 }
