@@ -1,7 +1,7 @@
 package com.codelap.api.controller.study.dto;
 
-public class StudyProceedRequest {
-    public record StudyProceedRequestDto(
+public class StudyProceedDto {
+    public record StudyProceedRequest(
             Long studyId,
             Long leaderId
     ) {
