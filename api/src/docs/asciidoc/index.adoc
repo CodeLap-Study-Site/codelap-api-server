@@ -116,3 +116,18 @@ include::{snippets}/study-request/create/http-response.adoc[]
 
 === ResponseBody
 include::{snippets}/study-request/create/response-body.adoc[]
+
+[[Study-requestApprove]]
+== 스터디참가요청 승인 API
+
+=== Request
+include::{snippets}/study-request/approve/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study-request/approve/request-body.adoc[]
+
+=== Response
+include::{snippets}/study-request/approve/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study-request/approve/response-body.adoc[]
