@@ -45,7 +45,7 @@ public class StudyRequest {
     }
 
     public boolean containsMember(User user) {
-        return this.study.getMembers().contains(user);
+        return this.study.containsMember(user);
     }
 
     private StudyRequest(User user, Study study, String message) {
