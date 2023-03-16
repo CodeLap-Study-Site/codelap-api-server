@@ -100,5 +100,6 @@ class StudyRequestControllerTest extends ApiTest {
         StudyRequest foundStudyRequest = studyRequestRepository.findById(studyRequest.getId()).orElseThrow();
 
         assertThat(foundStudyRequest.getStatus()).isEqualTo(APPROVED);
+        assertThat(study.getMembers()).contains(user);
     }
 }

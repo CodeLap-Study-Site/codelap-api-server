@@ -1,7 +1,5 @@
 package com.codelap.api.controller.study;
 
-import com.codelap.api.controller.study.dto.StudyAddMemberDto;
-import com.codelap.api.controller.study.dto.StudyAddMemberDto.StudyAddMemberRequest;
 import com.codelap.common.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,12 +31,6 @@ public class StudyController {
             @RequestBody StudyUpdateRequest req
     ) {
         studyService.update(req.studyId(), req.leaderId(), req.name(), req.info(), req.maxMembersSize(), req.difficulty(), req.period().toStudyPeriod(), req.career().toStudyNeedCareer());
-    }
-    @PostMapping("/add-member")
-    public void addMember(
-            @RequestBody StudyAddMemberRequest req
-    ) {
-        studyService.addMember(req.studyId(), req.userId(), req.leaderId());
     }
 
     @PostMapping("/proceed")
