@@ -1,5 +1,7 @@
 package com.codelap.api.controller.study;
 
+import com.codelap.api.controller.study.dto.StudyAddMemberDto;
+import com.codelap.api.controller.study.dto.StudyAddMemberDto.StudyAddMemberRequest;
 import com.codelap.common.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.codelap.api.controller.study.dto.StudyCreateDto.StudyCreateRequest;
-import static com.codelap.api.controller.study.dto.StudyProceedRequest.StudyProceedRequestDto;
+import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedRequest;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.StudyUpdateRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 
@@ -32,10 +34,16 @@ public class StudyController {
     ) {
         studyService.update(req.studyId(), req.leaderId(), req.name(), req.info(), req.maxMembersSize(), req.difficulty(), req.period().toStudyPeriod(), req.career().toStudyNeedCareer());
     }
+    @PostMapping("/add-member")
+    public void addMember(
+            @RequestBody StudyAddMemberRequest req
+    ) {
+        studyService.addMember(req.studyId(), req.userId(), req.leaderId());
+    }
 
     @PostMapping("/proceed")
     public void proceed(
-            @RequestBody StudyProceedRequestDto req
+            @RequestBody StudyProceedRequest req
     ) {
         studyService.proceed(req.studyId(), req.leaderId());
     }

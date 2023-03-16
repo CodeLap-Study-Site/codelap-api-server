@@ -1,5 +1,7 @@
 package com.codelap.api.controller.study;
 
+import com.codelap.api.controller.study.dto.StudyAddMemberDto;
+import com.codelap.api.controller.study.dto.StudyAddMemberDto.StudyAddMemberRequest;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
@@ -8,6 +10,7 @@ import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.OffsetDateTime;
 
 import static com.codelap.api.controller.study.dto.StudyCreateDto.*;
-import static com.codelap.api.controller.study.dto.StudyProceedRequest.StudyProceedRequestDto;
+import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedRequest;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
@@ -117,13 +120,42 @@ class StudyControllerTest extends ApiTest {
     }
 
     @Test
+    void 스터디_멤버_추가_성공() throws Exception {
+        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+
+        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User user = userRepository.save(User.create("name", 10, career, "abcd", "user"));
+
+        StudyAddMemberRequest req =  new StudyAddMemberRequest(study.getId(), user.getId(), leader.getId());
+
+        mockMvc.perform(post("/study/add-member")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study/add-member",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
+
+        assertThat(foundStudy.containsMember(user));
+    }
+
+
+
+    @Test
     void 스터디_진행_성공() throws Exception {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
 
         Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
 
-        StudyProceedRequestDto req = new StudyProceedRequestDto(study.getId(), leader.getId());
+        StudyProceedRequest req = new StudyProceedRequest(study.getId(), leader.getId());
 
         mockMvc.perform(post("/study/proceed")
                         .contentType(APPLICATION_JSON)
