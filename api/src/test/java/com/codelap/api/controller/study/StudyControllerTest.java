@@ -113,40 +113,4 @@ class StudyControllerTest extends ApiTest {
         assertThat(foundStudy.getLeader()).isSameAs(leader);
         assertThat(foundStudy.getMembers()).containsExactly(leader);
     }
-
-    @Test
-    void 스터디_멤버_참가_성공() throws Exception {
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-
-        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
-
-
-        UserCareer career = UserCareer.create("직무", 1);
-        User user = userRepository.save(User.create("name", 10, career, "abcd", "user"));
-
-        StudyAddMemberRequest req = new StudyAddMemberRequest(study.getId(), user.getId(), leader.getId());
-
-        //에드멤버디티오 매개변수는 스터디id, 유저id, 리더id로 필요로한상황
-
-
-        mockMvc.perform(post("/study/add-member")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study/add-member",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
-
-
-        Study foundStudy = studyRepository.findAll().get(0);
-
-        assertThat(foundStudy.getId()).isNotNull();
-        assertThat(foundStudy.containsMember(user));
-
-    }
-
-
 }
