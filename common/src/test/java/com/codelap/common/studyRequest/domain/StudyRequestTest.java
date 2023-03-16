@@ -91,15 +91,13 @@ class StudyRequestTest {
 
     @ParameterizedTest
     @EnumSource(value = StudyRequestStatus.class, names = {"REQUESTED"}, mode = EXCLUDE)
-    void 스터디_참가_신청_실패__이미_있는_회원(StudyRequestStatus status) {
+    void 스터디_참가_신청_수락_실패__수락_가능한_상태가_아님(StudyRequestStatus status) {
         User user = User.create("candidate", 10, career, "abcd", "email");
         StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
 
-        study.addMember(user);
-
         studyRequest.setStatus(status);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> StudyRequest.create(user, study, "message"));
+        assertThatIllegalStateException().isThrownBy(() -> studyRequest.approve());
     }
 
     @Test
@@ -130,5 +128,26 @@ class StudyRequestTest {
         studyRequest.setStatus(status);
 
         assertThatIllegalStateException().isThrownBy(() -> studyRequest.reject("rejectMessage"));
+    }
+
+    @Test
+    void 스터디_참가_신청_취소_성공() {
+        User user = User.create("candidate", 10, career, "abcd", "email");
+        StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
+
+        studyRequest.cancel();
+
+        assertThat(studyRequest.getStatus()).isEqualTo(CANCELED);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyRequestStatus.class, names = {"REQUESTED"}, mode = EXCLUDE)
+    void 스터디_참가_신청_취소_실패__취소_가능한_상태가_아님(StudyRequestStatus status) {
+        User user = User.create("candidate", 10, career, "abcd", "email");
+        StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
+
+        studyRequest.setStatus(status);
+
+        assertThatIllegalStateException().isThrownBy(() -> studyRequest.cancel());
     }
 }

@@ -73,4 +73,10 @@ public class StudyRequest {
         this.status = REJECTED;
         this.rejectMessage = rejectMessage;
     }
+
+    public void cancel() {
+        check(status == REQUESTED);
+
+        this.status = CANCELED;
+    }
 }
