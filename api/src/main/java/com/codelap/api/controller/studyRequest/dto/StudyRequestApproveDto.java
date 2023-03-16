@@ -5,6 +5,5 @@ public class StudyRequestApproveDto {
             Long studyRequestId,
             Long leaderId
     ) {
-
     }
 }

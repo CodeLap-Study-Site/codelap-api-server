@@ -10,16 +10,18 @@ import com.codelap.common.studyRequest.domain.StudyRequestRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.OffsetDateTime;
 
+import static com.codelap.api.controller.studyRequest.dto.StudyRequestApproveDto.StudyRequestApproveRequest;
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestCreateDto.StudyRequestCreateRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
+import static com.codelap.common.studyRequest.domain.StudyRequestStatus.APPROVED;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REQUESTED;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -71,7 +73,7 @@ class StudyRequestControllerTest extends ApiTest {
                         preprocessResponse(prettyPrint())
                 ));
 
-        StudyRequest foundStudyRequest = studyRequestRepository.findAll().get(0);
+        StudyRequest foundStudyRequest = studyRequestRepository.findAll().get(1);
 
         assertThat(foundStudyRequest.getId()).isNotNull();
         assertThat(foundStudyRequest.getStudy()).isSameAs(study);
@@ -95,7 +97,7 @@ class StudyRequestControllerTest extends ApiTest {
                         preprocessResponse(prettyPrint())
                 ));
 
-        StudyRequest foundStudyRequest = studyRequestRepository.findAll().get(0);
+        StudyRequest foundStudyRequest = studyRequestRepository.findById(studyRequest.getId()).orElseThrow();
 
         assertThat(foundStudyRequest.getStatus()).isEqualTo(APPROVED);
     }
