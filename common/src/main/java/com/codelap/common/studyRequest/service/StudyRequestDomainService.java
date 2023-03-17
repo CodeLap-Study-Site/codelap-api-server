@@ -42,6 +42,16 @@ public class StudyRequestDomainService implements StudyRequestService {
     }
 
     @Override
+    public void reject(Long studyRequestId, Long leaderId, String rejectMessage) {
+        User leader = userRepository.findById(leaderId).orElseThrow();
+        StudyRequest studyRequest = studyRequestRepository.findById(studyRequestId).orElseThrow();
+
+        require(studyRequest.isLeader(leader));
+
+        studyRequest.reject(rejectMessage);
+    }
+
+    @Override
     public void cancel(Long studyRequestId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
         StudyRequest studyRequest = studyRequestRepository.findById(studyRequestId).orElseThrow();
