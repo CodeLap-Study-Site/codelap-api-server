@@ -44,7 +44,7 @@ public class StudyRequest {
         return this.study.getLeader() == leader;
     }
 
-    public boolean isUser(User user){
+    public boolean isUser(User user) {
         return this.user == user;
     }
 
