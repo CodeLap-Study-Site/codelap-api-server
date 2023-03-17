@@ -4,6 +4,7 @@ import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
 import com.codelap.common.study.domain.StudyPeriod;
 import com.codelap.common.study.domain.StudyRepository;
+import com.codelap.common.study.service.StudyService;
 import com.codelap.common.studyRequest.domain.StudyRequest;
 import com.codelap.common.studyRequest.domain.StudyRequestRepository;
 import com.codelap.common.user.domain.User;
@@ -19,6 +20,7 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.APPROVED;
+import static com.codelap.common.studyRequest.domain.StudyRequestStatus.CANCELED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
@@ -86,4 +88,27 @@ class StudyRequestDomainServiceTest {
 
         assertThatIllegalArgumentException().isThrownBy(() -> studyRequestService.approve(studyRequest.getId(), fakeLeader.getId()));
     }
+
+    @Test
+    void 스터디_참가_신청_취소_성공() {
+        studyRequestService.create(user.getId(), study.getId(), "참가신청");
+
+        StudyRequest studyRequest = studyRequestRepository.findAll().get(0);
+
+        studyRequestService.cancel(studyRequest.getId(), user.getId());
+
+        assertThat(studyRequestRepository.findAll().get(0).getStatus()).isEqualTo(CANCELED);
+    }
+
+    @Test
+    void 스터디_참가_신청_취소__실패_이미_스터디_멤버(){
+        studyRequestService.create(user.getId(), study.getId(), "참가신청");
+
+        StudyRequest studyRequest = studyRequestRepository.findAll().get(0);
+
+        study.addMember(user);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyRequestService.cancel(studyRequest.getId(), user.getId()));
+    }
+
 }

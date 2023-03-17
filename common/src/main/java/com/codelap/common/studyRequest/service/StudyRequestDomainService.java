@@ -40,4 +40,14 @@ public class StudyRequestDomainService implements StudyRequestService {
 
         studyRequest.approve();
     }
+
+    @Override
+    public void cancel(Long studyRequestId, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        StudyRequest studyRequest = studyRequestRepository.findById(studyRequestId).orElseThrow();
+
+        require(!studyRequest.studyContainsMember(user));
+
+        studyRequest.cancel();
+    }
 }
