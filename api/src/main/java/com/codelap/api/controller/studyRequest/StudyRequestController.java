@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestApproveDto.StudyRequestApproveRequest;
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestCreateDto.StudyRequestCreateRequest;
+import static com.codelap.api.controller.studyRequest.dto.StudyRequestRejectDto.StudyRequestRejectRequest;
 
 @RestController
 @RequestMapping("/study-request")
@@ -31,5 +32,12 @@ public class StudyRequestController {
             @RequestBody StudyRequestApproveRequest dto
     ) {
         studyRequestAppService.approve(dto.studyRequestId(), dto.leaderId());
+    }
+
+    @PostMapping("reject")
+    public void reject(
+            @RequestBody StudyRequestRejectRequest dto
+    ) {
+        studyRequestService.reject(dto.studyRequestId(), dto.leaderId(), dto.rejectMessage());
     }
 }
