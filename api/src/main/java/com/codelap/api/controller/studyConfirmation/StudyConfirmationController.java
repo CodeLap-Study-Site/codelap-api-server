@@ -12,12 +12,11 @@ import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmation
 @RestController
 @RequestMapping("/study-confirmation")
 @RequiredArgsConstructor
-
 public class StudyConfirmationController {
 
     private final StudyConfirmationService studyConfirmationService;
 
-    @PostMapping()
+    @PostMapping
     public void create(
             @RequestBody StudyConfirmationCreateRequest req
     ) {

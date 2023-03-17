@@ -175,3 +175,18 @@ include::{snippets}/study-request/cancel/http-response.adoc[]
 
 === ResponseBody
 include::{snippets}/study-request/cancel/response-body.adoc[]
+
+
+== 스터디인증 생성 API
+
+=== Request
+include::{snippets}/study-confirmation/create/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study-confirmation/create/request-body.adoc[]
+
+=== Response
+include::{snippets}/study-confirmation/create/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study-confirmation/create/response-body.adoc[]
