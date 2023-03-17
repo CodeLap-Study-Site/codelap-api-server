@@ -51,11 +51,13 @@ public class StudyRequestDomainService implements StudyRequestService {
         studyRequest.reject(rejectMessage);
     }
 
+
     @Override
     public void cancel(Long studyRequestId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
         StudyRequest studyRequest = studyRequestRepository.findById(studyRequestId).orElseThrow();
 
+        require(studyRequest.isUser(user));
         require(!studyRequest.studyContainsMember(user));
 
         studyRequest.cancel();

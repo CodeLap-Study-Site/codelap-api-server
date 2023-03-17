@@ -4,7 +4,6 @@ import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
 import com.codelap.common.study.domain.StudyPeriod;
 import com.codelap.common.study.domain.StudyRepository;
-import com.codelap.common.study.service.StudyService;
 import com.codelap.common.studyRequest.domain.StudyRequest;
 import com.codelap.common.studyRequest.domain.StudyRequestRepository;
 import com.codelap.common.user.domain.User;
@@ -19,9 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.studyRequest.domain.StudyRequestStatus.APPROVED;
-import static com.codelap.common.studyRequest.domain.StudyRequestStatus.CANCELED;
-import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REJECTED;
+import static com.codelap.common.studyRequest.domain.StudyRequestStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
@@ -44,6 +41,7 @@ class StudyRequestDomainServiceTest {
     private Study study;
     private User user;
     private User leader;
+    private StudyRequest studyRequest;
 
     @BeforeEach
     void setUp() {
@@ -56,23 +54,22 @@ class StudyRequestDomainServiceTest {
         study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
 
         user = userRepository.save(User.create("user", 10, career, "abcd", "email"));
+
+        studyRequest = StudyRequest.create(user, study, "message");
+        studyRequest = studyRequestRepository.save(studyRequest);
     }
 
     @Test
     void 스터디_참가_신청_성공() {
         studyRequestService.create(user.getId(), study.getId(), "참가신청");
 
-        StudyRequest studyRequest = studyRequestRepository.findAll().get(0);
+        StudyRequest studyRequest = studyRequestRepository.findAll().get(1);
 
         assertThat(studyRequest.getId()).isNotNull();
     }
 
     @Test
     void 스터디_참가_신청_수락_성공() {
-        studyRequestService.create(user.getId(), study.getId(), "참가신청");
-
-        StudyRequest studyRequest = studyRequestRepository.findAll().get(0);
-
         studyRequestService.approve(studyRequest.getId(), leader.getId());
 
         assertThat(studyRequestRepository.findAll().get(0).getStatus()).isEqualTo(APPROVED);
@@ -80,10 +77,6 @@ class StudyRequestDomainServiceTest {
 
     @Test
     void 스터디_참가_신청_수락_실패__스터디의_리더가_아님() {
-        studyRequestService.create(user.getId(), study.getId(), "참가신청");
-
-        StudyRequest studyRequest = studyRequestRepository.findAll().get(0);
-
         UserCareer career = UserCareer.create("직무", 1);
         User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "fakeLeader"));
 
@@ -92,33 +85,33 @@ class StudyRequestDomainServiceTest {
 
     @Test
     void 스터디_참가_신청_취소_성공() {
-        studyRequestService.create(user.getId(), study.getId(), "참가신청");
-
-        StudyRequest studyRequest = studyRequestRepository.findAll().get(0);
-
         studyRequestService.cancel(studyRequest.getId(), user.getId());
 
-        assertThat(studyRequestRepository.findAll().get(0).getStatus()).isEqualTo(CANCELED);
+        assertThat(studyRequest.getStatus()).isEqualTo(CANCELED);
     }
 
     @Test
-    void 스터디_참가_신청_취소__실패_이미_스터디_멤버(){
-        studyRequestService.create(user.getId(), study.getId(), "참가신청");
-
-        StudyRequest studyRequest = studyRequestRepository.findAll().get(0);
-
+    void 스터디_참가_신청_취소__실패_이미_스터디_멤버() {
         study.addMember(user);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> studyRequestService.cancel(studyRequest.getId(), user.getId()));
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> studyRequestService.cancel(studyRequest.getId(), user.getId())
+        );
     }
 
+    @Test
+    void 스터디_참가_신청_취소__실패_스터디_요청을_보낸_사용자가_아님() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeUser = userRepository.save(User.create("fakeUser", 10, career, "abcd", "fakeLeader"));
+
+
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> studyRequestService.cancel(studyRequest.getId(), fakeUser.getId())
+        );
+    }
 
     @Test
     void 스터디_참가_신청_거절_성공() {
-        studyRequestService.create(user.getId(), study.getId(), "참가신청");
-
-        StudyRequest studyRequest = studyRequestRepository.findAll().get(0);
-
         studyRequestService.reject(studyRequest.getId(), leader.getId(), "참가신청 거절");
 
         assertThat(studyRequestRepository.findAll().get(0).getStatus()).isEqualTo(REJECTED);
@@ -126,10 +119,6 @@ class StudyRequestDomainServiceTest {
 
     @Test
     void 스터디_참가_신청_거절_실패__스터디의_리더가_아님() {
-        studyRequestService.create(user.getId(), study.getId(), "참가신청");
-
-        StudyRequest studyRequest = studyRequestRepository.findAll().get(0);
-
         UserCareer career = UserCareer.create("직무", 1);
         User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "fakeLeader"));
 
