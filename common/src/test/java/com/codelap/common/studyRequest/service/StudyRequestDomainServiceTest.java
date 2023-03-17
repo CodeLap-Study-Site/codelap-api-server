@@ -36,7 +36,7 @@ class StudyRequestDomainServiceTest {
     private UserRepository userRepository;
 
     @Autowired
-    StudyRequestRepository studyRequestRepository;
+    private StudyRequestRepository studyRequestRepository;
 
     private Study study;
     private User user;

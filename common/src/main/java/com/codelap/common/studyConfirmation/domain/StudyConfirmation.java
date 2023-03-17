@@ -45,6 +45,10 @@ public class StudyConfirmation {
 
     private String rejectedMessage;
 
+    public boolean isUser(User user) {
+        return this.user == user;
+    }
+
     private StudyConfirmation(Study study, User user, String title, String content, List<StudyConfirmationFile> files) {
         this.study = study;
         this.user = user;
