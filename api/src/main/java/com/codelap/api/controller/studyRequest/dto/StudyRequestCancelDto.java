@@ -5,6 +5,5 @@ public class StudyRequestCancelDto {
             Long studyRequestId,
             Long userId
     ){
-
     }
 }
