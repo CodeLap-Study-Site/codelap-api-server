@@ -147,3 +147,17 @@ include::{snippets}/study-request/approve/http-response.adoc[]
 === ResponseBody
 include::{snippets}/study-request/approve/response-body.adoc[]
 
+[[Study-requestReject]]
+== 스터디참가요청 거절 API
+
+=== Request
+include::{snippets}/study-request/reject/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study-request/reject/request-body.adoc[]
+
+=== Response
+include::{snippets}/study-request/reject/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study-request/reject/response-body.adoc[]
