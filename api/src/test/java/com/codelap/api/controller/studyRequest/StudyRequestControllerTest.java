@@ -1,5 +1,6 @@
 package com.codelap.api.controller.studyRequest;
 
+import com.codelap.api.controller.studyRequest.dto.StudyRequestCancelDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
@@ -10,6 +11,7 @@ import com.codelap.common.studyRequest.domain.StudyRequestRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
+import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.OffsetDateTime;
 
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestApproveDto.StudyRequestApproveRequest;
+import static com.codelap.api.controller.studyRequest.dto.StudyRequestCancelDto.*;
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestCreateDto.StudyRequestCreateRequest;
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestRejectDto.StudyRequestRejectRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
@@ -120,5 +123,24 @@ class StudyRequestControllerTest extends ApiTest {
         StudyRequest foundStudyRequest = studyRequestRepository.findById(studyRequest.getId()).orElseThrow();
 
         assertThat(foundStudyRequest.getStatus()).isEqualTo(REJECTED);
+    }
+
+    @Test
+    void 스터디_참가_요청_취소_성공() throws Exception{
+        StudyRequestCancelRequest req = new StudyRequestCancelRequest(studyRequest.getId(), user.getId());
+
+        mockMvc.perform(post("/study-request/cancel")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study-request/cancel",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        StudyRequest foundStudyRequest = studyRequestRepository.findById(studyRequest.getId()).orElseThrow();
+
+        assertThat(foundStudyRequest.getStatus()).isEqualTo(CANCELED);
     }
 }
