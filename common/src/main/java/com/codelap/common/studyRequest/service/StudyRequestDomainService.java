@@ -40,4 +40,14 @@ public class StudyRequestDomainService implements StudyRequestService {
 
         studyRequest.approve();
     }
+
+    @Override
+    public void reject(Long studyRequestId, Long leaderId, String rejectMessage) {
+        User leader = userRepository.findById(leaderId).orElseThrow();
+        StudyRequest studyRequest = studyRequestRepository.findById(studyRequestId).orElseThrow();
+
+        require(studyRequest.isLeader(leader));
+
+        studyRequest.reject(rejectMessage);
+    }
 }
