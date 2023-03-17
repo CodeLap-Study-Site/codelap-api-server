@@ -48,6 +48,6 @@ public class StudyRequestDomainService implements StudyRequestService {
 
         require(studyRequest.isLeader(leader));
 
-        studyRequest.reject("거절 메시지");
+        studyRequest.reject(rejectMessage);
     }
 }
