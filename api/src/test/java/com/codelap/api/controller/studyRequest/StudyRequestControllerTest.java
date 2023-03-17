@@ -18,9 +18,9 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestApproveDto.StudyRequestApproveRequest;
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestCreateDto.StudyRequestCreateRequest;
+import static com.codelap.api.controller.studyRequest.dto.StudyRequestRejectDto.StudyRequestRejectRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
-import static com.codelap.common.studyRequest.domain.StudyRequestStatus.APPROVED;
-import static com.codelap.common.studyRequest.domain.StudyRequestStatus.REQUESTED;
+import static com.codelap.common.studyRequest.domain.StudyRequestStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -101,5 +101,24 @@ class StudyRequestControllerTest extends ApiTest {
 
         assertThat(foundStudyRequest.getStatus()).isEqualTo(APPROVED);
         assertThat(study.getMembers()).contains(user);
+    }
+
+    @Test
+    void 스터디_참가_요청_거절_성공() throws Exception {
+        StudyRequestRejectRequest req = new StudyRequestRejectRequest(studyRequest.getId(), leader.getId(), "거절 메세지");
+
+        mockMvc.perform(post("/study-request/reject")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study-request/reject",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        StudyRequest foundStudyRequest = studyRequestRepository.findById(studyRequest.getId()).orElseThrow();
+
+        assertThat(foundStudyRequest.getStatus()).isEqualTo(REJECTED);
     }
 }
