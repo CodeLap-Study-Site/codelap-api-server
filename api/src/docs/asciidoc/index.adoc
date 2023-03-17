@@ -161,3 +161,17 @@ include::{snippets}/study-request/reject/http-response.adoc[]
 
 === ResponseBody
 include::{snippets}/study-request/reject/response-body.adoc[]
+
+== 스터디참가요청 취소 API
+
+=== Request
+include::{snippets}/study-request/cancel/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study-request/cancel/request-body.adoc[]
+
+=== Response
+include::{snippets}/study-request/cancel/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study-request/cancel/response-body.adoc[]

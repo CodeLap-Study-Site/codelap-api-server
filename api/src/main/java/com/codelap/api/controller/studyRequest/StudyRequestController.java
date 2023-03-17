@@ -1,5 +1,6 @@
 package com.codelap.api.controller.studyRequest;
 
+import com.codelap.api.controller.studyRequest.dto.StudyRequestCancelDto;
 import com.codelap.api.service.studyrequest.StudyRequestAppService;
 import com.codelap.common.studyRequest.service.StudyRequestService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestApproveDto.StudyRequestApproveRequest;
+import static com.codelap.api.controller.studyRequest.dto.StudyRequestCancelDto.*;
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestCreateDto.StudyRequestCreateRequest;
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestRejectDto.StudyRequestRejectRequest;
 
@@ -39,5 +41,12 @@ public class StudyRequestController {
             @RequestBody StudyRequestRejectRequest dto
     ) {
         studyRequestService.reject(dto.studyRequestId(), dto.leaderId(), dto.rejectMessage());
+    }
+
+    @PostMapping("cancel")
+    public void cancel(
+            @RequestBody StudyRequestCancelRequest dto
+            ){
+        studyRequestService.cancel(dto.studyRequestId(), dto.userId());
     }
 }
