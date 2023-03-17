@@ -4,6 +4,6 @@ public class StudyRequestCancelDto {
     public record StudyRequestCancelRequest(
             Long studyRequestId,
             Long userId
-    ){
+    ) {
     }
 }
