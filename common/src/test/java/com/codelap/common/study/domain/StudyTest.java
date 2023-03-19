@@ -17,6 +17,7 @@ import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 
 class StudyTest {
 
@@ -76,7 +77,7 @@ class StudyTest {
     }
 
     @Test
-    void 스터디_생성_실패__경력이_널() {
+    void 스터디_생성_실패__기간이_널() {
         assertThatIllegalArgumentException().isThrownBy(() -> create("팀", "설명", 4, NORMAL, null, needCareer, leader));
     }
 
@@ -276,5 +277,34 @@ class StudyTest {
         study.setStatus(status);
 
         assertThatIllegalStateException().isThrownBy(() -> study.proceed());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyStatus.class, names = {"CLOSED", "IN_PROGRESS"}, mode = INCLUDE)
+    void 스터디_오픈_성공(StudyStatus status) {
+        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+
+        study.setStatus(status);
+
+        study.open(period);
+
+        assertThat(study.getStatus()).isEqualTo(OPENED);
+    }
+
+    @Test
+    void 스터디_오픈_실패__기간이_널() {
+        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> study.open(null));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyStatus.class, names = {"CLOSED", "IN_PROGRESS"}, mode = EXCLUDE)
+    void 스터디_오픈_실패__상태가_닫힘이나_진행중이_아님(StudyStatus status) {
+        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+
+        study.setStatus(status);
+
+        assertThatIllegalStateException().isThrownBy(() -> study.open(period));
     }
 }

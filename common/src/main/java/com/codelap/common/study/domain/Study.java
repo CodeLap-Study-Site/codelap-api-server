@@ -130,4 +130,13 @@ public class Study {
 
         this.status = IN_PROGRESS;
     }
+
+    public void open(StudyPeriod period) {
+        require(nonNull(period));
+
+        check(CAN_OPEN_STATUSES.contains(status));
+
+        this.period = period;
+        this.status = OPENED;
+    }
 }
