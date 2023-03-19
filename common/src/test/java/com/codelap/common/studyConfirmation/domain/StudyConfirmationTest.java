@@ -8,6 +8,7 @@ import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.time.OffsetDateTime;
@@ -15,9 +16,10 @@ import java.util.List;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmation.create;
+import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CONFIRMED;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CREATED;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
 class StudyConfirmationTest {
 
@@ -79,5 +81,25 @@ class StudyConfirmationTest {
     @Test
     void 스터디_인증_생성_실패__파일이_널() {
         assertThatIllegalArgumentException().isThrownBy(() -> create(study, member, "title", "content", null));
+    }
+
+    @Test
+    void 스터디_인증_확인_성공() {
+        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+
+        studyConfirmation.confirm();
+
+        assertThat(studyConfirmation.getStatus()).isEqualTo(CONFIRMED);
+        assertThat(studyConfirmation.getConfirmedAt()).isNotNull();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyConfirmationStatus.class, names = {"CREATED"}, mode = EXCLUDE)
+    void 스터디_인증_확인_실패__확인_가능한_상태가_아님(StudyConfirmationStatus status) {
+        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+
+        studyConfirmation.setStatus(status);
+
+        assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.confirm());
     }
 }

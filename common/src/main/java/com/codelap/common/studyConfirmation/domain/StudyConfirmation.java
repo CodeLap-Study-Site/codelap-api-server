@@ -5,12 +5,15 @@ import com.codelap.common.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.logging.log4j.util.Strings;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CONFIRMED;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CREATED;
+import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PROTECTED;
@@ -37,7 +40,8 @@ public class StudyConfirmation {
     @ElementCollection
     private List<StudyConfirmationFile> files;
 
-    private final StudyConfirmationStatus status = CREATED;
+    @Setter
+    private StudyConfirmationStatus status = CREATED;
 
     private final OffsetDateTime createdAt = OffsetDateTime.now();
 
@@ -47,6 +51,10 @@ public class StudyConfirmation {
 
     public boolean isUser(User user) {
         return this.user == user;
+    }
+
+    public boolean isLeader(User leader) {
+        return this.study.getLeader() == leader;
     }
 
     private StudyConfirmation(Study study, User user, String title, String content, List<StudyConfirmationFile> files) {
@@ -65,5 +73,12 @@ public class StudyConfirmation {
         require(nonNull(files));
 
         return new StudyConfirmation(study, user, title, content, files);
+    }
+
+    public void confirm() {
+        check(this.status == CREATED);
+
+        this.confirmedAt = OffsetDateTime.now();
+        this.status = CONFIRMED;
     }
 }
