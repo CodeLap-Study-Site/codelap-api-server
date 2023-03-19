@@ -87,21 +87,10 @@ class StudyConfirmationTest {
     void 스터디_인증_확인_성공() {
         StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
 
-        studyConfirmation.confirm(leader);
+        studyConfirmation.confirm();
 
-        assertThat(studyConfirmation.isLeader(leader));
         assertThat(studyConfirmation.getStatus()).isEqualTo(CONFIRMED);
         assertThat(studyConfirmation.getConfirmedAt()).isNotNull();
-    }
-
-    @Test
-    void 스터디_인증_확인_실패__리더의_승인이_아님() {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
-
-        UserCareer career = UserCareer.create("직무", 1);
-        User fakeLeader = User.create("fakeLeader", 10, career, "abcd", "fakeLeader");
-
-        assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.confirm(fakeLeader));
     }
 
     @ParameterizedTest
@@ -111,6 +100,6 @@ class StudyConfirmationTest {
 
         studyConfirmation.setStatus(status);
 
-        assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.confirm(leader));
+        assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.confirm());
     }
 }

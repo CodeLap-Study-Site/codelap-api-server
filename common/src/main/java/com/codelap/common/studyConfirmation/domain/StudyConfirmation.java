@@ -75,9 +75,7 @@ public class StudyConfirmation {
         return new StudyConfirmation(study, user, title, content, files);
     }
 
-    public void confirm(User leader) {
-        require(this.isLeader(leader));
-
+    public void confirm() {
         check(this.status == CREATED);
 
         this.confirmedAt = OffsetDateTime.now();
