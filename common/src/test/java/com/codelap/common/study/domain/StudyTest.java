@@ -17,6 +17,7 @@ import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 
 class StudyTest {
 
@@ -276,5 +277,27 @@ class StudyTest {
         study.setStatus(status);
 
         assertThatIllegalStateException().isThrownBy(() -> study.proceed());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyStatus.class, names = {"OPENED", "DELETED"}, mode = EXCLUDE)
+    void 스터디_재오픈_성공(StudyStatus status) {
+        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+
+        study.setStatus(status);
+
+        study.reOpen();
+
+        assertThat(study.getStatus()).isEqualTo(OPENED);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyStatus.class, names = {"OPENED", "DELETED"}, mode = INCLUDE)
+    void 스터디_재오픈_실패__상태가_닫힘이나_진행중이_아님(StudyStatus status) {
+        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+
+        study.setStatus(status);
+
+        assertThatIllegalStateException().isThrownBy(() -> study.reOpen());
     }
 }

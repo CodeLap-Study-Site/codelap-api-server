@@ -130,4 +130,10 @@ public class Study {
 
         this.status = IN_PROGRESS;
     }
+
+    public void reOpen() {
+        check(status != OPENED && status != DELETED);
+
+        this.status = OPENED;
+    }
 }
