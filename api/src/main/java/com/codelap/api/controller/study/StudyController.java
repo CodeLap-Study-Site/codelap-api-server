@@ -1,5 +1,6 @@
 package com.codelap.api.controller.study;
 
+import com.codelap.api.controller.study.dto.StudyRemoveMemberDto;
 import com.codelap.common.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,5 +39,12 @@ public class StudyController {
             @RequestBody StudyProceedRequest req
     ) {
         studyService.proceed(req.studyId(), req.leaderId());
+    }
+
+    @PostMapping("removeMember")
+    public void removeMember(
+            @RequestBody StudyRemoveMemberDto.StudyRemoveRequest req
+    ) {
+        studyService.removeMember(req.studyId(), req.memberId(), req.leaderId());
     }
 }
