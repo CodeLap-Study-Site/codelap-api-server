@@ -307,4 +307,41 @@ class StudyTest {
 
         assertThatIllegalStateException().isThrownBy(() -> study.open(period));
     }
+
+    @Test
+    void 스터디_멤버_추방_성공() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User member = User.create("name", 10, career, "abcd", "member");
+
+        study.addMember(member);
+
+        study.removeMember(member);
+
+        assertThat(study.getMembers()).doesNotContain(member);
+    }
+
+    @Test
+    void 스터디_멤버_추방_실패__강퇴할_대상이_멤버가_아님() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeMember = User.create("name", 10, career, "abcd", "fakeMember");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> study.removeMember(fakeMember));
+    }
+
+    @Test
+    void 스터디_멤버_추방_실패__강퇴할_대상이_리더() {
+        assertThatIllegalArgumentException().isThrownBy(() -> study.removeMember(leader));
+    }
+
+    @Test
+    void 스터디_멤버_추방_실패__스터디가_삭제된_상태() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User member = User.create("name", 10, career, "abcd", "member");
+
+        study.addMember(member);
+
+        study.setStatus(DELETED);
+
+        assertThatIllegalStateException().isThrownBy(() -> study.removeMember(member));
+    }
 }

@@ -139,4 +139,13 @@ public class Study {
         this.period = period;
         this.status = OPENED;
     }
+
+    public void removeMember(User member) {
+        require(containsMember(member));
+        require(!isLeader(member));
+
+        check(status != DELETED);
+
+        members.remove(member);
+    }
 }
