@@ -13,4 +13,6 @@ public interface StudyService {
     void addMember(Long studyId, Long userId, Long leaderId);
 
     void proceed(Long studyId, Long userId);
+
+    void removeMember(Long studyId, Long memberId, Long leaderId);
 }
