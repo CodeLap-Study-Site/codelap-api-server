@@ -16,7 +16,7 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.api.controller.study.dto.StudyCreateDto.*;
 import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedRequest;
-import static com.codelap.api.controller.study.dto.StudyRemoveMemberDto.StudyRemoveRequest;
+import static com.codelap.api.controller.study.dto.StudyRemoveMemberDto.StudyRemoveMemberRequest;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
@@ -153,14 +153,14 @@ class StudyControllerTest extends ApiTest {
 
         study.addMember(member);
 
-        StudyRemoveRequest req = new StudyRemoveRequest(study.getId(), member.getId(), leader.getId());
+        StudyRemoveMemberRequest req = new StudyRemoveMemberRequest(study.getId(), member.getId(), leader.getId());
 
-        mockMvc.perform(post("/study/removeMember")
+        mockMvc.perform(post("/study/delete")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpectAll(
                         status().isOk()
-                ).andDo(document("study/removeMember",
+                ).andDo(document("study/delete",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
                 ));

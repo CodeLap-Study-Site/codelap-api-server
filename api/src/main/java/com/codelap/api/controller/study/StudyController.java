@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.codelap.api.controller.study.dto.StudyCreateDto.StudyCreateRequest;
 import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedRequest;
+import static com.codelap.api.controller.study.dto.StudyRemoveMemberDto.*;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.StudyUpdateRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 
@@ -41,9 +42,9 @@ public class StudyController {
         studyService.proceed(req.studyId(), req.leaderId());
     }
 
-    @PostMapping("removeMember")
+    @PostMapping("/delete")
     public void removeMember(
-            @RequestBody StudyRemoveMemberDto.StudyRemoveRequest req
+            @RequestBody StudyRemoveMemberRequest req
     ) {
         studyService.removeMember(req.studyId(), req.memberId(), req.leaderId());
     }
