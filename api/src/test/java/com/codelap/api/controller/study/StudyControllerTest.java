@@ -16,6 +16,7 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import static com.codelap.api.controller.study.dto.StudyCreateDto.*;
+import static com.codelap.api.controller.study.dto.StudyLeaveDto.StudyLeaveRequest;
 import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedRequest;
 import static com.codelap.api.controller.study.dto.StudyRemoveMemberDto.StudyRemoveMemberRequest;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
@@ -192,5 +193,34 @@ class StudyControllerTest extends ApiTest {
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
         assertThat(foundStudy.getStatus()).isEqualTo(CLOSED);
+    }
+
+    @Test
+    void 스터디_나가기_성공() throws Exception {
+        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+
+        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User member = userRepository.save(User.create("member", 10, career, "abcd", "member"));
+
+        study.addMember(member);
+
+        StudyLeaveRequest req = new StudyLeaveRequest(study.getId(), member.getId());
+
+        mockMvc.perform(post("/study/leave")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study/leave",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
+
+        assertThat(foundStudy.getMembers()).doesNotContain(member);
     }
 }

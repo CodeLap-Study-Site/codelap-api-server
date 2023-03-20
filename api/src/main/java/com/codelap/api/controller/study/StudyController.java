@@ -1,6 +1,7 @@
 package com.codelap.api.controller.study;
 
 import com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
+import com.codelap.api.controller.study.dto.StudyLeaveDto.StudyLeaveRequest;
 import com.codelap.common.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
