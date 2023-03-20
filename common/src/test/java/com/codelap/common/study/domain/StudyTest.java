@@ -362,4 +362,26 @@ class StudyTest {
 
         assertThatIllegalStateException().isThrownBy(() -> study.close());
     }
+
+    @Test
+    void 스터디_나가기_성공() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User member = User.create("name", 10, career, "abcd", "member");
+
+        study.addMember(member);
+
+        study.leave(member);
+
+        assertThat(study.getMembers()).doesNotContain(member);
+    }
+
+    @Test
+    void 스터디_나가기_실패__회원이_리더() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User member = User.create("name", 10, career, "abcd", "member");
+
+        study.addMember(member);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> study.leave(leader));
+    }
 }

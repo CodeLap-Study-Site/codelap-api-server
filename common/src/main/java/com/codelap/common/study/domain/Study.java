@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.logging.log4j.util.Strings;
 
+import java.lang.reflect.Member;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -153,5 +154,12 @@ public class Study {
         check(CAN_CLOSED_STATUSES.contains(status));
 
         this.status = CLOSED;
+    }
+
+    public void leave(User member){
+        require(containsMember(member));
+        require(!isLeader(member));
+
+        members.remove(member);
     }
 }
