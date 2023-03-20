@@ -1,5 +1,6 @@
 package com.codelap.api.controller.study;
 
+import com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import com.codelap.common.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,5 +47,12 @@ public class StudyController {
             @RequestBody StudyRemoveMemberRequest req
     ) {
         studyService.removeMember(req.studyId(), req.memberId(), req.leaderId());
+    }
+
+    @PostMapping("/close")
+    public void close(
+            @RequestBody StudyCloseRequest req
+    ) {
+        studyService.close(req.studyId(), req.leaderId());
     }
 }
