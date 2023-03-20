@@ -77,4 +77,11 @@ public class StudyDomainService implements StudyService {
 
         study.close();
     }
+
+    public void leave(Long studyId, Long memberId){
+        Study study = studyRepository.findById(studyId).orElseThrow();
+        User member = userRepository.findById(memberId).orElseThrow();
+
+        study.leave(member);
+    }
 }
