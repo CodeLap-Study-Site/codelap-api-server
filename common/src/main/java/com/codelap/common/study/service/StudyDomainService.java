@@ -82,8 +82,6 @@ public class StudyDomainService implements StudyService {
         Study study = studyRepository.findById(studyId).orElseThrow();
         User member = userRepository.findById(memberId).orElseThrow();
 
-        require(!study.isLeader(member));
-
         study.leave(member);
     }
 }

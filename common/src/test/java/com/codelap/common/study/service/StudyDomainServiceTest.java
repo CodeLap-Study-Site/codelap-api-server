@@ -188,16 +188,4 @@ class StudyDomainServiceTest {
 
         assertThat(foundStudy.getMembers()).doesNotContain(member);
     }
-
-    @Test
-    void 스터디_나가기_실패__회원이_리더() {
-        UserCareer career = UserCareer.create("직무", 1);
-        User member = userRepository.save(User.create("name", 10, career, "abcd", "member"));
-
-        studyService.addMember(study.getId(), member.getId(), leader.getId());
-
-        assertThatIllegalArgumentException().isThrownBy(() -> studyService.leave(study.getId(), leader.getId()));
-    }
-
-
 }
