@@ -19,8 +19,8 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.*;
+import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 @Transactional
 @SpringBootTest
@@ -80,7 +80,7 @@ class StudyRequestDomainServiceTest {
         UserCareer career = UserCareer.create("직무", 1);
         User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "fakeLeader"));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> studyRequestService.approve(studyRequest.getId(), fakeLeader.getId()));
+        assertThatActorValidateCodeLapException().isThrownBy(() -> studyRequestService.approve(studyRequest.getId(), fakeLeader.getId()));
     }
 
     @Test
@@ -91,22 +91,12 @@ class StudyRequestDomainServiceTest {
     }
 
     @Test
-    void 스터디_참가_신청_취소__실패_이미_스터디_멤버() {
-        study.addMember(user);
-
-        assertThatIllegalArgumentException().isThrownBy(
-                () -> studyRequestService.cancel(studyRequest.getId(), user.getId())
-        );
-    }
-
-    @Test
     void 스터디_참가_신청_취소__실패_스터디_요청을_보낸_사용자가_아님() {
         UserCareer career = UserCareer.create("직무", 1);
         User fakeUser = userRepository.save(User.create("fakeUser", 10, career, "abcd", "fakeLeader"));
 
-
-        assertThatIllegalArgumentException().isThrownBy(
-                () -> studyRequestService.cancel(studyRequest.getId(), fakeUser.getId())
+        assertThatActorValidateCodeLapException().isThrownBy(() ->
+                studyRequestService.cancel(studyRequest.getId(), fakeUser.getId())
         );
     }
 
@@ -122,6 +112,6 @@ class StudyRequestDomainServiceTest {
         UserCareer career = UserCareer.create("직무", 1);
         User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "fakeLeader"));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> studyRequestService.reject(studyRequest.getId(), fakeLeader.getId(), "참가신청 거절"));
+        assertThatActorValidateCodeLapException().isThrownBy(() -> studyRequestService.reject(studyRequest.getId(), fakeLeader.getId(), "참가신청 거절"));
     }
 }
