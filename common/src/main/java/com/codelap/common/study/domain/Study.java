@@ -150,7 +150,7 @@ public class Study {
     }
 
     public void closeStudy(){
-        check(status != CLOSED);
+        check(CAN_CLOSED_STATUSES.contains(status));
 
         this.status = CLOSED;
     }

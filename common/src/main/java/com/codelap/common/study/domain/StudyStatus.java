@@ -9,4 +9,6 @@ public enum StudyStatus {
     DELETED;
 
     public final static Set<StudyStatus> CAN_OPEN_STATUSES = Set.of(IN_PROGRESS, CLOSED);
+
+    public final static Set<StudyStatus> CAN_CLOSED_STATUSES = Set.of(IN_PROGRESS, OPENED);
 }
