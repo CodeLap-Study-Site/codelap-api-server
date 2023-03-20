@@ -1,12 +1,20 @@
 package com.codelap.common.support;
 
 
-import java.util.Objects;
+import static com.codelap.common.support.ErrorCode.ACTOR_VALIDATE;
 
 public class Preconditions {
 
-    public static <T> T notNull(T obj) {
-        return Objects.requireNonNull(obj);
+    public static void validate(boolean expression, ErrorCode errorCode) {
+        if (!expression) {
+            throw new CodeLapException(errorCode);
+        }
+    }
+
+    public static void actorValidate(boolean expression) {
+        if (!expression) {
+            throw new CodeLapException(ACTOR_VALIDATE);
+        }
     }
 
     public static void require(boolean expression) {
