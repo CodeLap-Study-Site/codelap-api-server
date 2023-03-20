@@ -67,4 +67,14 @@ public class StudyDomainService implements StudyService {
 
         study.removeMember(member);
     }
+
+    @Override
+    public void close(Long studyId, Long leaderId) {
+        Study study = studyRepository.findById(studyId).orElseThrow();
+        User leader = userRepository.findById(leaderId).orElseThrow();
+
+        require(study.isLeader(leader));
+
+        study.close();
+    }
 }

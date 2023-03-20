@@ -17,6 +17,7 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
+import static com.codelap.common.study.domain.StudyStatus.CLOSED;
 import static com.codelap.common.study.domain.StudyStatus.IN_PROGRESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -155,5 +156,22 @@ class StudyDomainServiceTest {
         assertThatIllegalArgumentException().isThrownBy(() ->
                 studyService.removeMember(study.getId(), member.getId(), fakeLeader.getId())
         );
+    }
+
+    @Test
+    void 스터디_닫기_성공() {
+        studyService.close(study.getId(), leader.getId());
+
+        Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
+
+        assertThat(foundStudy.getStatus()).isEqualTo(CLOSED);
+    }
+
+    @Test
+    void 스터디_닫기_실패__리더가_아님() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "email"));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyService.close(study.getId(), fakeLeader.getId()));
     }
 }
