@@ -344,4 +344,22 @@ class StudyTest {
 
         assertThatIllegalStateException().isThrownBy(() -> study.removeMember(member));
     }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyStatus.class, names = {"OPENED", "IN_PROGRESS"}, mode = INCLUDE)
+    void 스터디_닫기_성공(StudyStatus status) {
+        study.setStatus(status);
+
+        study.closeStudy();
+
+        assertThat(study.getStatus()).isEqualTo(CLOSED);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyStatus.class, names = {"OPENED", "IN_PROGRESS"}, mode = EXCLUDE)
+    void 스터디_닫기_실패__스터디가_오픈이나_진행중이_아님(StudyStatus status) {
+        study.setStatus(status);
+
+        assertThatIllegalStateException().isThrownBy(() -> study.closeStudy());
+    }
 }

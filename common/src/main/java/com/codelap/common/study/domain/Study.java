@@ -148,4 +148,10 @@ public class Study {
 
         members.remove(member);
     }
+
+    public void closeStudy(){
+        check(CAN_CLOSED_STATUSES.contains(status));
+
+        this.status = CLOSED;
+    }
 }
