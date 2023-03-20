@@ -3,6 +3,7 @@ package com.codelap.common.study.service;
 import com.codelap.common.study.domain.StudyDifficulty;
 import com.codelap.common.study.domain.StudyNeedCareer;
 import com.codelap.common.study.domain.StudyPeriod;
+import org.springframework.scheduling.annotation.Scheduled;
 
 public interface StudyService {
 
@@ -15,4 +16,6 @@ public interface StudyService {
     void proceed(Long studyId, Long userId);
 
     void removeMember(Long studyId, Long memberId, Long leaderId);
+
+    void close(Long studyId, Long leaderId);
 }
