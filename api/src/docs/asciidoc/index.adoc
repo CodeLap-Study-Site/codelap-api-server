@@ -144,6 +144,19 @@ include::{snippets}/study/close/http-response.adoc[]
 === ResponseBody
 include::{snippets}/study/close/response-body.adoc[]
 
+== 스터디 나가기 API
+
+=== Request
+include::{snippets}/study/leave/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study/leave/request-body.adoc[]
+
+=== Response
+include::{snippets}/study/leave/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study/leave/response-body.adoc[]
 
 [[Study-requestCreate]]
 == 스터디참가신청 생성 API
