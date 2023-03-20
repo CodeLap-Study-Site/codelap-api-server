@@ -4,6 +4,6 @@ public class StudyCloseDto {
     public record StudyCloseRequest(
             Long studyId,
             Long leaderId
-    ){
+    ) {
     }
 }

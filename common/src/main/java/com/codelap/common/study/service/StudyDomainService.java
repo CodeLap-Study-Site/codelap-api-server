@@ -7,7 +7,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static com.codelap.common.support.Preconditions.require;
+import static com.codelap.common.support.Preconditions.actorValidate;
 
 @Service
 @Transactional
@@ -31,7 +31,7 @@ public class StudyDomainService implements StudyService {
         Study study = studyRepository.findById(studyId).orElseThrow();
         User leader = userRepository.findById(userId).orElseThrow();
 
-        require(study.isLeader(leader));
+        actorValidate(study.isLeader(leader));
 
         study.update(name, info, maxMembersSize, difficulty, period, needCareer);
     }
@@ -42,7 +42,7 @@ public class StudyDomainService implements StudyService {
         User user = userRepository.findById(userId).orElseThrow();
         User leader = userRepository.findById(leaderId).orElseThrow();
 
-        require(study.isLeader(leader));
+        actorValidate(study.isLeader(leader));
 
         study.addMember(user);
     }
@@ -52,7 +52,7 @@ public class StudyDomainService implements StudyService {
         Study study = studyRepository.findById(studyId).orElseThrow();
         User user = userRepository.findById(userId).orElseThrow();
 
-        require(study.isLeader(user));
+        actorValidate(study.isLeader(user));
 
         study.proceed();
     }
@@ -63,7 +63,7 @@ public class StudyDomainService implements StudyService {
         User member = userRepository.findById(memberId).orElseThrow();
         User leader = userRepository.findById(leaderId).orElseThrow();
 
-        require(study.isLeader(leader));
+        actorValidate(study.isLeader(leader));
 
         study.removeMember(member);
     }
@@ -73,12 +73,12 @@ public class StudyDomainService implements StudyService {
         Study study = studyRepository.findById(studyId).orElseThrow();
         User leader = userRepository.findById(leaderId).orElseThrow();
 
-        require(study.isLeader(leader));
+        actorValidate(study.isLeader(leader));
 
         study.close();
     }
 
-    public void leave(Long studyId, Long memberId){
+    public void leave(Long studyId, Long memberId) {
         Study study = studyRepository.findById(studyId).orElseThrow();
         User member = userRepository.findById(memberId).orElseThrow();
 

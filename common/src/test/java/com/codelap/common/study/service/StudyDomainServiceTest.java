@@ -19,8 +19,8 @@ import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.CLOSED;
 import static com.codelap.common.study.domain.StudyStatus.IN_PROGRESS;
+import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 @Transactional
 @SpringBootTest
@@ -87,7 +87,7 @@ class StudyDomainServiceTest {
         UserCareer career = UserCareer.create("직무", 1);
         User fakeLeader = userRepository.save(User.create("name", 10, career, "abcd", "fakeLeader"));
 
-        assertThatIllegalArgumentException().isThrownBy(() ->
+        assertThatActorValidateCodeLapException().isThrownBy(() ->
                 studyService.update(study.getId(), fakeLeader.getId(), "updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer)
         );
     }
@@ -110,7 +110,7 @@ class StudyDomainServiceTest {
         User user = userRepository.save(User.create("name", 10, career, "abcd", "user"));
         User fakeLeader = userRepository.save(User.create("name", 10, career, "abcd", "fakeLeader"));
 
-        assertThatIllegalArgumentException().isThrownBy(() ->
+        assertThatActorValidateCodeLapException().isThrownBy(() ->
                 studyService.addMember(study.getId(), user.getId(), fakeLeader.getId())
         );
     }
@@ -127,7 +127,7 @@ class StudyDomainServiceTest {
         UserCareer career = UserCareer.create("직무", 1);
         User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "email"));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> studyService.proceed(study.getId(), fakeLeader.getId()));
+        assertThatActorValidateCodeLapException().isThrownBy(() -> studyService.proceed(study.getId(), fakeLeader.getId()));
     }
 
     @Test
@@ -153,7 +153,7 @@ class StudyDomainServiceTest {
 
         User fakeLeader = userRepository.save(User.create("name", 10, career, "abcd", "fakeLeader"));
 
-        assertThatIllegalArgumentException().isThrownBy(() ->
+        assertThatActorValidateCodeLapException().isThrownBy(() ->
                 studyService.removeMember(study.getId(), member.getId(), fakeLeader.getId())
         );
     }
@@ -172,7 +172,7 @@ class StudyDomainServiceTest {
         UserCareer career = UserCareer.create("직무", 1);
         User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "email"));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> studyService.close(study.getId(), fakeLeader.getId()));
+        assertThatActorValidateCodeLapException().isThrownBy(() -> studyService.close(study.getId(), fakeLeader.getId()));
     }
 
     @Test

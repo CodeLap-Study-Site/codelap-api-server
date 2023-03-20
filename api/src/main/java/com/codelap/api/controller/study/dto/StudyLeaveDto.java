@@ -4,6 +4,6 @@ public class StudyLeaveDto {
     public record StudyLeaveRequest(
             Long studyId,
             Long memberId
-    ){
+    ) {
     }
 }
