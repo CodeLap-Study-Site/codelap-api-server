@@ -42,7 +42,7 @@ public class StudyController {
         studyService.proceed(req.studyId(), req.leaderId());
     }
 
-    @PostMapping("/delete")
+    @PostMapping("/remove-member")
     public void removeMember(
             @RequestBody StudyRemoveMemberRequest req
     ) {

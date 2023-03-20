@@ -119,16 +119,16 @@ include::{snippets}/study/proceed/response-body.adoc[]
 == 스터디 멤버 추방 API
 
 === Request
-include::{snippets}/study/delete/curl-request.adoc[]
+include::{snippets}/study/remove-member/curl-request.adoc[]
 
 === RequestBody
-include::{snippets}/study/delete/request-body.adoc[]
+include::{snippets}/study/remove-member/request-body.adoc[]
 
 === Response
-include::{snippets}/study/delete/http-response.adoc[]
+include::{snippets}/study/remove-member/http-response.adoc[]
 
 === ResponseBody
-include::{snippets}/study/delete/response-body.adoc[]
+include::{snippets}/study/remove-member/response-body.adoc[]
 
 
 [[Study-requestCreate]]

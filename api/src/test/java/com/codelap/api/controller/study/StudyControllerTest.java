@@ -155,12 +155,12 @@ class StudyControllerTest extends ApiTest {
 
         StudyRemoveMemberRequest req = new StudyRemoveMemberRequest(study.getId(), member.getId(), leader.getId());
 
-        mockMvc.perform(post("/study/delete")
+        mockMvc.perform(post("/study/remove-member")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpectAll(
                         status().isOk()
-                ).andDo(document("study/delete",
+                ).andDo(document("study/remove-member",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
                 ));
