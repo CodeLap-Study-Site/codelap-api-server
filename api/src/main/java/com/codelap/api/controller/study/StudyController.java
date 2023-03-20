@@ -56,4 +56,11 @@ public class StudyController {
     ) {
         studyService.close(req.studyId(), req.leaderId());
     }
+
+    @PostMapping("/leave")
+    public void leave(
+            @RequestBody StudyLeaveRequest req
+    ) {
+        studyService.leave(req.studyId(), req.memberId());
+    }
 }
