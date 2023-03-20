@@ -344,4 +344,18 @@ class StudyTest {
 
         assertThatIllegalStateException().isThrownBy(() -> study.removeMember(member));
     }
+
+    @Test
+    void 스터디_닫기_성공_() {
+        study.closeStudy();
+
+        assertThat(study.getStatus()).isEqualTo(CLOSED);
+    }
+
+    @Test
+    void 스터디_닫기_실패__스터디가_닫힌_상태() {
+        study.setStatus(CLOSED);
+
+        assertThatIllegalStateException().isThrownBy(() -> study.closeStudy());
+    }
 }
