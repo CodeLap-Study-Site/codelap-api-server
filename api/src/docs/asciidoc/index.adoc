@@ -130,6 +130,20 @@ include::{snippets}/study/remove-member/http-response.adoc[]
 === ResponseBody
 include::{snippets}/study/remove-member/response-body.adoc[]
 
+== 스터디 닫기 API
+
+=== Request
+include::{snippets}/study/close/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study/close/request-body.adoc[]
+
+=== Response
+include::{snippets}/study/close/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study/close/response-body.adoc[]
+
 
 [[Study-requestCreate]]
 == 스터디참가신청 생성 API
