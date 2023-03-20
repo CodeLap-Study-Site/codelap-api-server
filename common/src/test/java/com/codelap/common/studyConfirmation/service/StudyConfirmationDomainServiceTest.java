@@ -20,8 +20,8 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
+import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
 @Transactional
@@ -73,8 +73,8 @@ class StudyConfirmationDomainServiceTest {
         UserCareer career = UserCareer.create("직무", 1);
         User fakeUser = userRepository.save(User.create("fakeUser", 10, career, "abcd", "fakeUser"));
 
-        assertThatIllegalArgumentException().isThrownBy(
-                () -> studyConfirmationService.create(study.getId(), fakeUser.getId(), "title", "content", List.of(file))
+        assertThatActorValidateCodeLapException().isThrownBy(() ->
+                studyConfirmationService.create(study.getId(), fakeUser.getId(), "title", "content", List.of(file))
         );
     }
 }

@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.codelap.common.study.domain.StudyStatus.*;
-import static com.codelap.common.support.Preconditions.check;
-import static com.codelap.common.support.Preconditions.require;
+import static com.codelap.common.support.ErrorCode.INVALID_MEMBER_SIZE;
+import static com.codelap.common.support.Preconditions.*;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.util.Objects.nonNull;
@@ -79,11 +79,12 @@ public class Study {
     public static Study create(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader) {
         require(Strings.isNotBlank(name));
         require(Strings.isNotBlank(info));
-        require(maxMembersSize >= MIN_MEMBERS_SIZE);
         require(nonNull(difficulty));
         require(nonNull(period));
         require(nonNull(needCareer));
         require(nonNull(leader));
+
+        validate(maxMembersSize >= MIN_MEMBERS_SIZE, INVALID_MEMBER_SIZE);
 
         return new Study(name, info, maxMembersSize, difficulty, period, needCareer, leader);
     }
