@@ -347,7 +347,7 @@ class StudyTest {
 
     @ParameterizedTest
     @EnumSource(value = StudyStatus.class, names = {"OPENED", "IN_PROGRESS"}, mode = INCLUDE)
-    void 스터디_닫기_성공_(StudyStatus status) {
+    void 스터디_닫기_성공(StudyStatus status) {
         study.setStatus(status);
 
         study.closeStudy();
