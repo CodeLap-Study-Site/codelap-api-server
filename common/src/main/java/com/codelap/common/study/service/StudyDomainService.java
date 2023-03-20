@@ -75,6 +75,6 @@ public class StudyDomainService implements StudyService {
 
         require(study.isLeader(leader));
 
-        study.closeStudy();
+        study.close();
     }
 }

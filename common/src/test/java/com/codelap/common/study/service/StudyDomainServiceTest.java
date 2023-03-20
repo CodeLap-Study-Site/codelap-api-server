@@ -168,7 +168,7 @@ class StudyDomainServiceTest {
     }
 
     @Test
-    void 스터디_닫기_실파__리더가_아님() {
+    void 스터디_닫기_실패__리더가_아님() {
         UserCareer career = UserCareer.create("직무", 1);
         User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "email"));
 
