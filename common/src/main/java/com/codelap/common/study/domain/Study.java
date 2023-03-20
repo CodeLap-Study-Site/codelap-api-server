@@ -66,6 +66,10 @@ public class Study {
         return this.members.contains(user);
     }
 
+    public boolean emptyMember(){
+        return this.members.size() == 1;
+    }
+
     private Study(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader) {
         this.name = name;
         this.info = info;
@@ -164,9 +168,9 @@ public class Study {
     }
 
     public void delete(){
-        require(isLeader(leader));
+        check(emptyMember());
 
-        check(members.size()==1);
+        check(CAN_DELETE_STATUSES.contains(status));
 
         this.status = DELETED;
     }
