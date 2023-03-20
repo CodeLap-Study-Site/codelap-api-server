@@ -162,4 +162,12 @@ public class Study {
 
         members.remove(member);
     }
+
+    public void delete(){
+        require(isLeader(leader));
+
+        check(members.size()==1);
+
+        this.status = DELETED;
+    }
 }
