@@ -15,6 +15,8 @@ import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
+import static com.codelap.common.support.CodeLapExceptionTest.assertThatCodeLapException;
+import static com.codelap.common.support.ErrorCode.INVALID_MEMBER_SIZE;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
@@ -68,7 +70,7 @@ class StudyTest {
 
     @Test
     void 스터디_생성_실패__최대회원수가_최소값_보다_작음() {
-        assertThatIllegalArgumentException().isThrownBy(() -> create("팀", "설명", MIN_MEMBERS_SIZE - 1, NORMAL, period, needCareer, leader));
+        assertThatCodeLapException(INVALID_MEMBER_SIZE).isThrownBy(() -> create("팀", "설명", MIN_MEMBERS_SIZE - 1, NORMAL, period, needCareer, leader));
     }
 
     @Test

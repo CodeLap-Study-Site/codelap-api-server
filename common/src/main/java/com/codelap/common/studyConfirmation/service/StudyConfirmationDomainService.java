@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.codelap.common.support.Preconditions.require;
+import static com.codelap.common.support.Preconditions.actorValidate;
 
 @Service
 @Transactional
@@ -29,7 +29,7 @@ public class StudyConfirmationDomainService implements StudyConfirmationService 
         Study study = studyRepository.findById(studyId).orElseThrow();
         User user = userRepository.findById(userId).orElseThrow();
 
-        require(study.containsMember(user));
+        actorValidate(study.containsMember(user));
 
         StudyConfirmation studyConfirmation = StudyConfirmation.create(study, user, title, content, files);
 

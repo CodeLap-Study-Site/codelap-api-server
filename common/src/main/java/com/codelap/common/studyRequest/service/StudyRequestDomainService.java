@@ -10,7 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static com.codelap.common.support.Preconditions.require;
+import static com.codelap.common.support.Preconditions.actorValidate;
 
 @Service
 @Transactional
@@ -36,7 +36,7 @@ public class StudyRequestDomainService implements StudyRequestService {
         User leader = userRepository.findById(leaderId).orElseThrow();
         StudyRequest studyRequest = studyRequestRepository.findById(studyRequestId).orElseThrow();
 
-        require(studyRequest.isLeader(leader));
+        actorValidate(studyRequest.isLeader(leader));
 
         studyRequest.approve();
     }
@@ -46,7 +46,7 @@ public class StudyRequestDomainService implements StudyRequestService {
         User leader = userRepository.findById(leaderId).orElseThrow();
         StudyRequest studyRequest = studyRequestRepository.findById(studyRequestId).orElseThrow();
 
-        require(studyRequest.isLeader(leader));
+        actorValidate(studyRequest.isLeader(leader));
 
         studyRequest.reject(rejectMessage);
     }
@@ -57,8 +57,7 @@ public class StudyRequestDomainService implements StudyRequestService {
         User user = userRepository.findById(userId).orElseThrow();
         StudyRequest studyRequest = studyRequestRepository.findById(studyRequestId).orElseThrow();
 
-        require(studyRequest.isUser(user));
-        require(!studyRequest.studyContainsMember(user));
+        actorValidate(studyRequest.isUser(user));
 
         studyRequest.cancel();
     }
