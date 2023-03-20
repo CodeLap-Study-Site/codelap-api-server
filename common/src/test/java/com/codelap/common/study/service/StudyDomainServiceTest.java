@@ -174,4 +174,30 @@ class StudyDomainServiceTest {
 
         assertThatIllegalArgumentException().isThrownBy(() -> studyService.close(study.getId(), fakeLeader.getId()));
     }
+
+    @Test
+    void 스터디_나가기_성공() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User member = userRepository.save(User.create("name", 10, career, "abcd", "member"));
+
+        studyService.addMember(study.getId(), member.getId(), leader.getId());
+
+        studyService.leave(study.getId(), member.getId());
+
+        Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
+
+        assertThat(foundStudy.getMembers()).doesNotContain(member);
+    }
+
+    @Test
+    void 스터디_나가기_실패__회원이_리더() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User member = userRepository.save(User.create("name", 10, career, "abcd", "member"));
+
+        studyService.addMember(study.getId(), member.getId(), leader.getId());
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyService.leave(study.getId(), leader.getId()));
+    }
+
+
 }
