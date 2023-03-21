@@ -19,4 +19,6 @@ public interface StudyService {
     void close(Long studyId, Long leaderId);
 
     void leave(Long studyId, Long memberId);
+
+    void delete(Long studyId);
 }

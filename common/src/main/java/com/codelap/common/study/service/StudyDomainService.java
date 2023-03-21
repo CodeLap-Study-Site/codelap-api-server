@@ -84,4 +84,11 @@ public class StudyDomainService implements StudyService {
 
         study.leave(member);
     }
+
+    @Override
+    public void delete(Long studyId) {
+        Study study = studyRepository.findById(studyId).orElseThrow();
+
+        study.delete();
+    }
 }
