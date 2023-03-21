@@ -379,4 +379,29 @@ class StudyTest {
 
         assertThatCodeLapException(NOT_ALLOWED_AS_LEADER).isThrownBy(() -> study.leave(leader));
     }
+
+    @Test
+    void 스터디_삭제_성공() {
+        study.delete();
+
+        assertThat(study.getStatus()).isEqualTo(DELETED);
+    }
+
+    @Test
+    void 스터디_삭제_실패__리더가_아닌_멤버가_있을때() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User member = User.create("name", 10, career, "abcd", "member");
+
+        study.addMember(member);
+
+        assertThatCodeLapException(ANOTHER_EXISTED_MEMBER).isThrownBy(() -> study.delete());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyStatus.class, names = {"DELETED"}, mode = INCLUDE)
+    void 스터디_삭제_실패__스터디가_삭제된_상태(StudyStatus status) {
+        study.setStatus(status);
+
+        assertThatIllegalStateException().isThrownBy(() -> study.delete());
+    }
 }

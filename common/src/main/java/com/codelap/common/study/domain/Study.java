@@ -65,6 +65,10 @@ public class Study {
         return this.members.contains(user);
     }
 
+    public boolean emptyMember(){
+        return this.members.size() == 1;
+    }
+
     private Study(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader) {
         this.name = name;
         this.info = info;
@@ -161,5 +165,13 @@ public class Study {
         validate(!isLeader(member), NOT_ALLOWED_AS_LEADER);
 
         members.remove(member);
+    }
+
+    public void delete(){
+        validate(emptyMember(), ANOTHER_EXISTED_MEMBER);
+
+        check(CAN_DELETE_STATUSES.contains(status));
+
+        this.status = DELETED;
     }
 }
