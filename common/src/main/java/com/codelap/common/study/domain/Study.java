@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.codelap.common.study.domain.StudyStatus.*;
-import static com.codelap.common.support.ErrorCode.INVALID_MEMBER_SIZE;
+import static com.codelap.common.support.ErrorCode.*;
 import static com.codelap.common.support.Preconditions.*;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -96,12 +96,13 @@ public class Study {
     public void update(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer) {
         require(Strings.isNotBlank(name));
         require(Strings.isNotBlank(info));
-        require(maxMembersSize >= MIN_MEMBERS_SIZE);
         require(nonNull(difficulty));
         require(nonNull(period));
         require(nonNull(needCareer));
 
         check(status != DELETED);
+
+        validate(maxMembersSize >= MIN_MEMBERS_SIZE, INVALID_MEMBER_SIZE);
 
         this.name = name;
         this.info = info;
@@ -112,8 +113,8 @@ public class Study {
     }
 
     public void addMember(User user) {
-        require(maxMembersSize > members.size());
-        require(!members.contains(user));
+        validate(!containsMember(user), ALREADY_EXISTED_MEMBER);
+        validate(maxMembersSize > members.size(), INVALID_MEMBER_SIZE);
 
         check(status != DELETED);
 
@@ -121,9 +122,8 @@ public class Study {
     }
 
     public void changeLeader(User user) {
-        require(containsMember(user));
-        require(leader != user);
-        require(nonNull(user));
+        validate(containsMember(user), NOT_EXISTED_MEMBER);
+        validate(!isLeader(user), NOT_ALLOWED_AS_LEADER);
 
         check(status != DELETED);
 
@@ -146,8 +146,8 @@ public class Study {
     }
 
     public void removeMember(User member) {
-        require(containsMember(member));
-        require(!isLeader(member));
+        validate(containsMember(member), NOT_EXISTED_MEMBER);
+        validate(!isLeader(member), NOT_ALLOWED_AS_LEADER);
 
         check(status != DELETED);
 
@@ -161,8 +161,8 @@ public class Study {
     }
 
     public void leave(User member) {
-        require(containsMember(member));
-        require(!isLeader(member));
+        validate(containsMember(member), NOT_EXISTED_MEMBER);
+        validate(!isLeader(member), NOT_ALLOWED_AS_LEADER);
 
         members.remove(member);
     }
