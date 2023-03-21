@@ -35,4 +35,13 @@ public class StudyConfirmationDomainService implements StudyConfirmationService 
 
         studyConfirmationRepository.save(studyConfirmation);
     }
+
+    @Override
+    public void confirm(Long studyConfirmId, User leader) {
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findById(studyConfirmId).orElseThrow();
+
+        actorValidate(studyConfirmation.isLeader(leader));
+
+        studyConfirmation.confirm();
+    }
 }
