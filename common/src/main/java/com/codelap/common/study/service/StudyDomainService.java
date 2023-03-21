@@ -86,8 +86,11 @@ public class StudyDomainService implements StudyService {
     }
 
     @Override
-    public void delete(Long studyId) {
+    public void delete(Long studyId, Long leaderId) {
         Study study = studyRepository.findById(studyId).orElseThrow();
+        User leader = userRepository.findById(leaderId).orElseThrow();
+
+        actorValidate(study.isLeader(leader));
 
         study.delete();
     }

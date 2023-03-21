@@ -192,7 +192,7 @@ class StudyDomainServiceTest {
 
     @Test
     void 스터디_삭제_성공() {
-        studyService.delete(study.getId());
+        studyService.delete(study.getId(), leader.getId());
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -200,12 +200,20 @@ class StudyDomainServiceTest {
     }
 
     @Test
-    void 스터디_삭제_실패__리더가_아닌_멤버가_있을때(){
+    void 스터디_삭제_실패__리더가_아닌_멤버가_있을때() {
         UserCareer career = UserCareer.create("직무", 1);
         User member = userRepository.save(User.create("name", 10, career, "abcd", "member"));
 
         studyService.addMember(study.getId(), member.getId(), leader.getId());
 
-        assertThatCodeLapException(ANOTHER_EXISTED_MEMBER).isThrownBy(() -> studyService.delete(study.getId()));
+        assertThatCodeLapException(ANOTHER_EXISTED_MEMBER).isThrownBy(() -> studyService.delete(study.getId(), leader.getId()));
+    }
+
+    @Test
+    void 스터디_삭제_실패__리더가_아닐때() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeLeader = userRepository.save(User.create("name", 10, career, "abcd", "fakeLeader"));
+
+        assertThatActorValidateCodeLapException().isThrownBy(() -> studyService.delete(study.getId(), fakeLeader.getId()));
     }
 }
