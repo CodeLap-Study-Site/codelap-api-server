@@ -404,9 +404,10 @@ class StudyTest {
         assertThatIllegalStateException().isThrownBy(() -> study.delete());
     }
 
-    @Test
-    void 스터디_삭제_실패__스터디가_삭제된_상태(){
-        study.setStatus(DELETED);
+    @ParameterizedTest
+    @EnumSource(value = StudyStatus.class, names = {"DELETED"}, mode = INCLUDE)
+    void 스터디_삭제_실패__스터디가_삭제된_상태(StudyStatus status) {
+        study.setStatus(status);
 
         assertThatIllegalStateException().isThrownBy(() -> study.delete());
     }
