@@ -20,6 +20,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
+import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CONFIRMED;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -75,6 +76,28 @@ class StudyConfirmationDomainServiceTest {
 
         assertThatActorValidateCodeLapException().isThrownBy(() ->
                 studyConfirmationService.create(study.getId(), fakeUser.getId(), "title", "content", List.of(file))
+        );
+    }
+
+    @Test
+    void 스터디_인증_확인_성공() {
+        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+
+        studyConfirmationService.confirm(studyConfirmation.getId(), leader);
+
+        assertThat(studyConfirmation.getStatus()).isEqualTo(CONFIRMED);
+    }
+
+    @Test
+    void 스터디_인증_확인_실패__리더가_아님() {
+        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+
+        assertThatActorValidateCodeLapException().isThrownBy(() ->
+                studyConfirmationService.confirm(studyConfirmation.getId(), member)
         );
     }
 }
