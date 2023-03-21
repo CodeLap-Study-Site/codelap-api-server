@@ -15,7 +15,6 @@ import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
-import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatCodeLapException;
 import static com.codelap.common.support.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
@@ -204,7 +203,7 @@ class StudyTest {
 
         study.addMember(user);
 
-        assertThatActorValidateCodeLapException().isThrownBy(() -> study.addMember(user));
+        assertThatCodeLapException(EXISTING_MEMBER).isThrownBy(() -> study.addMember(user));
     }
 
     @Test

@@ -109,8 +109,7 @@ public class Study {
     }
 
     public void addMember(User user) {
-        actorValidate(!containsMember(user));
-
+        validate(!containsMember(user), EXISTING_MEMBER);
         validate(maxMembersSize > members.size(), INVALID_MEMBER_SIZE);
 
         check(status != DELETED);
