@@ -17,9 +17,10 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.StudyStatus.CLOSED;
-import static com.codelap.common.study.domain.StudyStatus.IN_PROGRESS;
+import static com.codelap.common.study.domain.StudyStatus.*;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
+import static com.codelap.common.support.CodeLapExceptionTest.assertThatCodeLapException;
+import static com.codelap.common.support.ErrorCode.ANOTHER_EXISTED_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
@@ -187,5 +188,32 @@ class StudyDomainServiceTest {
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
         assertThat(foundStudy.getMembers()).doesNotContain(member);
+    }
+
+    @Test
+    void 스터디_삭제_성공() {
+        studyService.delete(study.getId(), leader.getId());
+
+        Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
+
+        assertThat(foundStudy.getStatus()).isEqualTo(DELETED);
+    }
+
+    @Test
+    void 스터디_삭제_실패__리더가_아닌_멤버가_있을때() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User member = userRepository.save(User.create("name", 10, career, "abcd", "member"));
+
+        studyService.addMember(study.getId(), member.getId(), leader.getId());
+
+        assertThatCodeLapException(ANOTHER_EXISTED_MEMBER).isThrownBy(() -> studyService.delete(study.getId(), leader.getId()));
+    }
+
+    @Test
+    void 스터디_삭제_실패__리더가_아닐때() {
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeLeader = userRepository.save(User.create("name", 10, career, "abcd", "fakeLeader"));
+
+        assertThatActorValidateCodeLapException().isThrownBy(() -> studyService.delete(study.getId(), fakeLeader.getId()));
     }
 }
