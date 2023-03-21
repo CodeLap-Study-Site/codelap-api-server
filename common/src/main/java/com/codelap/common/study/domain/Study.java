@@ -168,7 +168,7 @@ public class Study {
     }
 
     public void delete(){
-        check(emptyMember());
+        validate(emptyMember(), ANOTHER_EXISTED_MEMBER);
 
         check(CAN_DELETE_STATUSES.contains(status));
 

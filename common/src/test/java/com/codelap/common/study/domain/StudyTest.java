@@ -394,7 +394,7 @@ class StudyTest {
 
         study.addMember(member);
 
-        assertThatIllegalStateException().isThrownBy(() -> study.delete());
+        assertThatCodeLapException(ANOTHER_EXISTED_MEMBER).isThrownBy(() -> study.delete());
     }
 
     @ParameterizedTest
