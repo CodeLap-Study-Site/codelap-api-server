@@ -5,10 +5,7 @@ import com.codelap.api.controller.study.dto.StudyDeleteDto;
 import com.codelap.api.controller.study.dto.StudyLeaveDto.StudyLeaveRequest;
 import com.codelap.common.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.codelap.api.controller.study.dto.StudyCreateDto.StudyCreateRequest;
 import static com.codelap.api.controller.study.dto.StudyDeleteDto.*;
@@ -66,7 +63,7 @@ public class StudyController {
         studyService.leave(req.studyId(), req.memberId());
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/delete")
     public void delete(
             @RequestBody StudyDeleteRequest req
     ){
