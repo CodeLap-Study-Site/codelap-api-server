@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.codelap.common.study.domain.StudyStatus.*;
-import static com.codelap.common.support.ErrorCode.INVALID_MEMBER_SIZE;
+import static com.codelap.common.support.ErrorCode.*;
 import static com.codelap.common.support.Preconditions.*;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -119,10 +119,8 @@ public class Study {
     }
 
     public void changeLeader(User user) {
-        actorValidate(containsMember(user));
-        actorValidate(leader != user);
-
-        require(nonNull(user));
+        validate(containsMember(user), NOT_EXISTING_MEMBER);
+        validate(leader != user, IS_LEADER);
 
         check(status != DELETED);
 
@@ -145,8 +143,8 @@ public class Study {
     }
 
     public void removeMember(User member) {
-        actorValidate(containsMember(member));
-        actorValidate(!isLeader(member));
+        validate(containsMember(member), NOT_EXISTING_MEMBER);
+        validate(!isLeader(member), IS_LEADER);
 
         check(status != DELETED);
 
@@ -160,8 +158,8 @@ public class Study {
     }
 
     public void leave(User member) {
-        actorValidate(containsMember(member));
-        actorValidate(!isLeader(member));
+        validate(containsMember(member), NOT_EXISTING_MEMBER);
+        validate(!isLeader(member), IS_LEADER);
 
         members.remove(member);
     }

@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 public enum ErrorCode {
 
     ACTOR_VALIDATE("error.actor.validate"),
-    INVALID_MEMBER_SIZE("error.member.size.validate");
+    INVALID_MEMBER_SIZE("error.member.size.validate"),
+    NOT_EXISTING_MEMBER("error.member.not.existing"),
+    IS_LEADER("error.member.is.leader");
 
     private final String message;
 }
