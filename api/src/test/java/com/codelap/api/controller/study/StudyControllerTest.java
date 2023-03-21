@@ -1,5 +1,6 @@
 package com.codelap.api.controller.study;
 
+import com.codelap.api.controller.study.dto.StudyDeleteDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
@@ -16,6 +17,7 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import static com.codelap.api.controller.study.dto.StudyCreateDto.*;
+import static com.codelap.api.controller.study.dto.StudyDeleteDto.*;
 import static com.codelap.api.controller.study.dto.StudyLeaveDto.StudyLeaveRequest;
 import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedRequest;
 import static com.codelap.api.controller.study.dto.StudyRemoveMemberDto.StudyRemoveMemberRequest;
@@ -222,5 +224,29 @@ class StudyControllerTest extends ApiTest {
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
         assertThat(foundStudy.getMembers()).doesNotContain(member);
+    }
+
+    @Test
+    void 스터디_삭제_성공() throws Exception {
+        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+
+        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
+
+        StudyDeleteRequest req = new StudyDeleteRequest(study.getId(), leader.getId());
+
+        mockMvc.perform(post("/study/delete")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study/delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
+
+        assertThat(foundStudy.getStatus()).isEqualTo(DELETED);
     }
 }
