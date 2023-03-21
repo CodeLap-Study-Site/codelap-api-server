@@ -109,7 +109,7 @@ public class Study {
     }
 
     public void addMember(User user) {
-        validate(!containsMember(user), EXISTING_MEMBER);
+        validate(!containsMember(user), ALREADY_EXISTED_MEMBER);
         validate(maxMembersSize > members.size(), INVALID_MEMBER_SIZE);
 
         check(status != DELETED);
@@ -118,8 +118,8 @@ public class Study {
     }
 
     public void changeLeader(User user) {
-        validate(containsMember(user), NOT_EXISTING_MEMBER);
-        validate(leader != user, IS_LEADER);
+        validate(containsMember(user), NOT_EXISTED_MEMBER);
+        validate(!isLeader(user), NOT_ALLOWED_AS_LEADER);
 
         check(status != DELETED);
 
@@ -142,8 +142,8 @@ public class Study {
     }
 
     public void removeMember(User member) {
-        validate(containsMember(member), NOT_EXISTING_MEMBER);
-        validate(!isLeader(member), IS_LEADER);
+        validate(containsMember(member), NOT_EXISTED_MEMBER);
+        validate(!isLeader(member), NOT_ALLOWED_AS_LEADER);
 
         check(status != DELETED);
 
@@ -157,8 +157,8 @@ public class Study {
     }
 
     public void leave(User member) {
-        validate(containsMember(member), NOT_EXISTING_MEMBER);
-        validate(!isLeader(member), IS_LEADER);
+        validate(containsMember(member), NOT_EXISTED_MEMBER);
+        validate(!isLeader(member), NOT_ALLOWED_AS_LEADER);
 
         members.remove(member);
     }

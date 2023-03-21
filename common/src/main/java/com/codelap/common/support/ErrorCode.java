@@ -9,9 +9,9 @@ public enum ErrorCode {
 
     ACTOR_VALIDATE("error.actor.validate"),
     INVALID_MEMBER_SIZE("error.member.size.validate"),
-    NOT_EXISTING_MEMBER("error.member.not.existing"),
-    EXISTING_MEMBER("error.member.existing"),
-    IS_LEADER("error.member.is.leader");
+    NOT_EXISTED_MEMBER("error.member.not.existed"),
+    ALREADY_EXISTED_MEMBER("error.member.already.existed"),
+    NOT_ALLOWED_AS_LEADER("error.member.not.allowed.as.leader");
 
     private final String message;
 }

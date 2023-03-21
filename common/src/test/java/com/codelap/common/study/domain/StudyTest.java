@@ -203,7 +203,7 @@ class StudyTest {
 
         study.addMember(user);
 
-        assertThatCodeLapException(EXISTING_MEMBER).isThrownBy(() -> study.addMember(user));
+        assertThatCodeLapException(ALREADY_EXISTED_MEMBER).isThrownBy(() -> study.addMember(user));
     }
 
     @Test
@@ -235,12 +235,12 @@ class StudyTest {
 
         User user = User.create("changeLeader", 10, career, "abcd", "setUp");
 
-        assertThatCodeLapException(NOT_EXISTING_MEMBER).isThrownBy(() -> study.changeLeader(user));
+        assertThatCodeLapException(NOT_EXISTED_MEMBER).isThrownBy(() -> study.changeLeader(user));
     }
 
     @Test
     void 스터디_리더_변경_실패__똑같은_방장으로_변경() {
-        assertThatCodeLapException(IS_LEADER).isThrownBy(() -> study.changeLeader(leader));
+        assertThatCodeLapException(NOT_ALLOWED_AS_LEADER).isThrownBy(() -> study.changeLeader(leader));
     }
 
     @Test
@@ -320,12 +320,12 @@ class StudyTest {
         UserCareer career = UserCareer.create("직무", 1);
         User fakeMember = User.create("name", 10, career, "abcd", "fakeMember");
 
-        assertThatCodeLapException(NOT_EXISTING_MEMBER).isThrownBy(() -> study.removeMember(fakeMember));
+        assertThatCodeLapException(NOT_EXISTED_MEMBER).isThrownBy(() -> study.removeMember(fakeMember));
     }
 
     @Test
     void 스터디_멤버_추방_실패__강퇴할_대상이_리더() {
-        assertThatCodeLapException(IS_LEADER).isThrownBy(() -> study.removeMember(leader));
+        assertThatCodeLapException(NOT_ALLOWED_AS_LEADER).isThrownBy(() -> study.removeMember(leader));
     }
 
     @Test
@@ -377,6 +377,6 @@ class StudyTest {
 
         study.addMember(member);
 
-        assertThatCodeLapException(IS_LEADER).isThrownBy(() -> study.leave(leader));
+        assertThatCodeLapException(NOT_ALLOWED_AS_LEADER).isThrownBy(() -> study.leave(leader));
     }
 }
