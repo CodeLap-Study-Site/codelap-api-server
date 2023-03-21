@@ -92,12 +92,13 @@ public class Study {
     public void update(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer) {
         require(Strings.isNotBlank(name));
         require(Strings.isNotBlank(info));
-        require(maxMembersSize >= MIN_MEMBERS_SIZE);
         require(nonNull(difficulty));
         require(nonNull(period));
         require(nonNull(needCareer));
 
         check(status != DELETED);
+
+        validate(maxMembersSize >= MIN_MEMBERS_SIZE, INVALID_MEMBER_SIZE);
 
         this.name = name;
         this.info = info;
@@ -108,8 +109,9 @@ public class Study {
     }
 
     public void addMember(User user) {
-        require(maxMembersSize > members.size());
-        require(!members.contains(user));
+        actorValidate(!containsMember(user));
+
+        validate(maxMembersSize > members.size(), INVALID_MEMBER_SIZE);
 
         check(status != DELETED);
 
@@ -117,8 +119,9 @@ public class Study {
     }
 
     public void changeLeader(User user) {
-        require(containsMember(user));
-        require(leader != user);
+        actorValidate(containsMember(user));
+        actorValidate(leader != user);
+
         require(nonNull(user));
 
         check(status != DELETED);
@@ -142,8 +145,8 @@ public class Study {
     }
 
     public void removeMember(User member) {
-        require(containsMember(member));
-        require(!isLeader(member));
+        actorValidate(containsMember(member));
+        actorValidate(!isLeader(member));
 
         check(status != DELETED);
 
@@ -157,8 +160,8 @@ public class Study {
     }
 
     public void leave(User member) {
-        require(containsMember(member));
-        require(!isLeader(member));
+        actorValidate(containsMember(member));
+        actorValidate(!isLeader(member));
 
         members.remove(member);
     }

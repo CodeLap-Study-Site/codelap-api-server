@@ -15,6 +15,7 @@ import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
+import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatCodeLapException;
 import static com.codelap.common.support.ErrorCode.INVALID_MEMBER_SIZE;
 import static org.assertj.core.api.Assertions.*;
@@ -131,7 +132,7 @@ class StudyTest {
         StudyPeriod updatePeriod = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer updateNeedCareer = StudyNeedCareer.create("직무", 1);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> study.update("팀", "설명", MIN_MEMBERS_SIZE - 1, NORMAL, updatePeriod, updateNeedCareer));
+        assertThatCodeLapException(INVALID_MEMBER_SIZE).isThrownBy(() -> study.update("팀", "설명", MIN_MEMBERS_SIZE - 1, NORMAL, updatePeriod, updateNeedCareer));
     }
 
     @Test
@@ -193,7 +194,7 @@ class StudyTest {
         study.addMember(user2);
         study.addMember(user3);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> study.addMember(user4));
+        assertThatCodeLapException(INVALID_MEMBER_SIZE).isThrownBy(() -> study.addMember(user4));
     }
 
     @Test
@@ -203,7 +204,7 @@ class StudyTest {
 
         study.addMember(user);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> study.addMember(user));
+        assertThatActorValidateCodeLapException().isThrownBy(() -> study.addMember(user));
     }
 
     @Test
@@ -235,19 +236,17 @@ class StudyTest {
 
         User user = User.create("changeLeader", 10, career, "abcd", "setUp");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> study.changeLeader(user));
+        assertThatActorValidateCodeLapException().isThrownBy(() -> study.changeLeader(user));
     }
 
     @Test
     void 스터디_리더_변경_실패__똑같은_방장으로_변경() {
-        UserCareer career = UserCareer.create("직무", 1);
-
-        assertThatIllegalArgumentException().isThrownBy(() -> study.changeLeader(leader));
+        assertThatActorValidateCodeLapException().isThrownBy(() -> study.changeLeader(leader));
     }
 
     @Test
     void 스터디_리더_변경_실패__회원이_널() {
-        assertThatIllegalArgumentException().isThrownBy(() -> study.changeLeader(null));
+        assertThatActorValidateCodeLapException().isThrownBy(() -> study.changeLeader(null));
     }
 
     @Test
@@ -327,12 +326,12 @@ class StudyTest {
         UserCareer career = UserCareer.create("직무", 1);
         User fakeMember = User.create("name", 10, career, "abcd", "fakeMember");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> study.removeMember(fakeMember));
+        assertThatActorValidateCodeLapException().isThrownBy(() -> study.removeMember(fakeMember));
     }
 
     @Test
     void 스터디_멤버_추방_실패__강퇴할_대상이_리더() {
-        assertThatIllegalArgumentException().isThrownBy(() -> study.removeMember(leader));
+        assertThatActorValidateCodeLapException().isThrownBy(() -> study.removeMember(leader));
     }
 
     @Test
@@ -384,6 +383,6 @@ class StudyTest {
 
         study.addMember(member);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> study.leave(leader));
+        assertThatActorValidateCodeLapException().isThrownBy(() -> study.leave(leader));
     }
 }
