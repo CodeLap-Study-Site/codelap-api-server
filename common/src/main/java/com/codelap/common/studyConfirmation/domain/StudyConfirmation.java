@@ -44,8 +44,8 @@ public class StudyConfirmation {
 
     private final OffsetDateTime createdAt = OffsetDateTime.now();
 
-    private OffsetDateTime checkedAt;
-
+    private OffsetDateTime confirmedAt;
+    private OffsetDateTime rejectedAt;
     private String rejectedMessage;
 
     public boolean isUser(User user) {
@@ -77,7 +77,7 @@ public class StudyConfirmation {
     public void confirm() {
         check(this.status == CREATED);
 
-        this.checkedAt = OffsetDateTime.now();
+        this.confirmedAt = OffsetDateTime.now();
         this.status = CONFIRMED;
     }
 
@@ -85,8 +85,7 @@ public class StudyConfirmation {
         check(this.status == CREATED);
 
         require(isNotBlank(rejectedMessage));
-
-        this.checkedAt = OffsetDateTime.now();
+        this.rejectedAt = OffsetDateTime.now();
         this.rejectedMessage = rejectedMessage;
         this.status = REJECTED;
     }

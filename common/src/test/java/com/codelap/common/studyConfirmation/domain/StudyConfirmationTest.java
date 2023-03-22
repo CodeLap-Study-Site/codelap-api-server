@@ -89,7 +89,7 @@ class StudyConfirmationTest {
         studyConfirmation.confirm();
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(CONFIRMED);
-        assertThat(studyConfirmation.getCheckedAt()).isNotNull();
+        assertThat(studyConfirmation.getConfirmedAt()).isNotNull();
     }
 
     @ParameterizedTest
@@ -110,7 +110,7 @@ class StudyConfirmationTest {
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(REJECTED);
         assertThat(studyConfirmation.getRejectedMessage()).isEqualTo("부적합");
-        assertThat(studyConfirmation.getCheckedAt()).isNotNull();
+        assertThat(studyConfirmation.getRejectedAt()).isNotNull();
     }
 
     @ParameterizedTest
