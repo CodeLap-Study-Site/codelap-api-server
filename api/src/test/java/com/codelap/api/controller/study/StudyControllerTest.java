@@ -1,6 +1,7 @@
 package com.codelap.api.controller.study;
 
 import com.codelap.api.controller.study.dto.StudyDeleteDto;
+import com.codelap.api.controller.study.dto.StudyOpenDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
@@ -19,6 +20,7 @@ import static com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseReque
 import static com.codelap.api.controller.study.dto.StudyCreateDto.*;
 import static com.codelap.api.controller.study.dto.StudyDeleteDto.*;
 import static com.codelap.api.controller.study.dto.StudyLeaveDto.StudyLeaveRequest;
+import static com.codelap.api.controller.study.dto.StudyOpenDto.*;
 import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedRequest;
 import static com.codelap.api.controller.study.dto.StudyRemoveMemberDto.StudyRemoveMemberRequest;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
@@ -249,5 +251,30 @@ class StudyControllerTest extends ApiTest {
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
         assertThat(foundStudy.getStatus()).isEqualTo(DELETED);
+    }
+
+    @Test
+    void 스터디_오픈_성공() throws Exception{
+        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
+
+        StudyOpenRequestStudyPeriodDto periodDto = new StudyOpenRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+
+        StudyOpenRequest req = new StudyOpenRequest(study.getId(), leader.getId(), periodDto);
+
+        mockMvc.perform(delete("/study/open")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study/open",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
+
+        assertThat(foundStudy.getStatus()).isEqualTo(OPENED);
     }
 }
