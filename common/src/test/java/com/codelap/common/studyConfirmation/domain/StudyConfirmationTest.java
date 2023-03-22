@@ -114,6 +114,14 @@ class StudyConfirmationTest {
     }
 
     @ParameterizedTest
+    @NullAndEmptySource
+    void 스터디_인증_거절_실패__거절_메시지가_널이거나_공백(String rejectedMessage) {
+        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.reject(rejectedMessage));
+    }
+
+    @ParameterizedTest
     @EnumSource(value = StudyConfirmationStatus.class, names = {"CREATED"}, mode = EXCLUDE)
     void 스터디_인증_거절_실패__확인_가능한_상태가_아님(StudyConfirmationStatus status) {
         StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
@@ -121,13 +129,5 @@ class StudyConfirmationTest {
         studyConfirmation.setStatus(status);
 
         assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.reject("부적합"));
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    void 스터디_인증_거절_실패__거절_메시지가_널이거나_공백(String rejectedMessage) {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
-
-        assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.reject(rejectedMessage));
     }
 }

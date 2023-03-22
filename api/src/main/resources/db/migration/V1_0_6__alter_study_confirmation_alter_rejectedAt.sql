@@ -1,1 +1,2 @@
-alter table study_confirmation add rejectedAt datetime(6);
+alter table study_confirmation
+    add rejectedAt datetime(6);
