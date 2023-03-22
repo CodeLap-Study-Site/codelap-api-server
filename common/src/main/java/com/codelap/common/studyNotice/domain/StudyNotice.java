@@ -26,9 +26,6 @@ public class StudyNotice {
     @ManyToOne
     private Study study;
 
-    @ManyToOne
-    private User leader;
-
     @ManyToMany
     private final List<User> readMembers = new ArrayList<>();
 

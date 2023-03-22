@@ -11,9 +11,6 @@ create table study_notice
 );
 
 alter table study_notice
-    add constraint FKppamo3aciacp5w2j3lt8ri8ut foreign key (leader_id) references user (id);
-
-alter table study_notice
     add constraint FK2anjxf0utmjtnv7n0r6dwsybk foreign key (study_id) references study (id);
 
 create table study_notice_files
