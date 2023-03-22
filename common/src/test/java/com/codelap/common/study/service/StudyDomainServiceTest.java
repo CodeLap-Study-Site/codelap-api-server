@@ -224,15 +224,15 @@ class StudyDomainServiceTest {
 
         study.setStatus(status);
 
-        studyService.open(study.getId(),leader.getId(), period);
+        studyService.open(study.getId(), leader.getId(), period);
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
         assertThat(foundStudy.getStatus()).isEqualTo(OPENED);
     }
 
-   @Test
-    void 스터디_오픈_실패__리더가_아님(){
+    @Test
+    void 스터디_오픈_실패__리더가_아님() {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         UserCareer career = UserCareer.create("직무", 1);
 

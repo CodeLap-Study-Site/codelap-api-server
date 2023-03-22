@@ -6,17 +6,16 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.logging.log4j.util.Strings;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CONFIRMED;
-import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CREATED;
+import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PROTECTED;
+import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
 @Entity
 @Getter
@@ -46,7 +45,7 @@ public class StudyConfirmation {
     private final OffsetDateTime createdAt = OffsetDateTime.now();
 
     private OffsetDateTime confirmedAt;
-
+    private OffsetDateTime rejectedAt;
     private String rejectedMessage;
 
     public boolean isUser(User user) {
@@ -68,8 +67,8 @@ public class StudyConfirmation {
     public static StudyConfirmation create(Study study, User user, String title, String content, List<StudyConfirmationFile> files) {
         require(nonNull(study));
         require(nonNull(user));
-        require(Strings.isNotBlank(title));
-        require(Strings.isNotBlank(content));
+        require(isNotBlank(title));
+        require(isNotBlank(content));
         require(nonNull(files));
 
         return new StudyConfirmation(study, user, title, content, files);
@@ -80,5 +79,15 @@ public class StudyConfirmation {
 
         this.confirmedAt = OffsetDateTime.now();
         this.status = CONFIRMED;
+    }
+
+    public void reject(String rejectedMessage) {
+        require(isNotBlank(rejectedMessage));
+
+        check(this.status == CREATED);
+
+        this.rejectedAt = OffsetDateTime.now();
+        this.rejectedMessage = rejectedMessage;
+        this.status = REJECTED;
     }
 }

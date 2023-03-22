@@ -1,7 +1,5 @@
 package com.codelap.api.controller.study;
 
-import com.codelap.api.controller.study.dto.StudyDeleteDto;
-import com.codelap.api.controller.study.dto.StudyOpenDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
@@ -18,9 +16,10 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import static com.codelap.api.controller.study.dto.StudyCreateDto.*;
-import static com.codelap.api.controller.study.dto.StudyDeleteDto.*;
+import static com.codelap.api.controller.study.dto.StudyDeleteDto.StudyDeleteRequest;
 import static com.codelap.api.controller.study.dto.StudyLeaveDto.StudyLeaveRequest;
-import static com.codelap.api.controller.study.dto.StudyOpenDto.*;
+import static com.codelap.api.controller.study.dto.StudyOpenDto.StudyOpenRequest;
+import static com.codelap.api.controller.study.dto.StudyOpenDto.StudyOpenRequestStudyPeriodDto;
 import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedRequest;
 import static com.codelap.api.controller.study.dto.StudyRemoveMemberDto.StudyRemoveMemberRequest;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
@@ -254,7 +253,7 @@ class StudyControllerTest extends ApiTest {
     }
 
     @Test
-    void 스터디_오픈_성공() throws Exception{
+    void 스터디_오픈_성공() throws Exception {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
         Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));

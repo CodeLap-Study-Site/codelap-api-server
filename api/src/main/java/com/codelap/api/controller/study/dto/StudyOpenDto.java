@@ -1,6 +1,5 @@
 package com.codelap.api.controller.study.dto;
 
-import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyPeriod;
 
 import java.time.OffsetDateTime;
@@ -10,8 +9,9 @@ public class StudyOpenDto {
             Long studyId,
             Long leaderId,
             StudyOpenRequestStudyPeriodDto period
-    ){
+    ) {
     }
+
     public record StudyOpenRequestStudyPeriodDto(
             OffsetDateTime startAt,
             OffsetDateTime endAt
