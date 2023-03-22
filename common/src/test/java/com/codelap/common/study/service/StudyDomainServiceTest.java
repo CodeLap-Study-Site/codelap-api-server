@@ -234,13 +234,10 @@ class StudyDomainServiceTest {
         assertThat(foundStudy.getStatus()).isEqualTo(OPENED);
     }
 
-    @ParameterizedTest
-    @EnumSource(value = StudyStatus.class, names = {"CLOSED", "IN_PROGRESS"}, mode = INCLUDE)
-    void 스터디_오픈_실패__리더가_아님(StudyStatus status){
+   @Test
+    void 스터디_오픈_실패__리더가_아님(){
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         UserCareer career = UserCareer.create("직무", 1);
-
-        study.setStatus(status);
 
         User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "email"));
 
