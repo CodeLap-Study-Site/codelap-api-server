@@ -45,11 +45,10 @@ public class StudyNotice {
 
     private final StudyNoticeStatus status = CREATED_NOTICE;
 
-    public static boolean isContents(String message, List<StudyNoticeFile> files) {
+    public static void isContents(String message, List<StudyNoticeFile> files) {
         if (isBlank(message) && isNull(files)) {
             throw new IllegalArgumentException();
         }
-        return true;
     }
 
     private StudyNotice(String title, String message, List<StudyNoticeFile> files) {
