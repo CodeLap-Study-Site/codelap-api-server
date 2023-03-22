@@ -11,8 +11,7 @@ import org.apache.logging.log4j.util.Strings;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CONFIRMED;
-import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CREATED;
+import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
 import static java.util.Objects.nonNull;
@@ -45,7 +44,7 @@ public class StudyConfirmation {
 
     private final OffsetDateTime createdAt = OffsetDateTime.now();
 
-    private OffsetDateTime confirmedAt;
+    private OffsetDateTime checkedAt;
 
     private String rejectedMessage;
 
@@ -78,7 +77,17 @@ public class StudyConfirmation {
     public void confirm() {
         check(this.status == CREATED);
 
-        this.confirmedAt = OffsetDateTime.now();
+        this.checkedAt = OffsetDateTime.now();
         this.status = CONFIRMED;
+    }
+
+    public void reject(String rejectedMessage) {
+        check(this.status == CREATED);
+
+        require(isNotBlank(rejectedMessage));
+
+        this.checkedAt = OffsetDateTime.now();
+        this.rejectedMessage = rejectedMessage;
+        this.status = REJECTED;
     }
 }
