@@ -10,6 +10,8 @@ import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -22,6 +24,7 @@ import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorVal
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatCodeLapException;
 import static com.codelap.common.support.ErrorCode.ANOTHER_EXISTED_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 
 @Transactional
 @SpringBootTest
@@ -215,5 +218,29 @@ class StudyDomainServiceTest {
         User fakeLeader = userRepository.save(User.create("name", 10, career, "abcd", "fakeLeader"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyService.delete(study.getId(), fakeLeader.getId()));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyStatus.class, names = {"CLOSED", "IN_PROGRESS"}, mode = INCLUDE)
+    void 스터디_오픈_성공(StudyStatus status) {
+        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+
+        study.setStatus(status);
+
+        studyService.open(study.getId(),leader.getId(), period);
+
+        Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
+
+        assertThat(foundStudy.getStatus()).isEqualTo(OPENED);
+    }
+
+   @Test
+    void 스터디_오픈_실패__리더가_아님(){
+        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+        UserCareer career = UserCareer.create("직무", 1);
+
+        User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "email"));
+
+        assertThatActorValidateCodeLapException().isThrownBy(() -> studyService.open(study.getId(), fakeLeader.getId(), period));
     }
 }

@@ -21,4 +21,6 @@ public interface StudyService {
     void leave(Long studyId, Long memberId);
 
     void delete(Long studyId, Long leaderId);
+
+    void open(Long studyId, Long leaderId, StudyPeriod period);
 }
