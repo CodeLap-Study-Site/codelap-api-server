@@ -5,7 +5,6 @@ create table study_notice
     created_at datetime(6),
     status     smallint,
     title      varchar(255),
-    leader_id  bigint,
     study_id   bigint,
     primary key (id)
 );
