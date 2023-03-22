@@ -85,7 +85,7 @@ class StudyConfirmationDomainServiceTest {
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
-        studyConfirmationService.confirm(studyConfirmation.getId(), leader);
+        studyConfirmationService.confirm(studyConfirmation.getId(), leader.getId());
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(CONFIRMED);
     }
@@ -97,7 +97,7 @@ class StudyConfirmationDomainServiceTest {
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
         assertThatActorValidateCodeLapException().isThrownBy(() ->
-                studyConfirmationService.confirm(studyConfirmation.getId(), member)
+                studyConfirmationService.confirm(studyConfirmation.getId(), member.getId())
         );
     }
 }

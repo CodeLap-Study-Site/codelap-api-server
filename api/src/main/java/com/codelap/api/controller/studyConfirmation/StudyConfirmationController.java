@@ -1,5 +1,6 @@
 package com.codelap.api.controller.studyConfirmation;
 
+import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationConfirmDto.StudyConfirmationConfirmRequest;
 import com.codelap.common.studyConfirmation.service.StudyConfirmationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,5 +22,12 @@ public class StudyConfirmationController {
             @RequestBody StudyConfirmationCreateRequest req
     ) {
         studyConfirmationService.create(req.studyId(), req.userId(), req.title(), req.content(), req.toStudyConfirmationFiles());
+    }
+
+    @PostMapping("/confirm")
+    public void confirm(
+            @RequestBody StudyConfirmationConfirmRequest req
+    ) {
+        studyConfirmationService.confirm(req.studyConfirmId(), req.leaderId());
     }
 }
