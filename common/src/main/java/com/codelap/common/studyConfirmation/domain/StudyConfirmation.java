@@ -90,4 +90,8 @@ public class StudyConfirmation {
         this.rejectedMessage = rejectedMessage;
         this.status = REJECTED;
     }
+
+    public void reConfirm(){
+        this.status = CREATED;
+    }
 }

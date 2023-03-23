@@ -130,4 +130,13 @@ class StudyConfirmationTest {
 
         assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.reject("부적합"));
     }
+
+    @Test
+    void 스터디_인증_재인증_성공() {
+        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+
+        studyConfirmation.reConfirm();
+
+        assertThat(studyConfirmation.getStatus()).isEqualTo(CREATED);
+    }
 }
