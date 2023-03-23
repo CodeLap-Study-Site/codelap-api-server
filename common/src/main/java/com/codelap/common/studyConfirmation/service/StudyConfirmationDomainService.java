@@ -46,4 +46,15 @@ public class StudyConfirmationDomainService implements StudyConfirmationService 
 
         studyConfirmation.confirm();
     }
+
+    @Override
+    public void reject(Long studyConfirmId, Long leaderId) {
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findById(studyConfirmId).orElseThrow();
+
+        User leader = userRepository.findById(leaderId).orElseThrow();
+
+        actorValidate(studyConfirmation.isLeader(leader));
+
+        studyConfirmation.reject("부적합");
+    }
 }
