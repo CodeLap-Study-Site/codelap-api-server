@@ -1,5 +1,6 @@
 package com.codelap.api.controller.studyConfirmation;
 
+import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
@@ -21,9 +22,9 @@ import java.util.List;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationConfirmDto.StudyConfirmationConfirmRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequestFileDto;
+import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
-import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CONFIRMED;
-import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CREATED;
+import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -109,5 +110,28 @@ class StudyConfirmationControllerTest extends ApiTest {
                 ));
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(CONFIRMED);
+    }
+
+    @Test
+    void 스터디_인증_거절_성공() throws Exception {
+        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 100L);
+
+        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "content", List.of(file)));
+
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+
+        StudyConfirmationRejectRequest req = new StudyConfirmationRejectRequest(studyConfirmation.getId(),leader.getId());
+
+        mockMvc.perform(post("/study-confirmation/reject")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study-confirmation/reject",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        assertThat(studyConfirmation.getStatus()).isEqualTo(REJECTED);
     }
 }
