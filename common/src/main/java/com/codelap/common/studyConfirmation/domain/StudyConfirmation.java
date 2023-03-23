@@ -91,7 +91,9 @@ public class StudyConfirmation {
         this.status = REJECTED;
     }
 
-    public void reConfirm(){
+    public void reConfirm() {
+        check(this.status != CONFIRMED);
+
         this.status = CREATED;
     }
 }

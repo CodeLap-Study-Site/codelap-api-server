@@ -19,6 +19,7 @@ import static com.codelap.common.studyConfirmation.domain.StudyConfirmation.crea
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 
 class StudyConfirmationTest {
 
@@ -138,5 +139,14 @@ class StudyConfirmationTest {
         studyConfirmation.reConfirm();
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(CREATED);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyConfirmationStatus.class, names = {"CONFIRMED"}, mode = INCLUDE)
+    void 스터디_인증_재인증_실패__인증이_이미_확인_됨(StudyConfirmationStatus status) {
+        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+
+        studyConfirmation.setStatus(status);
+        assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.reConfirm());
     }
 }
