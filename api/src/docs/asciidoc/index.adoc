@@ -273,3 +273,17 @@ include::{snippets}/study-confirmation/confirm/http-response.adoc[]
 
 === ResponseBody
 include::{snippets}/study-confirmation/confirm/response-body.adoc[]
+
+== 스터디인증 거절 API
+
+=== Request
+include::{snippets}/study-confirmation/reject/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study-confirmation/reject/request-body.adoc[]
+
+=== Response
+include::{snippets}/study-confirmation/reject/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study-confirmation/reject/response-body.adoc[]
