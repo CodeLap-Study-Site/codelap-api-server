@@ -161,4 +161,19 @@ class UserTest {
 
         assertThatIllegalStateException().isThrownBy(() -> user.delete());
     }
+
+    @Test
+    void 유저_마이페이지_조회_성공() {
+        var myPage = user.myPage(user);
+
+        assertThat(myPage.getEmail()).isEqualTo(user.getEmail());
+    }
+
+    @Test
+    void 유저_마이페이지_조회_실패__해당_유저가_아님() {
+        UserCareer career = UserCareer.create("직무", 1);
+        var fakeUser = User.create("fakeUser", 10, career, "abcd", "fakeUser");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> user.myPage(fakeUser));
+    }
 }

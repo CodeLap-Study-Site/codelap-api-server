@@ -93,4 +93,10 @@ public class User {
 
         this.status = DELETED;
     }
+
+    public User myPage(User user) {
+        require(this.email == user.email);
+
+        return user;
+    }
 }
