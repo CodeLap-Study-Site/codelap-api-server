@@ -29,7 +29,6 @@ public class StudyNoticeDomainService implements StudyNoticeService{
     @Override
     public void create(Long studyId, Long leaderId, String title, String contents, List<StudyNoticeFile> files) {
         Study study = studyRepository.findById(studyId).orElseThrow();
-
         User leader = userRepository.findById(leaderId).orElseThrow();
 
         actorValidate(study.isLeader(leader));
