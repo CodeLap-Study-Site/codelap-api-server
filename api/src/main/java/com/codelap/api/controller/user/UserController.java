@@ -2,15 +2,10 @@ package com.codelap.api.controller.user;
 
 import com.codelap.api.controller.user.dto.UserCreateDto.UserCreateRequest;
 import com.codelap.api.controller.user.dto.UserUpdateDto.UserUpdateRequest;
-import com.codelap.api.service.user.UserAppService;
-import com.codelap.common.study.domain.Study;
 import com.codelap.common.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-import static com.codelap.api.controller.user.dto.FindStudyListByUserIdDto.FindStudyListByUserIdRequest;
 import static com.codelap.api.controller.user.dto.UserChangePasswordDto.UserChangePasswordRequest;
 import static com.codelap.api.controller.user.dto.UserDeleteDto.UserDeleteRequest;
 
@@ -20,8 +15,6 @@ import static com.codelap.api.controller.user.dto.UserDeleteDto.UserDeleteReques
 public class UserController {
 
     private final UserService userService;
-
-    private final UserAppService userAppService;
 
     @PostMapping
     public void create(
@@ -49,12 +42,5 @@ public class UserController {
             @RequestBody UserDeleteRequest req
     ) {
         userService.delete(req.userId());
-    }
-
-    @GetMapping("findStudyList")
-    public List<Study> findStudyListByUserId(
-            @RequestBody FindStudyListByUserIdRequest req
-    ) {
-        return userAppService.findStudyListByUserId(req.userId());
     }
 }
