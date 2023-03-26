@@ -1,10 +1,14 @@
 package com.codelap.api.controller.study;
 
+import com.codelap.api.controller.study.dto.GetMyStudiesDto.GetMyStudiesResponse;
 import com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import com.codelap.api.controller.study.dto.StudyLeaveDto.StudyLeaveRequest;
+import com.codelap.api.service.study.StudyAppService;
 import com.codelap.common.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.codelap.api.controller.study.dto.StudyCreateDto.StudyCreateRequest;
 import static com.codelap.api.controller.study.dto.StudyDeleteDto.StudyDeleteRequest;
@@ -12,6 +16,7 @@ import static com.codelap.api.controller.study.dto.StudyOpenDto.StudyOpenRequest
 import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedRequest;
 import static com.codelap.api.controller.study.dto.StudyRemoveMemberDto.StudyRemoveMemberRequest;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.StudyUpdateRequest;
+import static com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 
 @RestController
@@ -20,6 +25,7 @@ import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 public class StudyController {
 
     private final StudyService studyService;
+    private final StudyAppService studyAppService;
 
     @PostMapping
     public void create(
@@ -76,5 +82,14 @@ public class StudyController {
     ) {
         studyService.open(req.studyId(), req.leaderId(), req.period().toStudyPeriod());
 
+    }
+
+    @GetMapping
+    public GetMyStudiesResponse findStudyListByUserId(
+            Long userId
+    ) {
+        List<GetStudiesStudyDto> studies = studyAppService.getStudies(userId);
+
+        return GetMyStudiesResponse.create(studies);
     }
 }
