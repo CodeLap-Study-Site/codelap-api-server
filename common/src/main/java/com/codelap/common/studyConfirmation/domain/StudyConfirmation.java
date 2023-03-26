@@ -96,7 +96,7 @@ public class StudyConfirmation {
         require(isNotBlank(content));
         require(nonNull(files));
 
-        check(this.status != CONFIRMED);
+        check(this.status == REJECTED);
 
         this.title = title;
         this.content = content;

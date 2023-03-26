@@ -3,6 +3,7 @@ package com.codelap.common.studyConfirmation.domain;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
 import com.codelap.common.study.domain.StudyPeriod;
+import com.codelap.common.study.domain.StudyStatus;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.BeforeEach;
@@ -132,9 +133,12 @@ class StudyConfirmationTest {
         assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.reject("부적합"));
     }
 
-    @Test
-    void 스터디_인증_재인증_성공() {
+    @ParameterizedTest
+    @EnumSource(value = StudyConfirmationStatus.class, names = {"REJECTED"}, mode = INCLUDE)
+    void 스터디_인증_재인증_성공(StudyConfirmationStatus status) {
         StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+
+        studyConfirmation.setStatus(status);
 
         studyConfirmation.reConfirm("modifyTitle", "modifyContent", List.of(file));
 
@@ -165,8 +169,8 @@ class StudyConfirmationTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = StudyConfirmationStatus.class, names = {"CONFIRMED"}, mode = INCLUDE)
-    void 스터디_인증_재인증_실패__인증이_이미_확인_됨(StudyConfirmationStatus status) {
+    @EnumSource(value = StudyConfirmationStatus.class, names = {"REJECTED"}, mode = EXCLUDE)
+    void 스터디_인증_재인증_실패__거절된_상태가_아님(StudyConfirmationStatus status) {
         StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
 
         studyConfirmation.setStatus(status);
