@@ -90,4 +90,17 @@ public class StudyConfirmation {
         this.rejectedMessage = rejectedMessage;
         this.status = REJECTED;
     }
+
+    public void reConfirm(String title, String content, List<StudyConfirmationFile> files) {
+        require(isNotBlank(title));
+        require(isNotBlank(content));
+        require(nonNull(files));
+
+        check(this.status == REJECTED);
+
+        this.title = title;
+        this.content = content;
+        this.files = files;
+        this.status = CREATED;
+    }
 }

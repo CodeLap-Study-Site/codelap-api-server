@@ -130,4 +130,48 @@ class StudyConfirmationTest {
 
         assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.reject("부적합"));
     }
+
+    @Test
+    void 스터디_인증_재인증_성공() {
+        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+
+        studyConfirmation.setStatus(REJECTED);
+
+        studyConfirmation.reConfirm("modifyTitle", "modifyContent", List.of(file));
+
+        assertThat(studyConfirmation.getStatus()).isEqualTo(CREATED);
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 스터디_인증_재인증_실패__타이틀이_공백_혹은_널(String modifyTitle) {
+        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.reConfirm(modifyTitle, "modifyContent", List.of(file)));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 스터디_인증_재인증_실패__컨텐츠가_공백_혹은_널(String modifyContent) {
+        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.reConfirm("title", modifyContent, List.of(file)));
+    }
+
+    @Test
+    void 스터디_인증_재인증_실패__파일이_공백_혹은_널() {
+        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.reConfirm("title", "content", null));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyConfirmationStatus.class, names = {"REJECTED"}, mode = EXCLUDE)
+    void 스터디_인증_재인증_실패__거절된_상태가_아님(StudyConfirmationStatus status) {
+        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+
+        studyConfirmation.setStatus(status);
+
+        assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.reConfirm("modifyTitle", "modifyContent", List.of(file)));
+    }
 }
