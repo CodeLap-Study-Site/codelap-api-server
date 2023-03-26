@@ -1,6 +1,7 @@
 package com.codelap.api.controller.studyConfirmation;
 
 import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto;
+import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.nio.file.Files;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -23,6 +25,7 @@ import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmation
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequestFileDto;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.*;
+import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -133,5 +136,29 @@ class StudyConfirmationControllerTest extends ApiTest {
                 ));
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(REJECTED);
+    }
+
+    @Test
+    void 스터디_인증_재인증_성공() throws Exception {
+        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 100L);
+
+        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "content", List.of(file)));
+
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+
+        StudyConfirmationreConfirmRequestFileDto refile = new StudyConfirmationreConfirmRequestFileDto("savedName", "originalName", 100L);
+        StudyConfirmationreConfirmRequest req =  new StudyConfirmationreConfirmRequest(studyConfirmation.getId(), member.getId(), "title", "content", List.of(refile));
+
+        mockMvc.perform(post("/study-confirmation/reconfirm")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study-confirmation/reconfirm",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        assertThat(studyConfirmation.getStatus()).isEqualTo(CREATED);
     }
 }

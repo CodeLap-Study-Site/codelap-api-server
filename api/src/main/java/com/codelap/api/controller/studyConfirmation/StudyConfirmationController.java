@@ -2,6 +2,7 @@ package com.codelap.api.controller.studyConfirmation;
 
 import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationConfirmDto.StudyConfirmationConfirmRequest;
 import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto;
+import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto;
 import com.codelap.common.studyConfirmation.service.StudyConfirmationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.*;
+import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto.*;
 
 @RestController
 @RequestMapping("/study-confirmation")
@@ -38,5 +40,12 @@ public class StudyConfirmationController {
             @RequestBody StudyConfirmationRejectRequest req
             ) {
             studyConfirmationService.reject(req.studyConfirmId(), req.leaderId());
+    }
+
+    @PostMapping("/reconfirm")
+    public void reConfirm(
+            @RequestBody StudyConfirmationreConfirmRequest req
+            ){
+        studyConfirmationService.reConfirm(req.studyConfirmId(), req.userId(), req.title(), req.content(), req.toStudyreConfirmationFiles());
     }
 }
