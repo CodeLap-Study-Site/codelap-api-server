@@ -57,4 +57,15 @@ public class StudyConfirmationDomainService implements StudyConfirmationService 
 
         studyConfirmation.reject("부적합");
     }
+
+    @Override
+    public void reConfirm(Long studyConfirmId, Long userId, String title, String content, List<StudyConfirmationFile> files) {
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findById(studyConfirmId).orElseThrow();
+
+        User user = userRepository.findById(userId).orElseThrow();
+
+        actorValidate(studyConfirmation.isUser(user));
+
+        studyConfirmation.reConfirm(title, content, files);
+    }
 }
