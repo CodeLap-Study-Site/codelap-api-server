@@ -11,8 +11,13 @@ import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import static com.codelap.api.controller.study.dto.StudyCreateDto.*;
@@ -30,8 +35,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StudyControllerTest extends ApiTest {
@@ -42,11 +47,17 @@ class StudyControllerTest extends ApiTest {
     @Autowired
     StudyRepository studyRepository;
     private User leader;
+    private Study study;
 
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
         leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
+
+        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+
+        study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
     }
 
     @Test
@@ -66,7 +77,7 @@ class StudyControllerTest extends ApiTest {
                         preprocessResponse(prettyPrint())
                 ));
 
-        Study foundStudy = studyRepository.findAll().get(0);
+        Study foundStudy = studyRepository.findAll().get(1);
 
         assertThat(foundStudy.getId()).isNotNull();
         assertThat(foundStudy.getName()).isEqualTo("팀");
@@ -85,15 +96,10 @@ class StudyControllerTest extends ApiTest {
 
     @Test
     void 스터디_수정_성공() throws Exception {
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-
-        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
-
         StudyUpdateRequestStudyPeriodDto periodDto = new StudyUpdateRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyUpdateRequestStudyNeedCareerDto careerDto = new StudyUpdateRequestStudyNeedCareerDto("updateOccupation", 5);
 
-        StudyUpdateRequest req = new StudyUpdateRequest(leader.getId(), study.getId(), "updateTeam", "updateInfo", 5, HARD, periodDto, careerDto);
+        StudyUpdateRequest req = new StudyUpdateRequest(study.getId(), leader.getId(), "updateTeam", "updateInfo", 5, HARD, periodDto, careerDto);
 
         mockMvc.perform(post("/study/update")
                         .contentType(APPLICATION_JSON)
@@ -105,7 +111,7 @@ class StudyControllerTest extends ApiTest {
                         preprocessResponse(prettyPrint())
                 ));
 
-        Study foundStudy = studyRepository.findAll().get(0);
+        Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
         assertThat(foundStudy.getId()).isNotNull();
         assertThat(foundStudy.getName()).isEqualTo("updateTeam");
@@ -124,11 +130,6 @@ class StudyControllerTest extends ApiTest {
 
     @Test
     void 스터디_진행_성공() throws Exception {
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-
-        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
-
         StudyProceedRequest req = new StudyProceedRequest(study.getId(), leader.getId());
 
         mockMvc.perform(post("/study/proceed")
@@ -148,11 +149,6 @@ class StudyControllerTest extends ApiTest {
 
     @Test
     void 스터디_멤버_추방_성공() throws Exception {
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-
-        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
-
         UserCareer career = UserCareer.create("직무", 1);
         User member = userRepository.save(User.create("member", 10, career, "abcd", "member"));
 
@@ -177,11 +173,6 @@ class StudyControllerTest extends ApiTest {
 
     @Test
     void 스터디_닫기_성공() throws Exception {
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-
-        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
-
         StudyCloseRequest req = new StudyCloseRequest(study.getId(), leader.getId());
 
         mockMvc.perform(post("/study/close")
@@ -201,11 +192,6 @@ class StudyControllerTest extends ApiTest {
 
     @Test
     void 스터디_나가기_성공() throws Exception {
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-
-        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
-
         UserCareer career = UserCareer.create("직무", 1);
         User member = userRepository.save(User.create("member", 10, career, "abcd", "member"));
 
@@ -230,11 +216,6 @@ class StudyControllerTest extends ApiTest {
 
     @Test
     void 스터디_삭제_성공() throws Exception {
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-
-        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
-
         StudyDeleteRequest req = new StudyDeleteRequest(study.getId(), leader.getId());
 
         mockMvc.perform(delete("/study/delete")
@@ -254,15 +235,12 @@ class StudyControllerTest extends ApiTest {
 
     @Test
     void 스터디_오픈_성공() throws Exception {
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        Study study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
+        study.proceed();
 
         StudyOpenRequestStudyPeriodDto periodDto = new StudyOpenRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-
         StudyOpenRequest req = new StudyOpenRequest(study.getId(), leader.getId(), periodDto);
 
-        mockMvc.perform(delete("/study/open")
+        mockMvc.perform(post("/study/open")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpectAll(
@@ -275,5 +253,59 @@ class StudyControllerTest extends ApiTest {
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
         assertThat(foundStudy.getStatus()).isEqualTo(OPENED);
+    }
+
+    @Test
+    void 유저가_참여한_스터디_조회_성공() throws Exception {
+        UserCareer career = UserCareer.create("직무", 1);
+        User leader = userRepository.save(User.create("name", 10, career, "abcd", "leader"));
+
+        유저가_참여한_스터디_조회_스터디_생성(leader);
+
+        mockMvc.perform(get("/study")
+                        .param("userId", leader.getId().toString()))
+                .andExpect(status().isOk())
+                .andExpectAll(유저가_참여한_스터디_조회_검증(leader))
+                .andDo(document("study/my-list",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+    }
+
+    private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
+        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+
+        for (int i = 0; i < 5; i++) {
+            Study study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+
+            studyRepository.save(study);
+        }
+
+        Study study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+        study.setStatus(DELETED);
+
+        studyRepository.save(study);
+    }
+
+    private ResultMatcher[] 유저가_참여한_스터디_조회_검증(User leader) {
+        List<Study> studies = studyRepository.findByLeader(leader)
+                .stream()
+                .filter(it -> it.getStatus() != DELETED)
+                .collect(Collectors.toList());
+
+        return IntStream.range(0, studies.size())
+                .mapToObj(index -> {
+                    Study indexStudy = studies.get(index);
+
+                    return Map.entry(index, List.of(
+                            jsonPath("$.studies.[" + index + "].id").value(indexStudy.getId()),
+                            jsonPath("$.studies.[" + index + "].name").value(indexStudy.getName()),
+                            jsonPath("$.studies.[" + index + "].createdAt").isNotEmpty(),
+                            jsonPath("$.studies.[" + index + "].status").value(indexStudy.getStatus().name())
+                    ));
+                })
+                .flatMap(entry -> entry.getValue().stream())
+                .toArray(ResultMatcher[]::new);
     }
 }
