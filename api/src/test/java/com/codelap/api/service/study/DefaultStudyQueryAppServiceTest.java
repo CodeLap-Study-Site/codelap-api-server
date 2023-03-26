@@ -8,7 +8,6 @@ import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,18 +37,28 @@ class DefaultStudyQueryAppServiceTest {
 
     private User leader;
 
-
-    @BeforeEach
-    void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
-    }
-
     @Test
     void 유저가_참여한_스터디_조회_성공() {
+        UserCareer career = UserCareer.create("직무", 1);
+        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
+
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        유저가_참여한_스터디_조회_검증(leader);
+        List<Study> getStudies = studyRepository.findByLeader(leader)
+                .stream()
+                .filter(it -> it.getStatus() != DELETED)
+                .collect(Collectors.toList());
+
+        List<GetStudiesStudyDto> studies = studyQueryAppService.getStudies(leader);
+
+        IntStream.range(0, getStudies.size())
+                .forEach(index -> {
+                    assertThat(studies.get(index).id()).isEqualTo(getStudies.get(index).getId());
+                    assertThat(studies.get(index).name()).isEqualTo(getStudies.get(index).getName());
+                    assertThat(studies.get(index).createdAt()).isNotNull();
+                    assertThat(getStudies.get(index).getCreatedAt()).isNotNull();
+                    assertThat(studies.get(index).status()).isEqualTo(getStudies.get(index).getStatus());
+                });
     }
 
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
@@ -64,24 +73,5 @@ class DefaultStudyQueryAppServiceTest {
         study.setStatus(DELETED);
 
         studyRepository.save(study);
-    }
-
-    private void 유저가_참여한_스터디_조회_검증(User leader) {
-        List<GetStudiesStudyDto> getStudies = studyRepository.findByLeader(leader)
-                .stream()
-                .filter(it -> it.getStatus() != DELETED)
-                .map(study -> new GetStudiesStudyDto(study.getId(), study.getName(), study.getCreatedAt(), study.getStatus()))
-                .collect(Collectors.toList());
-
-        List<GetStudiesStudyDto> studies = studyQueryAppService.getStudies(leader);
-
-        IntStream.range(0, getStudies.size())
-                .forEach(index -> {
-                    assertThat(studies.get(index).id()).isEqualTo(getStudies.get(index).id());
-                    assertThat(studies.get(index).name()).isEqualTo(getStudies.get(index).name());
-                    assertThat(studies.get(index).createdAt()).isNotNull();
-                    assertThat(getStudies.get(index).createdAt()).isNotNull();
-                    assertThat(studies.get(index).status()).isEqualTo(getStudies.get(index).status());
-                });
     }
 }
