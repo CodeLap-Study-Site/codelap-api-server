@@ -3,7 +3,6 @@ package com.codelap.common.studyConfirmation.domain;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
 import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.StudyStatus;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +19,6 @@ import static com.codelap.common.studyConfirmation.domain.StudyConfirmation.crea
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
-import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 
 class StudyConfirmationTest {
 
@@ -133,12 +131,11 @@ class StudyConfirmationTest {
         assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.reject("부적합"));
     }
 
-    @ParameterizedTest
-    @EnumSource(value = StudyConfirmationStatus.class, names = {"REJECTED"}, mode = INCLUDE)
-    void 스터디_인증_재인증_성공(StudyConfirmationStatus status) {
+    @Test
+    void 스터디_인증_재인증_성공() {
         StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
 
-        studyConfirmation.setStatus(status);
+        studyConfirmation.setStatus(REJECTED);
 
         studyConfirmation.reConfirm("modifyTitle", "modifyContent", List.of(file));
 
@@ -150,7 +147,7 @@ class StudyConfirmationTest {
     void 스터디_인증_재인증_실패__타이틀이_공백_혹은_널(String modifyTitle) {
         StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.reConfirm(modifyTitle,"modifyContent", List.of(file)));
+        assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.reConfirm(modifyTitle, "modifyContent", List.of(file)));
     }
 
     @ParameterizedTest
@@ -165,7 +162,7 @@ class StudyConfirmationTest {
     void 스터디_인증_재인증_실패__파일이_공백_혹은_널() {
         StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.reConfirm("title","content",null));
+        assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.reConfirm("title", "content", null));
     }
 
     @ParameterizedTest
@@ -174,6 +171,7 @@ class StudyConfirmationTest {
         StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
 
         studyConfirmation.setStatus(status);
-        assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.reConfirm("modifyTitle","modifyContent",List.of(file)));
+
+        assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.reConfirm("modifyTitle", "modifyContent", List.of(file)));
     }
 }
