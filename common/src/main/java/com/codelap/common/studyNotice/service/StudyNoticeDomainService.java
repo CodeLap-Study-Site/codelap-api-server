@@ -33,6 +33,6 @@ public class StudyNoticeDomainService implements StudyNoticeService{
 
         actorValidate(study.isLeader(leader));
 
-        studyNoticeRepository.save(StudyNotice.create(title, contents, files));
+        studyNoticeRepository.save(StudyNotice.create(study, title, contents, files));
     }
 }
