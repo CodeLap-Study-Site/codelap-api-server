@@ -1,12 +1,8 @@
 package com.codelap.common.studyNoticeComment.domain;
 
-import com.codelap.common.study.domain.Study;
 import com.codelap.common.studyNotice.domain.StudyNotice;
 import com.codelap.common.user.domain.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +11,7 @@ import java.time.OffsetDateTime;
 
 import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.CREATED;
 import static com.codelap.common.support.Preconditions.require;
+import static jakarta.persistence.EnumType.STRING;
 import static java.util.Objects.nonNull;
 import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
@@ -32,13 +29,11 @@ public class StudyNoticeComment {
     @ManyToOne
     private User user;
 
-    @ManyToOne
-    private Study study;
-
     private String content;
 
     private final OffsetDateTime createAt = OffsetDateTime.now();
 
+    @Enumerated(STRING)
     private final StudyNoticeCommentStatus status = CREATED;
 
     private StudyNoticeComment(User user, String content) {
@@ -46,7 +41,8 @@ public class StudyNoticeComment {
         this.content = content;
     }
 
-    public static StudyNoticeComment create(User user, String content) {
+    public static StudyNoticeComment create(StudyNotice studyNotice, User user, String content) {
+        require(nonNull(studyNotice));
         require(nonNull(user));
         require(isNotBlank(content));
 
