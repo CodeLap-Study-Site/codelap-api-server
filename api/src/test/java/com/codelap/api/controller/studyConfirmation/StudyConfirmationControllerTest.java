@@ -1,6 +1,5 @@
 package com.codelap.api.controller.studyConfirmation;
 
-import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
@@ -22,7 +21,7 @@ import java.util.List;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationConfirmDto.StudyConfirmationConfirmRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequestFileDto;
-import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.*;
+import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.StudyConfirmationRejectRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,7 +65,7 @@ class StudyConfirmationControllerTest extends ApiTest {
     @Test
     void 스터디_인증_생성_성공() throws Exception {
         StudyConfirmationCreateRequestFileDto file = new StudyConfirmationCreateRequestFileDto("savedName", "originalName", 100L);
-        StudyConfirmationCreateRequest req = new StudyConfirmationCreateRequest(study.getId(), member.getId(), "title", "content", List.of(file));
+        StudyConfirmationCreateRequest req = new StudyConfirmationCreateRequest(study.getId(), member.getId(), "title", "contents", List.of(file));
 
         mockMvc.perform(post("/study-confirmation")
                         .contentType(APPLICATION_JSON)
@@ -84,7 +83,7 @@ class StudyConfirmationControllerTest extends ApiTest {
         assertThat(studyConfirmation.getStudy()).isSameAs(study);
         assertThat(studyConfirmation.getUser()).isSameAs(member);
         assertThat(studyConfirmation.getTitle()).isEqualTo("title");
-        assertThat(studyConfirmation.getContent()).isEqualTo("content");
+        assertThat(studyConfirmation.getContent()).isEqualTo("contents");
         assertThat(studyConfirmation.getStatus()).isEqualTo(CREATED);
         assertThat(studyConfirmation.getCreatedAt()).isNotNull();
     }
@@ -93,7 +92,7 @@ class StudyConfirmationControllerTest extends ApiTest {
     void 스터디_인증_확인_성공() throws Exception {
         StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 100L);
 
-        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "content", List.of(file)));
+        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "contents", List.of(file)));
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
@@ -116,7 +115,7 @@ class StudyConfirmationControllerTest extends ApiTest {
     void 스터디_인증_거절_성공() throws Exception {
         StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 100L);
 
-        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "content", List.of(file)));
+        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "contents", List.of(file)));
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
