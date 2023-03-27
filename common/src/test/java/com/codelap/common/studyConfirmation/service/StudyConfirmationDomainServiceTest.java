@@ -20,7 +20,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CONFIRMED;
+import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -98,6 +98,55 @@ class StudyConfirmationDomainServiceTest {
 
         assertThatActorValidateCodeLapException().isThrownBy(() ->
                 studyConfirmationService.confirm(studyConfirmation.getId(), member.getId())
+        );
+    }
+
+    @Test
+    void 스터디_인증_거절_성공() {
+        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+
+        studyConfirmationService.reject(studyConfirmation.getId(), leader.getId());
+
+        assertThat(studyConfirmation.getStatus()).isEqualTo(REJECTED);
+    }
+
+    @Test
+    void 스터디_인증_거절_실패__리더가_아님() {
+        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+
+        assertThatActorValidateCodeLapException().isThrownBy(() ->
+                studyConfirmationService.reject(studyConfirmation.getId(), member.getId())
+        );
+    }
+
+    @Test
+    void 스터디_인증_재인증_성공() {
+        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+
+        studyConfirmation.setStatus(REJECTED);
+
+        studyConfirmationService.reConfirm(studyConfirmation.getId(), member.getId(), "title", "content", List.of(file));
+
+        assertThat(studyConfirmation.getStatus()).isEqualTo(CREATED);
+    }
+
+    @Test
+    void 스터디_인증_재인증_실패__사용자가_인증의_주인이_아님(){
+        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeUser = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "fakeUser"));
+
+        assertThatActorValidateCodeLapException().isThrownBy(() ->
+                studyConfirmationService.reConfirm(studyConfirmation.getId(), fakeUser.getId(), "title", "content", List.of(file))
         );
     }
 }

@@ -186,6 +186,21 @@ include::{snippets}/study/open/http-response.adoc[]
 === ResponseBody
 include::{snippets}/study/open/response-body.adoc[]
 
+[[GetMyStudies]]
+== 내 스터디 목록 조회 API
+
+=== Request
+include::{snippets}/study/my-list/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study/my-list/request-body.adoc[]
+
+=== Response
+include::{snippets}/study/my-list/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study/my-list/response-body.adoc[]
+
 [[Study-requestCreate]]
 == 스터디참가신청 생성 API
 
@@ -273,3 +288,32 @@ include::{snippets}/study-confirmation/confirm/http-response.adoc[]
 
 === ResponseBody
 include::{snippets}/study-confirmation/confirm/response-body.adoc[]
+
+== 스터디인증 거절 API
+
+=== Request
+include::{snippets}/study-confirmation/reject/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study-confirmation/reject/request-body.adoc[]
+
+=== Response
+include::{snippets}/study-confirmation/reject/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study-confirmation/reject/response-body.adoc[]
+
+
+== 스터디공지 생성 API
+
+=== Request
+include::{snippets}/study-notice/create/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study-notice/create/request-body.adoc[]
+
+=== Response
+include::{snippets}/study-notice/create/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study-notice/create/response-body.adoc[]

@@ -21,9 +21,9 @@ import java.util.List;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationConfirmDto.StudyConfirmationConfirmRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequestFileDto;
+import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.StudyConfirmationRejectRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
-import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CONFIRMED;
-import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.CREATED;
+import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -65,7 +65,7 @@ class StudyConfirmationControllerTest extends ApiTest {
     @Test
     void 스터디_인증_생성_성공() throws Exception {
         StudyConfirmationCreateRequestFileDto file = new StudyConfirmationCreateRequestFileDto("savedName", "originalName", 100L);
-        StudyConfirmationCreateRequest req = new StudyConfirmationCreateRequest(study.getId(), member.getId(), "title", "content", List.of(file));
+        StudyConfirmationCreateRequest req = new StudyConfirmationCreateRequest(study.getId(), member.getId(), "title", "contents", List.of(file));
 
         mockMvc.perform(post("/study-confirmation")
                         .contentType(APPLICATION_JSON)
@@ -83,7 +83,7 @@ class StudyConfirmationControllerTest extends ApiTest {
         assertThat(studyConfirmation.getStudy()).isSameAs(study);
         assertThat(studyConfirmation.getUser()).isSameAs(member);
         assertThat(studyConfirmation.getTitle()).isEqualTo("title");
-        assertThat(studyConfirmation.getContent()).isEqualTo("content");
+        assertThat(studyConfirmation.getContent()).isEqualTo("contents");
         assertThat(studyConfirmation.getStatus()).isEqualTo(CREATED);
         assertThat(studyConfirmation.getCreatedAt()).isNotNull();
     }
@@ -92,7 +92,7 @@ class StudyConfirmationControllerTest extends ApiTest {
     void 스터디_인증_확인_성공() throws Exception {
         StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 100L);
 
-        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "content", List.of(file)));
+        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "contents", List.of(file)));
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
@@ -109,5 +109,28 @@ class StudyConfirmationControllerTest extends ApiTest {
                 ));
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(CONFIRMED);
+    }
+
+    @Test
+    void 스터디_인증_거절_성공() throws Exception {
+        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 100L);
+
+        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "contents", List.of(file)));
+
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+
+        StudyConfirmationRejectRequest req = new StudyConfirmationRejectRequest(studyConfirmation.getId(),leader.getId());
+
+        mockMvc.perform(post("/study-confirmation/reject")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study-confirmation/reject",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        assertThat(studyConfirmation.getStatus()).isEqualTo(REJECTED);
     }
 }

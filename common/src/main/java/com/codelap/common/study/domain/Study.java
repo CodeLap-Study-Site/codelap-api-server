@@ -65,7 +65,7 @@ public class Study {
         return this.members.contains(user);
     }
 
-    public boolean emptyMember(){
+    public boolean emptyMember() {
         return this.members.size() == 1;
     }
 
@@ -167,7 +167,7 @@ public class Study {
         members.remove(member);
     }
 
-    public void delete(){
+    public void delete() {
         validate(emptyMember(), ANOTHER_EXISTED_MEMBER);
 
         check(CAN_DELETE_STATUSES.contains(status));

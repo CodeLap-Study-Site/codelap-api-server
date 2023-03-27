@@ -10,11 +10,10 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.CREATED_NOTICE;
+import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.CREATED;
 import static com.codelap.common.support.Preconditions.require;
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PROTECTED;
-import static org.apache.logging.log4j.util.Strings.isBlank;
 import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
 @Entity
@@ -28,40 +27,32 @@ public class StudyNotice {
     @ManyToOne
     private Study study;
 
-    @ManyToOne
-    private User leader;
-
-    @OneToMany
-    private final List<User> readNoticeUsers = new ArrayList<>();
+    @ManyToMany
+    private final List<User> readMembers = new ArrayList<>();
 
     private String title;
 
-    private String message;
+    private String contents;
 
     @ElementCollection
     private List<StudyNoticeFile> files;
 
     private final OffsetDateTime createdAt = OffsetDateTime.now();
 
-    private final StudyNoticeStatus status = CREATED_NOTICE;
+    private final StudyNoticeStatus status = CREATED;
 
-    public static void isContents(String message, List<StudyNoticeFile> files) {
-        if (isBlank(message) && isNull(files)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private StudyNotice(String title, String message, List<StudyNoticeFile> files) {
+    private StudyNotice(Study study, String title, String contents, List<StudyNoticeFile> files) {
+        this.study = study;
         this.title = title;
-        this.message = message;
+        this.contents = contents;
         this.files = files;
     }
 
-    public static StudyNotice create(String title, String message, List<StudyNoticeFile> files) {
+    public static StudyNotice create(Study study, String title, String contents, List<StudyNoticeFile> files) {
+        require(nonNull(study));
         require(isNotBlank(title));
+        require(isNotBlank(contents));
 
-        isContents(message, files);
-
-        return new StudyNotice(title, message, files);
+        return new StudyNotice(study, title, contents, files);
     }
 }
