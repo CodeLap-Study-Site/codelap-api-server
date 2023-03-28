@@ -7,11 +7,6 @@ create table bookmark
     primary key (id)
 );
 
-create table bookmark_seq
-(
-    next_val bigint
-);
-
 alter table bookmark
     add constraint FK3lgv1iky352nk1dl4amqklj4g foreign key (study_id) references study (id);
 

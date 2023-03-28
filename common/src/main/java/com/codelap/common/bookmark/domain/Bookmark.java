@@ -4,10 +4,7 @@ import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyStatus;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +19,7 @@ import static com.codelap.common.support.Preconditions.require;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Bookmark {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
