@@ -9,11 +9,6 @@ create table study_notice_comment
     primary key (id)
 );
 
-create table study_notice_comment_seq
-(
-    next_val bigint
-);
-
 alter table study_notice_comment
     add constraint FKm41mm0asxh70w7dweqix17q15 foreign key (study_notice_id) references study_notice (id);
 
