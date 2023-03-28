@@ -1,6 +1,6 @@
 create table study_notice_comment
 (
-    id              bigint not null,
+    id              bigint not null auto_increment,
     content         varchar(255),
     create_at       datetime(6),
     status          varchar(255),
