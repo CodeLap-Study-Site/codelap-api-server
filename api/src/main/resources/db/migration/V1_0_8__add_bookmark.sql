@@ -1,6 +1,6 @@
 create table bookmark
 (
-    id         bigint not null,
+    id         bigint not null auto_increment,
     created_at datetime(6),
     study_id   bigint,
     user_id    bigint,
