@@ -1,2 +1,3 @@
 alter table study_confirmation
-    add rejectedAt datetime(6);
+    add column rejected_at datetime(6);
+

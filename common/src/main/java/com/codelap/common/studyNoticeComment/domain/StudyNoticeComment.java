@@ -20,7 +20,7 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StudyNoticeComment {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
