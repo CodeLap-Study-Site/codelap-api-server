@@ -103,4 +103,10 @@ public class StudyConfirmation {
         this.files = files;
         this.status = CREATED;
     }
+
+    public void delete() {
+        check(this.status != DELETED);
+
+        this.status = DELETED;
+    }
 }
