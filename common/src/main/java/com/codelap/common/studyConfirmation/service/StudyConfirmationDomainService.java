@@ -65,4 +65,15 @@ public class StudyConfirmationDomainService implements StudyConfirmationService 
 
         studyConfirmation.reConfirm(title, content, files);
     }
+
+    @Override
+    public void delete(Long studyConfirmId, Long userId) {
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findById(studyConfirmId).orElseThrow();
+
+        User user = userRepository.findById(userId).orElseThrow();
+
+        actorValidate(studyConfirmation.isUser(user));
+
+        studyConfirmation.delete();
+    }
 }
