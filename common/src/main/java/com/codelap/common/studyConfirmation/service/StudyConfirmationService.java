@@ -12,4 +12,6 @@ public interface StudyConfirmationService {
     void reject(Long studyConfirmId, Long leaderId);
 
     void reConfirm(Long studyConfirmId, Long userId, String title, String content, List<StudyConfirmationFile> files);
+
+    void delete(Long studyConfirmId, Long userId);
 }

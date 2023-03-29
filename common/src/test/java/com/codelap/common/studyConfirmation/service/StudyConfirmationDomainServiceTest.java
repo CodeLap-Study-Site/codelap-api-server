@@ -149,4 +149,29 @@ class StudyConfirmationDomainServiceTest {
                 studyConfirmationService.reConfirm(studyConfirmation.getId(), fakeUser.getId(), "title", "content", List.of(file))
         );
     }
+
+    @Test
+    void 스터디_인증_취소_성공() {
+        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+
+        studyConfirmationService.delete(studyConfirmation.getId(), member.getId());
+
+        assertThat(studyConfirmation.getStatus()).isEqualTo(DELETED);
+    }
+
+    @Test
+    void 스터디_인증_취소_실패__사용자가_인증의_주인이_아님() {
+        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeUser = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "fakeUser"));
+
+        assertThatActorValidateCodeLapException().isThrownBy(() ->
+                studyConfirmationService.delete(studyConfirmation.getId(), fakeUser.getId())
+        );
+    }
 }
