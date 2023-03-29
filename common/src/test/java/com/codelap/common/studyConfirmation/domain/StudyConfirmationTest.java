@@ -174,4 +174,22 @@ class StudyConfirmationTest {
 
         assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.reConfirm("modifyTitle", "modifyContent", List.of(file)));
     }
+
+    @Test
+    void 스터디_인증_삭제_성공() {
+        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+
+        studyConfirmation.delete();
+
+        assertThat(studyConfirmation.getStatus()).isEqualTo(DELETED);
+    }
+
+    @Test
+    void 스터디_인증_삭제_실패__이미_삭제된_인증() {
+        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+
+        studyConfirmation.setStatus(DELETED);
+
+        assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.delete());
+    }
 }
