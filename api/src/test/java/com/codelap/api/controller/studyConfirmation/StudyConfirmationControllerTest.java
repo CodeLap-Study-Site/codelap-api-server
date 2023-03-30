@@ -21,6 +21,7 @@ import java.util.List;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationConfirmDto.StudyConfirmationConfirmRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequestFileDto;
+import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationDeleteDto.StudyConfirmationDeleteRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.StudyConfirmationRejectRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
@@ -28,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -132,5 +134,28 @@ class StudyConfirmationControllerTest extends ApiTest {
                 ));
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(REJECTED);
+    }
+
+    @Test
+    void 스터디_인증_삭제_성공() throws Exception {
+        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 100L);
+
+        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "contents", List.of(file)));
+
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+
+        StudyConfirmationDeleteRequest req = new StudyConfirmationDeleteRequest(studyConfirmation.getId(),member.getId());
+
+        mockMvc.perform(delete("/study-confirmation")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study-confirmation/delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        assertThat(studyConfirmation.getStatus()).isEqualTo(DELETED);
     }
 }
