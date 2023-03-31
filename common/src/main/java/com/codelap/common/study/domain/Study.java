@@ -34,7 +34,13 @@ public class Study {
 
     private int maxMembersSize;
 
+
     private int views;
+
+    @ElementCollection
+    @Enumerated(STRING)
+    private List<TechStack> techStackList;
+
 
     @Enumerated(STRING)
     private StudyDifficulty difficulty;
@@ -71,7 +77,7 @@ public class Study {
         return this.members.size() == 1;
     }
 
-    private Study(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader) {
+    private Study(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader, List<TechStack> techStackList) {
         this.name = name;
         this.info = info;
         this.maxMembersSize = maxMembersSize;
@@ -80,27 +86,29 @@ public class Study {
         this.needCareer = needCareer;
         this.leader = leader;
         this.members.add(leader);
+        this.techStackList = techStackList;
     }
 
-    public static Study create(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader) {
+    public static Study create(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader, List<TechStack> techStackList) {
         require(Strings.isNotBlank(name));
         require(Strings.isNotBlank(info));
         require(nonNull(difficulty));
         require(nonNull(period));
         require(nonNull(needCareer));
         require(nonNull(leader));
-
+        require(nonNull(techStackList));
         validate(maxMembersSize >= MIN_MEMBERS_SIZE, INVALID_MEMBER_SIZE);
 
-        return new Study(name, info, maxMembersSize, difficulty, period, needCareer, leader);
+        return new Study(name, info, maxMembersSize, difficulty, period, needCareer, leader, techStackList);
     }
 
-    public void update(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer) {
+    public void update(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<TechStack> techStackList) {
         require(Strings.isNotBlank(name));
         require(Strings.isNotBlank(info));
         require(nonNull(difficulty));
         require(nonNull(period));
         require(nonNull(needCareer));
+        require(nonNull(techStackList));
 
         check(status != DELETED);
 
@@ -112,6 +120,7 @@ public class Study {
         this.difficulty = difficulty;
         this.period = period;
         this.needCareer = needCareer;
+        this.techStackList = techStackList;
     }
 
     public void addMember(User user) {
