@@ -34,6 +34,8 @@ public class Study {
 
     private int maxMembersSize;
 
+    private int views;
+
     @Enumerated(STRING)
     private StudyDifficulty difficulty;
 
