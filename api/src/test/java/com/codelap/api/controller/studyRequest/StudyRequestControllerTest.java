@@ -1,10 +1,7 @@
 package com.codelap.api.controller.studyRequest;
 
 import com.codelap.api.support.ApiTest;
-import com.codelap.common.study.domain.Study;
-import com.codelap.common.study.domain.StudyNeedCareer;
-import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.StudyRepository;
+import com.codelap.common.study.domain.*;
 import com.codelap.common.studyRequest.domain.StudyRequest;
 import com.codelap.common.studyRequest.domain.StudyRequestRepository;
 import com.codelap.common.user.domain.User;
@@ -15,12 +12,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestApproveDto.StudyRequestApproveRequest;
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestCancelDto.StudyRequestCancelRequest;
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestCreateDto.StudyRequestCreateRequest;
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestRejectDto.StudyRequestRejectRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
+import static com.codelap.common.study.domain.TechStack.Java;
+import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -44,6 +45,7 @@ class StudyRequestControllerTest extends ApiTest {
     private User user;
     private Study study;
     private StudyRequest studyRequest;
+    private List<TechStack> techStackList;
 
     @BeforeEach
     void setUp() {
@@ -52,8 +54,9 @@ class StudyRequestControllerTest extends ApiTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+        techStackList = Arrays.asList(Java, Spring);
 
-        study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader));
+        study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader, techStackList));
 
         user = userRepository.save(User.create("candidate", 10, career, "abcd", "email"));
 

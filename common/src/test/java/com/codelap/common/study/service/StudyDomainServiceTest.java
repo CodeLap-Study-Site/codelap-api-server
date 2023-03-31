@@ -13,10 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
+import static com.codelap.common.study.domain.TechStack.Java;
+import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatCodeLapException;
 import static com.codelap.common.support.ErrorCode.ANOTHER_EXISTED_MEMBER;
@@ -38,7 +42,7 @@ class StudyDomainServiceTest {
 
     private User leader;
     private Study study;
-
+    private List<TechStack> techStackList;
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
@@ -46,8 +50,9 @@ class StudyDomainServiceTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+        techStackList = Arrays.asList(Java, Spring);
 
-        study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+        study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
         study = studyRepository.save(study);
     }
 
@@ -56,7 +61,7 @@ class StudyDomainServiceTest {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
 
-        studyService.create(leader.getId(), "팀", "설명", 4, NORMAL, period, needCareer);
+        studyService.create(leader.getId(), "팀", "설명", 4, NORMAL, period, needCareer, techStackList);
 
         Study foundStudy = studyRepository.findAll().get(0);
 
@@ -68,7 +73,7 @@ class StudyDomainServiceTest {
         StudyPeriod updatePeriod = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer updateNeedCareer = StudyNeedCareer.create("직무", 1);
 
-        studyService.update(study.getId(), leader.getId(), "updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer);
+        studyService.update(study.getId(), leader.getId(), "updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer, techStackList);
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -89,7 +94,7 @@ class StudyDomainServiceTest {
         User fakeLeader = userRepository.save(User.create("name", 10, career, "abcd", "fakeLeader"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() ->
-                studyService.update(study.getId(), fakeLeader.getId(), "updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer)
+                studyService.update(study.getId(), fakeLeader.getId(), "updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer, techStackList)
         );
     }
 
