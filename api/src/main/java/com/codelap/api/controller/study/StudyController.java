@@ -31,14 +31,14 @@ public class StudyController {
     public void create(
             @RequestBody StudyCreateRequest req
     ) {
-        studyService.create(req.leaderId(), req.name(), req.info(), req.maxMembersSize(), HARD, req.period().toStudyPeriod(), req.career().toStudyNeedCareer());
+        studyService.create(req.leaderId(), req.name(), req.info(), req.maxMembersSize(), HARD, req.period().toStudyPeriod(), req.career().toStudyNeedCareer(), req.techStackList());
     }
 
     @PostMapping("/update")
     public void update(
             @RequestBody StudyUpdateRequest req
     ) {
-        studyService.update(req.studyId(), req.leaderId(), req.name(), req.info(), req.maxMembersSize(), req.difficulty(), req.period().toStudyPeriod(), req.career().toStudyNeedCareer());
+        studyService.update(req.studyId(), req.leaderId(), req.name(), req.info(), req.maxMembersSize(), req.difficulty(), req.period().toStudyPeriod(), req.career().toStudyNeedCareer(), req.techStackList());
     }
 
     @PostMapping("/proceed")

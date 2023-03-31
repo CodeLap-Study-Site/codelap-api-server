@@ -3,8 +3,10 @@ package com.codelap.api.controller.study.dto;
 import com.codelap.common.study.domain.StudyDifficulty;
 import com.codelap.common.study.domain.StudyNeedCareer;
 import com.codelap.common.study.domain.StudyPeriod;
+import com.codelap.common.study.domain.TechStack;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public class StudyCreateDto {
 
@@ -15,7 +17,8 @@ public class StudyCreateDto {
             int maxMembersSize,
             StudyDifficulty difficulty,
             StudyCreateRequestStudyPeriodDto period,
-            StudyCreateRequestStudyNeedCareerDto career
+            StudyCreateRequestStudyNeedCareerDto career,
+            List<TechStack> techStackList
     ) {
     }
 
