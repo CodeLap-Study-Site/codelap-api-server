@@ -1,10 +1,7 @@
 package com.codelap.api.controller.study;
 
 import com.codelap.api.support.ApiTest;
-import com.codelap.common.study.domain.Study;
-import com.codelap.common.study.domain.StudyNeedCareer;
-import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.StudyRepository;
+import com.codelap.common.study.domain.*;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
@@ -14,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,6 +29,8 @@ import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
+import static com.codelap.common.study.domain.TechStack.Java;
+import static com.codelap.common.study.domain.TechStack.Spring;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -48,6 +48,7 @@ class StudyControllerTest extends ApiTest {
     StudyRepository studyRepository;
     private User leader;
     private Study study;
+    private List<TechStack> techStackList;
 
     @BeforeEach
     void setUp() {
@@ -56,8 +57,9 @@ class StudyControllerTest extends ApiTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+        techStackList = Arrays.asList(Java, Spring);
 
-        study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader));
+        study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList));
     }
 
     @Test
@@ -65,7 +67,7 @@ class StudyControllerTest extends ApiTest {
         StudyCreateRequestStudyPeriodDto periodDto = new StudyCreateRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyCreateRequestStudyNeedCareerDto careerDto = new StudyCreateRequestStudyNeedCareerDto("직무", 10);
 
-        StudyCreateRequest req = new StudyCreateRequest(leader.getId(), "팀", "정보", 4, HARD, periodDto, careerDto);
+        StudyCreateRequest req = new StudyCreateRequest(leader.getId(), "팀", "정보", 4, HARD, periodDto, careerDto, techStackList);
 
         mockMvc.perform(post("/study")
                         .contentType(APPLICATION_JSON)
@@ -99,7 +101,7 @@ class StudyControllerTest extends ApiTest {
         StudyUpdateRequestStudyPeriodDto periodDto = new StudyUpdateRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyUpdateRequestStudyNeedCareerDto careerDto = new StudyUpdateRequestStudyNeedCareerDto("updateOccupation", 5);
 
-        StudyUpdateRequest req = new StudyUpdateRequest(study.getId(), leader.getId(), "updateTeam", "updateInfo", 5, HARD, periodDto, careerDto);
+        StudyUpdateRequest req = new StudyUpdateRequest(study.getId(), leader.getId(), "updateTeam", "updateInfo", 5, HARD, periodDto, careerDto, techStackList);
 
         mockMvc.perform(post("/study/update")
                         .contentType(APPLICATION_JSON)
@@ -277,12 +279,12 @@ class StudyControllerTest extends ApiTest {
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
 
         for (int i = 0; i < 5; i++) {
-            Study study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+            Study study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
 
             studyRepository.save(study);
         }
 
-        Study study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader);
+        Study study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
         study.setStatus(DELETED);
 
         studyRepository.save(study);

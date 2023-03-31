@@ -7,6 +7,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static com.codelap.common.support.Preconditions.actorValidate;
 
 @Service
@@ -18,22 +20,22 @@ public class StudyDomainService implements StudyService {
     private final UserRepository userRepository;
 
     @Override
-    public void create(Long leaderId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer) {
+    public void create(Long leaderId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<TechStack> techStackList) {
         User leader = userRepository.findById(leaderId).orElseThrow();
 
-        Study study = Study.create(name, info, maxMembersSize, difficulty, period, needCareer, leader);
+        Study study = Study.create(name, info, maxMembersSize, difficulty, period, needCareer, leader, techStackList);
 
         studyRepository.save(study);
     }
 
     @Override
-    public void update(Long studyId, Long userId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer) {
+    public void update(Long studyId, Long userId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<TechStack> techStackList) {
         Study study = studyRepository.findById(studyId).orElseThrow();
         User leader = userRepository.findById(userId).orElseThrow();
 
         actorValidate(study.isLeader(leader));
 
-        study.update(name, info, maxMembersSize, difficulty, period, needCareer);
+        study.update(name, info, maxMembersSize, difficulty, period, needCareer, techStackList);
     }
 
     @Override

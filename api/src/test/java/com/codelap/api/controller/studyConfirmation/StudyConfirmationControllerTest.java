@@ -1,10 +1,7 @@
 package com.codelap.api.controller.studyConfirmation;
 
 import com.codelap.api.support.ApiTest;
-import com.codelap.common.study.domain.Study;
-import com.codelap.common.study.domain.StudyNeedCareer;
-import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.StudyRepository;
+import com.codelap.common.study.domain.*;
 import com.codelap.common.studyConfirmation.domain.StudyConfirmation;
 import com.codelap.common.studyConfirmation.domain.StudyConfirmationFile;
 import com.codelap.common.studyConfirmation.domain.StudyConfirmationRepository;
@@ -16,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationConfirmDto.StudyConfirmationConfirmRequest;
@@ -23,6 +21,8 @@ import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmation
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequestFileDto;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.StudyConfirmationRejectRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
+import static com.codelap.common.study.domain.TechStack.Java;
+import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -45,6 +45,7 @@ class StudyConfirmationControllerTest extends ApiTest {
     private User leader;
     private User member;
     private Study study;
+    private List<TechStack> techStackList;
 
 
     @BeforeEach
@@ -54,8 +55,9 @@ class StudyConfirmationControllerTest extends ApiTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+        techStackList = Arrays.asList(Java, Spring);
 
-        study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader));
+        study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader, techStackList));
 
         member = userRepository.save(User.create("candidate", 10, career, "abcd", "email"));
 
