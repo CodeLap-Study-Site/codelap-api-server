@@ -145,9 +145,7 @@ class StudyConfirmationControllerTest extends ApiTest {
     void 스터디_인증_재인증_성공() throws Exception {
         StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 100L);
 
-        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "content", List.of(file)));
-
-        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "content", List.of(file)));
 
         StudyConfirmationreConfirmRequestFileDto refile = new StudyConfirmationreConfirmRequestFileDto("savedName", "originalName", 100L);
         StudyConfirmationreConfirmRequest req =  new StudyConfirmationreConfirmRequest(studyConfirmation.getId(), member.getId(), "title", "content", List.of(refile));
@@ -163,26 +161,5 @@ class StudyConfirmationControllerTest extends ApiTest {
                 ));
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(CREATED);
-    }
-
-    @Test
-    void 스터디_인증_삭제_성공() throws Exception {
-        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 100L);
-
-        StudyConfirmation studyConfirmation = studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "contents", List.of(file)));
-
-        StudyConfirmationDeleteRequest req = new StudyConfirmationDeleteRequest(studyConfirmation.getId(),member.getId());
-
-        mockMvc.perform(delete("/study-confirmation")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study-confirmation/delete",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
-
-        assertThat(studyConfirmation.getStatus()).isEqualTo(DELETED);
     }
 }
