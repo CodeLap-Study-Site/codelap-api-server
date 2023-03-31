@@ -140,9 +140,7 @@ class StudyConfirmationControllerTest extends ApiTest {
     void 스터디_인증_삭제_성공() throws Exception {
         StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 100L);
 
-        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "contents", List.of(file)));
-
-        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "contents", List.of(file)));
 
         StudyConfirmationDeleteRequest req = new StudyConfirmationDeleteRequest(studyConfirmation.getId(),member.getId());
 
