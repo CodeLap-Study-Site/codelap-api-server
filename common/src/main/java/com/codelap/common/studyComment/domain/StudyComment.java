@@ -36,10 +36,6 @@ public class StudyComment {
     @Enumerated(STRING)
     private final StudyCommentStatus status = CREATED;
 
-    public boolean containsMember(User user) {
-        return study.getMembers().contains(user);
-    }
-
     private StudyComment(User user, String comment) {
         this.user = user;
         this.comment = comment;
