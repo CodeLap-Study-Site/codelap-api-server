@@ -34,7 +34,8 @@ public class Study {
 
     private int maxMembersSize;
 
-    @Enumerated(EnumType.STRING)
+    @ElementCollection
+    @Enumerated(STRING)
     private List<TechStack> techStackList;
 
     @Enumerated(STRING)
