@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.CREATED;
 import static com.codelap.common.support.Preconditions.require;
+import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PROTECTED;
 import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
@@ -40,16 +41,18 @@ public class StudyNotice {
 
     private final StudyNoticeStatus status = CREATED;
 
-    private StudyNotice(String title, String contents, List<StudyNoticeFile> files) {
+    private StudyNotice(Study study, String title, String contents, List<StudyNoticeFile> files) {
+        this.study = study;
         this.title = title;
         this.contents = contents;
         this.files = files;
     }
 
-    public static StudyNotice create(String title, String contents, List<StudyNoticeFile> files) {
+    public static StudyNotice create(Study study, String title, String contents, List<StudyNoticeFile> files) {
+        require(nonNull(study));
         require(isNotBlank(title));
         require(isNotBlank(contents));
 
-        return new StudyNotice(title, contents, files);
+        return new StudyNotice(study, title, contents, files);
     }
 }

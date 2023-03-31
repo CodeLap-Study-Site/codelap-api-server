@@ -316,3 +316,18 @@ include::{snippets}/study-confirmation/reconfirm/http-response.adoc[]
 
 === ResponseBody
 include::{snippets}/study-confirmation/reconfirm/response-body.adoc[]
+
+
+== 스터디공지 생성 API
+
+=== Request
+include::{snippets}/study-notice/create/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study-notice/create/request-body.adoc[]
+
+=== Response
+include::{snippets}/study-notice/create/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study-notice/create/response-body.adoc[]

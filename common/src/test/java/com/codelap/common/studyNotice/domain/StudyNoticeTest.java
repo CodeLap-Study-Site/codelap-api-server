@@ -40,7 +40,7 @@ class StudyNoticeTest {
     @Test
     void 스터디_공지_생성_성공() {
         StudyNoticeFile file = new StudyNoticeFile("savedName", "originalName", 100L);
-        StudyNotice studyNotice = StudyNotice.create("title", "contents", List.of(file));
+        StudyNotice studyNotice = StudyNotice.create(study,"title", "contents", List.of(file));
 
         assertThat(studyNotice.getTitle()).isEqualTo("title");
         assertThat(studyNotice.getContents()).isEqualTo("contents");
@@ -52,12 +52,12 @@ class StudyNoticeTest {
     void 스터디_공지_생성_실패__제목이_널이거나_공백(String title) {
         StudyNoticeFile file = new StudyNoticeFile("savedName", "originalName", 100L);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> StudyNotice.create(title, "contents", List.of(file)));
+        assertThatIllegalArgumentException().isThrownBy(() -> StudyNotice.create(study, title,"contents", List.of(file)));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     void 스터디_공지_생성_실패__메시지가_널이거나_공백_파일이_널(String contents) {
-        assertThatIllegalArgumentException().isThrownBy(() -> StudyNotice.create("title", contents, null));
+        assertThatIllegalArgumentException().isThrownBy(() -> StudyNotice.create(study,"title", contents, null));
     }
 }

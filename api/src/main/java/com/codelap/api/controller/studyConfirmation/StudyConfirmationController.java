@@ -5,14 +5,13 @@ import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectD
 import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto;
 import com.codelap.common.studyConfirmation.service.StudyConfirmationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.*;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto.*;
+import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationDeleteDto.StudyConfirmationDeleteRequest;
+import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.StudyConfirmationRejectRequest;
 
 @RestController
 @RequestMapping("/study-confirmation")
@@ -39,7 +38,7 @@ public class StudyConfirmationController {
     public void reject(
             @RequestBody StudyConfirmationRejectRequest req
             ) {
-            studyConfirmationService.reject(req.studyConfirmId(), req.leaderId());
+        studyConfirmationService.reject(req.studyConfirmId(), req.leaderId());
     }
 
     @PostMapping("/reconfirm")
@@ -47,5 +46,12 @@ public class StudyConfirmationController {
             @RequestBody StudyConfirmationreConfirmRequest req
             ){
         studyConfirmationService.reConfirm(req.studyConfirmId(), req.userId(), req.title(), req.content(), req.toStudyreConfirmationFiles());
+    }
+
+    @DeleteMapping
+    public void delete(
+            @RequestBody StudyConfirmationDeleteRequest req
+            ) {
+        studyConfirmationService.delete(req.studyConfirmId(), req.userId());
     }
 }
