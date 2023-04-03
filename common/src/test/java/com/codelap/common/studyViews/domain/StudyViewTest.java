@@ -22,7 +22,7 @@ import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-class StudyViewsTest {
+class StudyViewTest {
 
     private User leader;
     private Study study;
@@ -45,20 +45,20 @@ class StudyViewsTest {
 
     @Test
     void 스터디_조회수_생성_성공() {
-        StudyViews studyViews = StudyViews.create(study, "1.1.1.1");
+        StudyView studyView = StudyView.create(study, "1.1.1.1");
 
-        Assertions.assertThat(studyViews.getStudy()).isNotNull();
-        Assertions.assertThat(studyViews.getIpAddress()).isEqualTo("1.1.1.1");
+        Assertions.assertThat(studyView.getStudy()).isNotNull();
+        Assertions.assertThat(studyView.getIpAddress()).isEqualTo("1.1.1.1");
     }
 
     @Test
     void 스터디_조회수_생성_실패__스터디가_널() {
-        assertThatIllegalArgumentException().isThrownBy(() -> StudyViews.create(null, "1.1.1.1"));
+        assertThatIllegalArgumentException().isThrownBy(() -> StudyView.create(null, "1.1.1.1"));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     void 스터디_조회수_생성_실패__IP가_공백_혹은_널(String ipAddress) {
-        assertThatIllegalArgumentException().isThrownBy(() -> StudyViews.create(study, ipAddress));
+        assertThatIllegalArgumentException().isThrownBy(() -> StudyView.create(study, ipAddress));
     }
 }

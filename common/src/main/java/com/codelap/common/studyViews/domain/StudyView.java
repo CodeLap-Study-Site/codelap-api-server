@@ -16,7 +16,7 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
 @Table(uniqueConstraints = {
         @UniqueConstraint(name = "uq_ipAddress", columnNames = "ipAddress"),
 })
-public class StudyViews {
+public class StudyView {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,15 +26,15 @@ public class StudyViews {
 
     private String ipAddress;
 
-    private StudyViews(Study study, String ipAddress) {
+    private StudyView(Study study, String ipAddress) {
         this.study = study;
         this.ipAddress = ipAddress;
     }
 
-    public static StudyViews create(Study study, String ipAddress) {
+    public static StudyView create(Study study, String ipAddress) {
         require(nonNull(study));
         require(isNotBlank(ipAddress));
 
-        return new StudyViews(study, ipAddress);
+        return new StudyView(study, ipAddress);
     }
 }
