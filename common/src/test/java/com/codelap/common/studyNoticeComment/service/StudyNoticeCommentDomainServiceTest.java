@@ -1,10 +1,11 @@
 package com.codelap.common.studyNoticeComment.service;
 
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyNeedCareer;
+import com.codelap.common.study.domain.StudyPeriod;
+import com.codelap.common.study.domain.TechStack;
 import com.codelap.common.studyNotice.domain.StudyNotice;
 import com.codelap.common.studyNotice.domain.StudyNoticeFile;
-import com.codelap.common.studyNotice.domain.StudyNoticeRepository;
-import com.codelap.common.studyNotice.service.StudyNoticeService;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeComment;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentRepository;
 import com.codelap.common.user.domain.User;
@@ -19,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.codelap.common.study.domain.Study.create;
@@ -31,14 +31,10 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 @Transactional
 @SpringBootTest
-public class StudyNoticeCommentDoaminServiceTest {
+public class StudyNoticeCommentDomainServiceTest {
 
     @Autowired
     private StudyNoticeCommentService studyNoticeCommentService;
-
-    @Autowired
-    private StudyRepository studyRepository;
-    private StudyNoticeService studyNoticeService;
 
     @Autowired
     private UserRepository userRepository;
@@ -47,13 +43,9 @@ public class StudyNoticeCommentDoaminServiceTest {
     private StudyNoticeCommentRepository studyNoticeCommentRepository;
 
     private StudyNotice studyNotice;
-    private User leader;
-
-    private User member;
-
     private Study study;
-
-    private StudyNoticeFile file;
+    private User leader;
+    private User member;
 
     @BeforeEach
     void setUp() {
@@ -63,27 +55,28 @@ public class StudyNoticeCommentDoaminServiceTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        List<TechStack> techStackList = Arrays.asList(Java, Spring);
+        List<TechStack> techStackList = List.of(Java, Spring);
 
-        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
-        StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 100L);
+        study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
+
         study.addMember(member);
 
+        StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 100L);
         studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
     }
 
     @Test
     void 스터디_공지_댓글_생성_성공() {
-        studyNoticeCommentService.create(studyNotice, member.getId(), "content");
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice, member.getId(), "content");
 
-        StudyNoticeComment studyNoticeComment = studyNoticeCommentRepository.findAll().get(0);
+        studyNoticeComment = studyNoticeCommentRepository.findById(studyNoticeComment.getId()).orElseThrow();
 
         assertThat(studyNoticeComment.getId()).isNotNull();
     }
 
     @ParameterizedTest
     @NullAndEmptySource
-    void 스터디_공지_댓글_생성_실패__댓글_내용이_널이거나_공백(String content){
+    void 스터디_공지_댓글_생성_실패__댓글_내용이_널이거나_공백(String content) {
         assertThatIllegalArgumentException().isThrownBy(() -> studyNoticeCommentService.create(studyNotice, member.getId(), content));
     }
 }
