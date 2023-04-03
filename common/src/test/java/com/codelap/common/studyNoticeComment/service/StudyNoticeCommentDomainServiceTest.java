@@ -1,6 +1,9 @@
 package com.codelap.common.studyNoticeComment.service;
 
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyNeedCareer;
+import com.codelap.common.study.domain.StudyPeriod;
+import com.codelap.common.study.domain.TechStack;
 import com.codelap.common.studyNotice.domain.StudyNotice;
 import com.codelap.common.studyNotice.domain.StudyNoticeFile;
 import com.codelap.common.studyNotice.domain.StudyNoticeRepository;
@@ -31,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 @Transactional
 @SpringBootTest
-public class StudyNoticeCommentDoaminServiceTest {
+public class StudyNoticeCommentDomainServiceTest {
 
     @Autowired
     private StudyNoticeCommentService studyNoticeCommentService;
@@ -47,9 +50,14 @@ public class StudyNoticeCommentDoaminServiceTest {
     private StudyNoticeCommentRepository studyNoticeCommentRepository;
 
     private StudyNotice studyNotice;
+    private Study study;
     private User leader;
 
     private User member;
+
+    private Study study;
+
+    private StudyNoticeFile file;
 
     @BeforeEach
     void setUp() {
@@ -59,12 +67,13 @@ public class StudyNoticeCommentDoaminServiceTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        List<TechStack> techStackList = Arrays.asList(Java, Spring);
+        List<TechStack> techStackList = List.of(Java, Spring);
 
-       Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
+        study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
+
+        study.addMember(member);
+
         StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 100L);
-       study.addMember(member);
-
         studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
     }
 
@@ -72,12 +81,14 @@ public class StudyNoticeCommentDoaminServiceTest {
     void 스터디_공지_댓글_생성_성공() {
         StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice, member.getId(), "content");
 
+        studyNoticeComment = studyNoticeCommentRepository.findById(studyNoticeComment.getId()).orElseThrow();
+
         assertThat(studyNoticeComment.getId()).isNotNull();
     }
 
     @ParameterizedTest
     @NullAndEmptySource
-    void 스터디_공지_댓글_생성_실패__댓글_내용이_널이거나_공백(String content){
+    void 스터디_공지_댓글_생성_실패__댓글_내용이_널이거나_공백(String content) {
         assertThatIllegalArgumentException().isThrownBy(() -> studyNoticeCommentService.create(studyNotice, member.getId(), content));
     }
 }
