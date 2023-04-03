@@ -1,4 +1,4 @@
-package com.codelap.common.studyViews.domain;
+package com.codelap.common.studyView.domain;
 
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
