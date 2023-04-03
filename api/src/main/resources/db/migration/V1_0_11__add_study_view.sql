@@ -7,7 +7,7 @@ create table study_view
 );
 
 alter table study_view
-    add constraint uq_ipAddress unique (ip_address);
+    add constraint uq_ip_address unique (ip_address);
 
 alter table study_view
     add constraint FK6r86ddequ8k2wyr77cac4tpga foreign key (study_id) references study (id);

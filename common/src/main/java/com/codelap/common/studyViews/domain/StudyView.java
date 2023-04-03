@@ -14,7 +14,7 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {
-        @UniqueConstraint(name = "uq_ipAddress", columnNames = "ipAddress"),
+        @UniqueConstraint(name = "uq_ip_address", columnNames = "ipAddress"),
 })
 public class StudyView {
     @Id
