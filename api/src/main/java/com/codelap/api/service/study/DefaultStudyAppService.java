@@ -1,5 +1,6 @@
 package com.codelap.api.service.study;
 
+import com.codelap.api.service.study.dto.GetAllStudiesStudyDto;
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
@@ -22,5 +23,10 @@ public class DefaultStudyAppService implements StudyAppService {
         User user = userRepository.findById(userId).orElseThrow();
 
         return studyQueryAppService.getStudies(user);
+    }
+
+    @Override
+    public List<GetAllStudiesStudyDto> getAllStudies() {
+        return studyQueryAppService.getAllStudies();
     }
 }
