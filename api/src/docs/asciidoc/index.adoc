@@ -331,3 +331,18 @@ include::{snippets}/study-notice/create/http-response.adoc[]
 
 === ResponseBody
 include::{snippets}/study-notice/create/response-body.adoc[]
+
+
+== 스터디 조회수 생성 API
+
+=== Request
+include::{snippets}/study-view/create/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study-view/create/request-body.adoc[]
+
+=== Response
+include::{snippets}/study-view/create/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study-view/create/response-body.adoc[]
