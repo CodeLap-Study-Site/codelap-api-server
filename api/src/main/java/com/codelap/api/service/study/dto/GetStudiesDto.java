@@ -11,5 +11,6 @@ public class GetStudiesDto {
             String name,
             OffsetDateTime createdAt,
             StudyStatus status
-    ){}
+    ) {
+    }
 }
