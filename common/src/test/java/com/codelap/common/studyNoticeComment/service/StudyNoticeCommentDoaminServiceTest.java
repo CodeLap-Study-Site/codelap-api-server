@@ -51,10 +51,6 @@ public class StudyNoticeCommentDoaminServiceTest {
 
     private User member;
 
-    private Study study;
-
-    private StudyNoticeFile file;
-
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
@@ -65,18 +61,16 @@ public class StudyNoticeCommentDoaminServiceTest {
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
         List<TechStack> techStackList = Arrays.asList(Java, Spring);
 
-        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
+       Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
         StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 100L);
-        study.addMember(member);
+       study.addMember(member);
 
         studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
     }
 
     @Test
     void 스터디_공지_댓글_생성_성공() {
-        studyNoticeCommentService.create(studyNotice, member.getId(), "content");
-
-        StudyNoticeComment studyNoticeComment = studyNoticeCommentRepository.findAll().get(0);
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice, member.getId(), "content");
 
         assertThat(studyNoticeComment.getId()).isNotNull();
     }
