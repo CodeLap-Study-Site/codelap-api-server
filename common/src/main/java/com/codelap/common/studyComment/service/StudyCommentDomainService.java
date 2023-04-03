@@ -15,7 +15,7 @@ import static com.codelap.common.support.Preconditions.actorValidate;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class StudyCommentDomainService implements StudyCommentService{
+public class StudyCommentDomainService implements StudyCommentService {
 
     private final StudyRepository studyRepository;
 

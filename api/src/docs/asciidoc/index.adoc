@@ -331,3 +331,18 @@ include::{snippets}/study-notice/create/http-response.adoc[]
 
 === ResponseBody
 include::{snippets}/study-notice/create/response-body.adoc[]
+
+
+== 스터디공지 댓글 생성 API
+
+=== Request
+include::{snippets}/study-notice-comment/create/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study-notice-comment/create/request-body.adoc[]
+
+=== Response
+include::{snippets}/study-notice-comment/create/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study-notice-comment/create/response-body.adoc[]
