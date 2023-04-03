@@ -36,12 +36,9 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 @SpringBootTest
 public class StudyNoticeCommentDomainServiceTest {
 
-    @Autowired
-    private StudyNoticeCommentService studyNoticeCommentService;
 
     @Autowired
-    private StudyRepository studyRepository;
-    private StudyNoticeService studyNoticeService;
+    private StudyNoticeCommentService studyNoticeCommentService;
 
     @Autowired
     private UserRepository userRepository;
@@ -52,12 +49,7 @@ public class StudyNoticeCommentDomainServiceTest {
     private StudyNotice studyNotice;
     private Study study;
     private User leader;
-
     private User member;
-
-    private Study study;
-
-    private StudyNoticeFile file;
 
     @BeforeEach
     void setUp() {
