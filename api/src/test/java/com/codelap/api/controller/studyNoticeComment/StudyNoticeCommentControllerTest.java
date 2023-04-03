@@ -1,6 +1,5 @@
 package com.codelap.api.controller.studyNoticeComment;
 
-import com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentCreateDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.*;
 import com.codelap.common.studyNotice.domain.StudyNotice;
@@ -10,10 +9,6 @@ import com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentRepository
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.CREATED;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +21,11 @@ import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeComme
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
+import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.CREATED;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -68,7 +64,7 @@ class StudyNoticeCommentControllerTest extends ApiTest {
         StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 100L);
         studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
 
-       studyNoticeComment =  studyNoticeCommentRepository.save(StudyNoticeComment.create(studyNotice, member, "content"));
+        studyNoticeComment = studyNoticeCommentRepository.save(StudyNoticeComment.create(studyNotice, member, "content"));
     }
 
     @Test

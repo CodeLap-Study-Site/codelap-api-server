@@ -12,13 +12,14 @@ public class StudyConfirmationreConfirmDto {
             String title,
             String content,
             List<StudyConfirmationreConfirmRequestFileDto> files
-    ){
+    ) {
         public List<StudyConfirmationFile> toStudyreConfirmationFiles() {
-        return files.stream()
-                .map(StudyConfirmationreConfirmRequestFileDto::toStudyConfirmationFile)
-                .collect(Collectors.toList());
+            return files.stream()
+                    .map(StudyConfirmationreConfirmRequestFileDto::toStudyConfirmationFile)
+                    .collect(Collectors.toList());
+        }
     }
-    }
+
     public record StudyConfirmationreConfirmRequestFileDto(
             String savedName,
             String originalName,

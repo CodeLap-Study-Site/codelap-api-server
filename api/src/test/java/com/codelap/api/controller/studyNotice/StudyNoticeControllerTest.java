@@ -58,7 +58,7 @@ class StudyNoticeControllerTest extends ApiTest {
     @Test
     void 스터디_공지_생성_성공() throws Exception {
         StudyNoticeCreateRequestFileDto file = new StudyNoticeCreateRequestFileDto("savedName", "originalName", 100L);
-        StudyNoticeCreateRequest req = new StudyNoticeCreateRequest(study.getId(), leader.getId(),"title", "contents", List.of(file));
+        StudyNoticeCreateRequest req = new StudyNoticeCreateRequest(study.getId(), leader.getId(), "title", "contents", List.of(file));
 
         mockMvc.perform(post("/study-notice")
                         .contentType(APPLICATION_JSON)

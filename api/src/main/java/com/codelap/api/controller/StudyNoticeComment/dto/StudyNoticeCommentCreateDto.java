@@ -1,8 +1,6 @@
 package com.codelap.api.controller.StudyNoticeComment.dto;
 
-import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto;
 import com.codelap.common.study.domain.Study;
-import com.codelap.common.studyConfirmation.domain.StudyConfirmationFile;
 import com.codelap.common.studyNotice.domain.StudyNotice;
 import com.codelap.common.studyNotice.domain.StudyNoticeFile;
 
@@ -14,7 +12,7 @@ public class StudyNoticeCommentCreateDto {
             StudyNoticeCommentCreateRequestStudyNoticeDto studyNotice,
             Long userId,
             String content
-    ){
+    ) {
     }
 
     public record StudyNoticeCommentCreateRequestStudyNoticeDto(
@@ -23,14 +21,15 @@ public class StudyNoticeCommentCreateDto {
             String contents,
             List<StudyNoticeCommentCreateRequestFileDto> files
 
-    ){
-        public List<StudyNoticeFile> toStudyNoticeFile(){
+    ) {
+        public List<StudyNoticeFile> toStudyNoticeFile() {
             return files.stream()
                     .map(StudyNoticeCommentCreateRequestFileDto::toStudyNoticeFile)
                     .collect(Collectors.toList());
         }
+
         public StudyNotice toStudyNotice() {
-            return  StudyNotice.create(study, title, contents, toStudyNoticeFile());
+            return StudyNotice.create(study, title, contents, toStudyNoticeFile());
         }
     }
 

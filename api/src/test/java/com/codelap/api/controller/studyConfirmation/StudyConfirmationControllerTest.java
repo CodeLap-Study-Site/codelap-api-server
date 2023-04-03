@@ -1,7 +1,5 @@
 package com.codelap.api.controller.studyConfirmation;
 
-import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto;
-import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.*;
 import com.codelap.common.studyConfirmation.domain.StudyConfirmation;
@@ -14,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.nio.file.Files;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -22,10 +19,9 @@ import java.util.List;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationConfirmDto.StudyConfirmationConfirmRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequestFileDto;
-import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.*;
-import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto.*;
-import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationDeleteDto.StudyConfirmationDeleteRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.StudyConfirmationRejectRequest;
+import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto.StudyConfirmationreConfirmRequest;
+import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto.StudyConfirmationreConfirmRequestFileDto;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
@@ -34,7 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -128,7 +123,7 @@ class StudyConfirmationControllerTest extends ApiTest {
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
-        StudyConfirmationRejectRequest req = new StudyConfirmationRejectRequest(studyConfirmation.getId(),leader.getId());
+        StudyConfirmationRejectRequest req = new StudyConfirmationRejectRequest(studyConfirmation.getId(), leader.getId());
 
         mockMvc.perform(post("/study-confirmation/reject")
                         .contentType(APPLICATION_JSON)
@@ -150,7 +145,7 @@ class StudyConfirmationControllerTest extends ApiTest {
         StudyConfirmation studyConfirmation = studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "content", List.of(file)));
 
         StudyConfirmationreConfirmRequestFileDto refile = new StudyConfirmationreConfirmRequestFileDto("savedName", "originalName", 100L);
-        StudyConfirmationreConfirmRequest req =  new StudyConfirmationreConfirmRequest(studyConfirmation.getId(), member.getId(), "title", "content", List.of(refile));
+        StudyConfirmationreConfirmRequest req = new StudyConfirmationreConfirmRequest(studyConfirmation.getId(), member.getId(), "title", "content", List.of(refile));
 
         mockMvc.perform(post("/study-confirmation/reconfirm")
                         .contentType(APPLICATION_JSON)
