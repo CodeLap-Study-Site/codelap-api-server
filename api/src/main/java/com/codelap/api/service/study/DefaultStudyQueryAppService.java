@@ -81,6 +81,8 @@ public class DefaultStudyQueryAppService implements StudyQueryAppService {
                 )
                 .from(QStudy.study)
                 .where(QStudy.study.status.ne(DELETED))
+                .leftJoin(QStudy.study.techStackList, QStudyTechStack.studyTechStack)
                 .fetch();
+
     }
 }
