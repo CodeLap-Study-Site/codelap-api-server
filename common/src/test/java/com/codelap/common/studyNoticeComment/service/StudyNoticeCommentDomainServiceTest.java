@@ -81,4 +81,25 @@ public class StudyNoticeCommentDomainServiceTest {
     void 스터디_공지_댓글_생성_실패__댓글_내용이_널이거나_공백(String content) {
         assertThatIllegalArgumentException().isThrownBy(() -> studyNoticeCommentService.create(studyNotice, member.getId(), content));
     }
+
+    @Test
+    void 스터디_공지_댓글_삭제_성공() {
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice, member.getId(), "content");
+
+        studyNoticeCommentService.delete(studyNoticeComment.getId(), member.getId());
+
+        studyNoticeComment = studyNoticeCommentRepository.findById(studyNoticeComment.getId()).orElseThrow();
+
+        assertThat(studyNoticeComment.getStatus()).isEqualTo(DELETED);
+    }
+
+    @Test
+    void 스터디_공지_댓글_삭제_실패__작성한_유저가_아님() {
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice, member.getId(), "content");
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeUser = userRepository.save(User.create("fakeUser", 10, career, "abcd", "fakeUser"));
+
+        assertThatActorValidateCodeLapException().isThrownBy(() -> studyNoticeCommentService.delete(studyNoticeComment.getId(), fakeUser.getId()));
+    }
 }

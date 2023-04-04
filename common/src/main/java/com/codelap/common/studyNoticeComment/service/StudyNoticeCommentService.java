@@ -6,4 +6,6 @@ import com.codelap.common.studyNoticeComment.domain.StudyNoticeComment;
 public interface StudyNoticeCommentService {
 
     StudyNoticeComment create(StudyNotice studyNotice, Long userId, String content);
+
+    void delete(Long StudyNoticeCommentId, Long userId);
 }

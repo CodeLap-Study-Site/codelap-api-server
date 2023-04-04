@@ -123,7 +123,7 @@ class StudyConfirmationControllerTest extends ApiTest {
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
-        StudyConfirmationRejectRequest req = new StudyConfirmationRejectRequest(studyConfirmation.getId(),leader.getId());
+        StudyConfirmationRejectRequest req = new StudyConfirmationRejectRequest(studyConfirmation.getId(), leader.getId());
 
         mockMvc.perform(post("/study-confirmation/reject")
                         .contentType(APPLICATION_JSON)
@@ -145,7 +145,7 @@ class StudyConfirmationControllerTest extends ApiTest {
         StudyConfirmation studyConfirmation = studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "content", List.of(file)));
 
         StudyConfirmationreConfirmRequestFileDto refile = new StudyConfirmationreConfirmRequestFileDto("savedName", "originalName", 100L);
-        StudyConfirmationreConfirmRequest req =  new StudyConfirmationreConfirmRequest(studyConfirmation.getId(), member.getId(), "title", "content", List.of(refile));
+        StudyConfirmationreConfirmRequest req = new StudyConfirmationreConfirmRequest(studyConfirmation.getId(), member.getId(), "title", "content", List.of(refile));
 
         mockMvc.perform(post("/study-confirmation/reconfirm")
                         .contentType(APPLICATION_JSON)

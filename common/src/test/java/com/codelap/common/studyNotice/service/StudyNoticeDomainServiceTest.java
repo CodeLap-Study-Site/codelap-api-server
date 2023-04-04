@@ -29,7 +29,7 @@ class StudyNoticeDomainServiceTest {
 
     @Autowired
     private StudyNoticeService studyNoticeService;
-    
+
     @Autowired
     private StudyRepository studyRepository;
 
@@ -38,7 +38,7 @@ class StudyNoticeDomainServiceTest {
 
     @Autowired
     private StudyNoticeRepository studyNoticeRepository;
-    
+
     private User leader;
     private Study study;
     private StudyNoticeFile file;

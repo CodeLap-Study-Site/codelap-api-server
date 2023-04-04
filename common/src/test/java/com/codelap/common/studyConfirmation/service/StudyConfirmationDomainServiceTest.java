@@ -139,7 +139,7 @@ class StudyConfirmationDomainServiceTest {
     }
 
     @Test
-    void 스터디_인증_재인증_실패__사용자가_인증의_주인이_아님(){
+    void 스터디_인증_재인증_실패__사용자가_인증의_주인이_아님() {
         studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);

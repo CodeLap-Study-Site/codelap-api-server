@@ -43,6 +43,7 @@ class StudyDomainServiceTest {
     private User leader;
     private Study study;
     private List<StudyTechStack> techStackList;
+
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);

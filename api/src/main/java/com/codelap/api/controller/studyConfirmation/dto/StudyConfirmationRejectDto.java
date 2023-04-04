@@ -4,6 +4,6 @@ public class StudyConfirmationRejectDto {
     public record StudyConfirmationRejectRequest(
             Long studyConfirmId,
             Long leaderId
-    ){
+    ) {
     }
 }
