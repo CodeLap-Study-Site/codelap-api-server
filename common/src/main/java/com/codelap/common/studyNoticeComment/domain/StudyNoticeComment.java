@@ -38,7 +38,9 @@ public class StudyNoticeComment {
     @Setter
     @Enumerated(STRING)
     private StudyNoticeCommentStatus status = CREATED;
-
+    public boolean isUser(User user) {
+        return this.user == user;
+    }
     private StudyNoticeComment(User user, String content) {
         this.user = user;
         this.content = content;
