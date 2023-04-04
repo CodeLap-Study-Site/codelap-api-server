@@ -18,14 +18,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentCreateDto.*;
+import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentDeleteDto.StudyNoticeCommentDeleteRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.CREATED;
+import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.DELETED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -90,6 +93,24 @@ class StudyNoticeCommentControllerTest extends ApiTest {
         assertThat(foundStudyNoticeComment.getContent()).isEqualTo(req.content());
         assertThat(foundStudyNoticeComment.getCreateAt()).isNotNull();
         assertThat(foundStudyNoticeComment.getStatus()).isEqualTo(CREATED);
+    }
+
+    @Test
+    void 스터디_공지_댓글_삭제_성공() throws Exception {
+        StudyNoticeCommentDeleteRequest req = new StudyNoticeCommentDeleteRequest(studyNoticeComment.getId(), member.getId());
+
+        mockMvc.perform(delete("/study-notice-comment")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study-notice-comment/delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        StudyNoticeComment foundStudyNoticeComment = studyNoticeCommentRepository.findById(studyNoticeComment.getId()).orElseThrow();
+        assertThat(foundStudyNoticeComment.getStatus()).isEqualTo(DELETED);
     }
 }
 

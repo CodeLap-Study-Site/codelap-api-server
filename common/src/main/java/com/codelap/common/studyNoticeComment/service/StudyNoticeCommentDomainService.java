@@ -36,7 +36,6 @@ public class StudyNoticeCommentDomainService implements StudyNoticeCommentServic
        StudyNoticeComment studyNoticeComment = studyNoticeCommentRepository.findById(StudyNoticeCommentId).orElseThrow();
 
        actorValidate(studyNoticeComment.isUser(user));
-
        studyNoticeComment.delete();
     }
 }
