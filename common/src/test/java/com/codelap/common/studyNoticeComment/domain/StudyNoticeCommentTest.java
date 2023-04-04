@@ -11,6 +11,7 @@ import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.time.OffsetDateTime;
@@ -22,13 +23,16 @@ import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.CREATED;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.DELETED;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 
 class StudyNoticeCommentTest {
 
     private User leader;
     private StudyNotice studyNotice;
+
+    private StudyNoticeComment studyNoticeComment;
 
     @BeforeEach
     void setUp() {
@@ -69,5 +73,24 @@ class StudyNoticeCommentTest {
     @NullAndEmptySource
     void 스터디_공지_댓글_생성_실패__댓글내용이_널이거나_공백(String content) {
         assertThatIllegalArgumentException().isThrownBy(() -> StudyNoticeComment.create(studyNotice, leader, content));
+    }
+
+    @Test
+    void 스터디_공지_댓글_삭제_성공() {
+        StudyNoticeComment studyNoticeComment = StudyNoticeComment.create(studyNotice, leader, "content");
+
+        studyNoticeComment.delete();
+
+        assertThat(studyNoticeComment.getStatus()).isEqualTo(DELETED);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyNoticeCommentStatus.class, names = {"DELETED"}, mode = INCLUDE)
+    void 스터디_공지_댓글_삭제_실패__이미_삭제된_상태(StudyNoticeCommentStatus status) {
+        StudyNoticeComment studyNoticeComment = StudyNoticeComment.create(studyNotice, leader, "content");
+
+        studyNoticeComment.setStatus(status);
+
+        assertThatIllegalStateException().isThrownBy(() -> studyNoticeComment.delete());
     }
 }
