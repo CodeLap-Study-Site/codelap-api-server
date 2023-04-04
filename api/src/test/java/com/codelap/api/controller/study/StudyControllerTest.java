@@ -26,11 +26,9 @@ import static com.codelap.api.controller.study.dto.StudyOpenDto.StudyOpenRequest
 import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedRequest;
 import static com.codelap.api.controller.study.dto.StudyRemoveMemberDto.StudyRemoveMemberRequest;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
-import static com.codelap.common.study.domain.StudyDifficulty.HARD;
-import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
+import static com.codelap.common.study.domain.StudyDifficulty.*;
 import static com.codelap.common.study.domain.StudyStatus.*;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
+import static com.codelap.common.support.TechStack.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -48,7 +46,7 @@ class StudyControllerTest extends ApiTest {
     StudyRepository studyRepository;
     private User leader;
     private Study study;
-    private List<TechStack> techStackList;
+    private List<StudyTechStack> techStackList;
 
     @BeforeEach
     void setUp() {
@@ -57,7 +55,7 @@ class StudyControllerTest extends ApiTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Java, Spring);
+        techStackList = Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java));
 
         study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList));
     }
@@ -305,6 +303,55 @@ class StudyControllerTest extends ApiTest {
                             jsonPath("$.studies.[" + index + "].name").value(indexStudy.getName()),
                             jsonPath("$.studies.[" + index + "].createdAt").isNotEmpty(),
                             jsonPath("$.studies.[" + index + "].status").value(indexStudy.getStatus().name())
+                    ));
+                })
+                .flatMap(entry -> entry.getValue().stream())
+                .toArray(ResultMatcher[]::new);
+    }
+
+    @Test
+    void 모든_스터디_목록_조회_성공() throws Exception {
+        UserCareer career = UserCareer.create("직무", 1);
+        User leader = userRepository.save(User.create("name", 10, career, "abcd", "leader"));
+
+        모든_스터디_목록_조회_스터디_생성();
+
+        mockMvc.perform(get("/study/view-all"))
+                .andExpect(status().isOk())
+                .andExpectAll(모든_스터디_조회_검증())
+                .andDo(document("study/view-all",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+    }
+
+    private void 모든_스터디_목록_조회_스터디_생성() {
+        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+
+        Study study1 = studyRepository.save(Study.create("팀1", "설명1", 4, EASY, period, needCareer, leader, List.of(new StudyTechStack(Spring), new StudyTechStack(Java))));
+        Study study2 = studyRepository.save(Study.create("팀2", "설명2", 5, NORMAL, period, needCareer, leader, List.of(new StudyTechStack(Spring), new StudyTechStack(Java))));
+        Study study3 = studyRepository.save(Study.create("팀3", "설명3", 6, HARD, period, needCareer, leader, List.of(new StudyTechStack(React), new StudyTechStack(JavaScript), new StudyTechStack(Python))));
+
+        Study study = studyRepository.save(Study.create("팀4", "설명4", 6, HARD, period, needCareer, leader, List.of(new StudyTechStack(Docker))));
+
+        study.delete();
+    }
+
+    private ResultMatcher[] 모든_스터디_조회_검증() {
+        List<Study> studies = studyRepository.findByLeader(leader)
+                .stream()
+                .filter(it -> it.getStatus() != DELETED)
+                .collect(Collectors.toList());
+
+        return IntStream.range(0, studies.size())
+                .mapToObj(index -> {
+                    Study indexStudy = studies.get(index);
+
+                    return Map.entry(index, List.of(
+                            jsonPath("$.studies.[" + index + "].id").value(indexStudy.getId()),
+                            jsonPath("$.studies.[" + index + "].name").value(indexStudy.getName()),
+                            jsonPath("$.studies.[" + index + "].leader").value(indexStudy.getLeader().getName())
                     ));
                 })
                 .flatMap(entry -> entry.getValue().stream())

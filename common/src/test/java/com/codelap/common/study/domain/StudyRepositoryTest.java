@@ -16,8 +16,8 @@ import java.util.List;
 import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.OPENED;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
@@ -43,7 +43,7 @@ class StudyRepositoryTest {
     void 스터디_생성_성공() {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        List<TechStack> techStackList = Arrays.asList(Java, Spring);
+        List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java));
 
         Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
 

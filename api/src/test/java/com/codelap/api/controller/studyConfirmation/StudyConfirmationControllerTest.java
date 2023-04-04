@@ -1,7 +1,5 @@
 package com.codelap.api.controller.studyConfirmation;
 
-import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto;
-import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.*;
 import com.codelap.common.studyConfirmation.domain.StudyConfirmation;
@@ -14,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.nio.file.Files;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -22,19 +19,17 @@ import java.util.List;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationConfirmDto.StudyConfirmationConfirmRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequestFileDto;
-import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.*;
-import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto.*;
-import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationDeleteDto.StudyConfirmationDeleteRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.StudyConfirmationRejectRequest;
+import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto.StudyConfirmationreConfirmRequest;
+import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto.StudyConfirmationreConfirmRequestFileDto;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -52,7 +47,7 @@ class StudyConfirmationControllerTest extends ApiTest {
     private User leader;
     private User member;
     private Study study;
-    private List<TechStack> techStackList;
+    private List<StudyTechStack> techStackList;
 
 
     @BeforeEach
@@ -62,7 +57,7 @@ class StudyConfirmationControllerTest extends ApiTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Java, Spring);
+        techStackList = Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java));
 
         study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader, techStackList));
 

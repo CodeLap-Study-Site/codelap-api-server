@@ -1,15 +1,17 @@
 package com.codelap.api.service.study.dto;
 
 import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.TechStack;
+import com.codelap.common.support.TechStack;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
 
 @NoArgsConstructor
 @Getter
+@Setter
 @ToString
 public class GetAllStudiesStudyDto {
     private Long id;

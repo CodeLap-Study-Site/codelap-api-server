@@ -8,6 +8,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+      metadata-builder-contributor: com.codelap.api.service.support.MySqlCustomDialect
     properties:
       hibernate:
         format_sql: false

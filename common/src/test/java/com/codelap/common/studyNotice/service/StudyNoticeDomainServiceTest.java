@@ -18,9 +18,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
@@ -50,7 +50,7 @@ class StudyNoticeDomainServiceTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        List<TechStack> techStackList = Arrays.asList(Java, Spring);
+        List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java));
 
         study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList));
 

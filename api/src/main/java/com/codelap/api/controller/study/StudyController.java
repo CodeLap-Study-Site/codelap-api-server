@@ -4,12 +4,15 @@ import com.codelap.api.controller.study.dto.GetMyStudiesDto.GetMyStudiesResponse
 import com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import com.codelap.api.controller.study.dto.StudyLeaveDto.StudyLeaveRequest;
 import com.codelap.api.service.study.StudyAppService;
+import com.codelap.api.service.study.dto.GetAllStudiesStudyDto;
 import com.codelap.common.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.codelap.api.controller.study.dto.GetStudyCardDto.GetStudyCardResponse;
 import static com.codelap.api.controller.study.dto.StudyCreateDto.StudyCreateRequest;
 import static com.codelap.api.controller.study.dto.StudyDeleteDto.StudyDeleteRequest;
 import static com.codelap.api.controller.study.dto.StudyOpenDto.StudyOpenRequest;
@@ -91,5 +94,27 @@ public class StudyController {
         List<GetStudiesStudyDto> studies = studyAppService.getStudies(userId);
 
         return GetMyStudiesResponse.create(studies);
+    }
+
+    @GetMapping("view-all")
+    public GetStudyCardResponse findStudyCardList(
+
+    ) {
+        List<GetAllStudiesStudyDto> allStudies = studyAppService.getAllStudies()
+                .stream()
+                .collect(Collectors.groupingBy(GetAllStudiesStudyDto::getId))
+                .values()
+                .stream()
+                .map(list -> {
+                    GetAllStudiesStudyDto dto = list.get(0);
+                    dto.setTechStackList(list.stream()
+                            .flatMap(s -> s.getTechStackList().stream())
+                            .distinct()
+                            .collect(Collectors.toList()));
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return GetStudyCardResponse.create(allStudies);
     }
 }

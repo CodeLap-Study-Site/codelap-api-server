@@ -17,9 +17,9 @@ import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
-import static com.codelap.common.study.domain.TechStack.*;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatCodeLapException;
 import static com.codelap.common.support.ErrorCode.*;
+import static com.codelap.common.support.TechStack.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
@@ -31,8 +31,11 @@ class StudyTest {
 
     private StudyPeriod period;
     private StudyNeedCareer needCareer;
-    private List<TechStack> techStackList;
-
+    private List<StudyTechStack> techStackList;
+    StudyTechStack spring = new StudyTechStack(Spring);
+    StudyTechStack java = new StudyTechStack(Java);
+    StudyTechStack swift = new StudyTechStack(Swift);
+    StudyTechStack svelte = new StudyTechStack(Svelte);
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
@@ -41,7 +44,9 @@ class StudyTest {
         period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         needCareer = StudyNeedCareer.create("직무", 1);
 
-        techStackList = Arrays.asList(Java, Spring);
+
+
+        techStackList = Arrays.asList(spring, java);
 
         study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
     }
@@ -60,8 +65,8 @@ class StudyTest {
         assertThat(study.getMembers()).containsExactly(leader);
         assertThat(study.getStatus()).isEqualTo(OPENED);
         assertThat(study.getCreatedAt()).isNotNull();
-        assertThat(study.getTechStackList()).contains(Spring);
-        assertThat(study.getTechStackList()).contains(Java);
+        assertThat(study.getTechStackList()).contains(spring);
+        assertThat(study.getTechStackList()).contains(java);
     }
 
     @ParameterizedTest
@@ -110,7 +115,7 @@ class StudyTest {
     void 스터디_수정_성공() {
         StudyPeriod updatePeriod = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer updateNeedCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Swift, Svelte);
+        techStackList = Arrays.asList(swift, svelte);
 
         study.update("updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer, techStackList);
 
@@ -120,8 +125,8 @@ class StudyTest {
         assertThat(study.getDifficulty()).isEqualTo(HARD);
         assertThat(study.getPeriod()).isSameAs(updatePeriod);
         assertThat(study.getNeedCareer()).isSameAs(updateNeedCareer);
-        assertThat(study.getTechStackList()).contains(Swift);
-        assertThat(study.getTechStackList()).contains(Svelte);
+        assertThat(study.getTechStackList()).contains(swift);
+        assertThat(study.getTechStackList()).contains(svelte);
     }
 
     @ParameterizedTest
@@ -129,7 +134,7 @@ class StudyTest {
     void 스터디_수정_실패__이름이_공백_혹은_널(String name) {
         StudyPeriod updatePeriod = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer updateNeedCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Swift, Svelte);
+        techStackList = Arrays.asList(new StudyTechStack(Swift), new StudyTechStack(Svelte));
 
         assertThatIllegalArgumentException().isThrownBy(() -> study.update(name, "설명", 4, NORMAL, updatePeriod, updateNeedCareer, techStackList));
     }
@@ -139,7 +144,7 @@ class StudyTest {
     void 스터디_수정_실패__설명이_공백_혹은_널(String info) {
         StudyPeriod updatePeriod = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer updateNeedCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Swift, Svelte);
+        techStackList = Arrays.asList(new StudyTechStack(Swift), new StudyTechStack(Svelte));
 
         assertThatIllegalArgumentException().isThrownBy(() -> study.update("팀", info, 4, NORMAL, updatePeriod, updateNeedCareer, techStackList));
     }
@@ -148,7 +153,7 @@ class StudyTest {
     void 스터디_수정_실패__최대회원수가_최소값_보다_작음() {
         StudyPeriod updatePeriod = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer updateNeedCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Swift, Svelte);
+        techStackList = Arrays.asList(new StudyTechStack(Swift), new StudyTechStack(Svelte));
 
         assertThatCodeLapException(INVALID_MEMBER_SIZE).isThrownBy(() -> study.update("팀", "설명", MIN_MEMBERS_SIZE - 1, NORMAL, updatePeriod, updateNeedCareer, techStackList));
     }
@@ -157,7 +162,7 @@ class StudyTest {
     void 스터디_수정_실패__난이도가_널() {
         StudyPeriod updatePeriod = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer updateNeedCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Swift, Svelte);
+        techStackList = Arrays.asList(new StudyTechStack(Swift), new StudyTechStack(Svelte));
 
         assertThatIllegalArgumentException().isThrownBy(() -> study.update("팀", "설명", 4, null, updatePeriod, updateNeedCareer, techStackList));
     }
@@ -165,7 +170,7 @@ class StudyTest {
     @Test
     void 스터디_수정_실패__경력이_널() {
         StudyNeedCareer updateNeedCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Swift, Svelte);
+        techStackList = Arrays.asList(new StudyTechStack(Swift), new StudyTechStack(Svelte));
 
         assertThatIllegalArgumentException().isThrownBy(() -> study.update("팀", "설명", 4, NORMAL, null, updateNeedCareer, techStackList));
     }
@@ -173,7 +178,7 @@ class StudyTest {
     @Test
     void 스터디_수정_실패__직무가_널() {
         StudyPeriod updatePeriod = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        techStackList = Arrays.asList(Swift, Svelte);
+        techStackList = Arrays.asList(new StudyTechStack(Swift), new StudyTechStack(Svelte));
 
         assertThatIllegalArgumentException().isThrownBy(() -> study.update("팀", "설명", 4, NORMAL, updatePeriod, null, techStackList));
     }
@@ -192,7 +197,7 @@ class StudyTest {
 
         StudyPeriod updatePeriod = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer updateNeedCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Swift, Svelte);
+        techStackList = Arrays.asList(new StudyTechStack(Swift), new StudyTechStack(Svelte));
 
         assertThatIllegalStateException().isThrownBy(() -> study.update("updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer, techStackList));
     }

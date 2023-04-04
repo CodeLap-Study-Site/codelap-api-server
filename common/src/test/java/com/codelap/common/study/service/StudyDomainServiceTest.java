@@ -19,11 +19,11 @@ import java.util.List;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatCodeLapException;
 import static com.codelap.common.support.ErrorCode.ANOTHER_EXISTED_MEMBER;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 
@@ -42,7 +42,7 @@ class StudyDomainServiceTest {
 
     private User leader;
     private Study study;
-    private List<TechStack> techStackList;
+    private List<StudyTechStack> techStackList;
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
@@ -50,7 +50,7 @@ class StudyDomainServiceTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Java, Spring);
+        techStackList = Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java));
 
         study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
         study = studyRepository.save(study);

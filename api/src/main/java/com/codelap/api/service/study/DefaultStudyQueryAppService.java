@@ -4,6 +4,7 @@ import com.codelap.api.service.study.dto.GetAllStudiesStudyDto;
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
 import com.codelap.common.bookmark.domain.QBookmark;
 import com.codelap.common.study.domain.QStudy;
+import com.codelap.common.study.domain.QStudyTechStack;
 import com.codelap.common.studyComment.domain.QStudyComment;
 import com.codelap.common.studyView.domain.QStudyView;
 import com.codelap.common.user.domain.User;
@@ -46,9 +47,7 @@ public class DefaultStudyQueryAppService implements StudyQueryAppService {
     }
 
     @Override
-    public List<GetAllStudiesStudyDto> getAllStudies() {
-
-
+    public List<GetAllStudiesStudyDto> getAllStudies(){
         return queryFactory
                 .select(
                         constructor(
@@ -77,7 +76,7 @@ public class DefaultStudyQueryAppService implements StudyQueryAppService {
                                 ),
                                 QStudy.study.members.size(),
                                 QStudy.study.maxMembersSize,
-                                list(QStudy.study.techStackList)
+                                list(QStudyTechStack.studyTechStack.techStack)
                         )
                 )
                 .from(QStudy.study)

@@ -1,8 +1,5 @@
-package com.codelap.common.study.domain;
+package com.codelap.common.support;
 
-import lombok.Getter;
-
-@Getter
 public enum TechStack {
     JavaScript,
     TypeScript,

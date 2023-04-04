@@ -20,9 +20,9 @@ import static com.codelap.api.controller.studyRequest.dto.StudyRequestCancelDto.
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestCreateDto.StudyRequestCreateRequest;
 import static com.codelap.api.controller.studyRequest.dto.StudyRequestRejectDto.StudyRequestRejectRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.*;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -45,7 +45,7 @@ class StudyRequestControllerTest extends ApiTest {
     private User user;
     private Study study;
     private StudyRequest studyRequest;
-    private List<TechStack> techStackList;
+    private List<StudyTechStack> techStackList;
 
     @BeforeEach
     void setUp() {
@@ -54,7 +54,7 @@ class StudyRequestControllerTest extends ApiTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Java, Spring);
+        techStackList = Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java));
 
         study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader, techStackList));
 

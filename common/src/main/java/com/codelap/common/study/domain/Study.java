@@ -35,8 +35,7 @@ public class Study {
     private int maxMembersSize;
 
     @ElementCollection
-    @Enumerated(STRING)
-    private List<TechStack> techStackList;
+    private List<StudyTechStack> techStackList;
 
     @Enumerated(STRING)
     private StudyDifficulty difficulty;
@@ -73,7 +72,7 @@ public class Study {
         return this.members.size() == 1;
     }
 
-    private Study(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader, List<TechStack> techStackList) {
+    private Study(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader, List<StudyTechStack> techStackList) {
         this.name = name;
         this.info = info;
         this.maxMembersSize = maxMembersSize;
@@ -85,7 +84,7 @@ public class Study {
         this.techStackList = techStackList;
     }
 
-    public static Study create(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader, List<TechStack> techStackList) {
+    public static Study create(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader, List<StudyTechStack> techStackList) {
         require(Strings.isNotBlank(name));
         require(Strings.isNotBlank(info));
         require(nonNull(difficulty));
@@ -98,7 +97,7 @@ public class Study {
         return new Study(name, info, maxMembersSize, difficulty, period, needCareer, leader, techStackList);
     }
 
-    public void update(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<TechStack> techStackList) {
+    public void update(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<StudyTechStack> techStackList) {
         require(Strings.isNotBlank(name));
         require(Strings.isNotBlank(info));
         require(nonNull(difficulty));

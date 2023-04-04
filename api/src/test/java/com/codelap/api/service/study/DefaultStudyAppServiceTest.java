@@ -1,5 +1,6 @@
 package com.codelap.api.service.study;
 
+import com.codelap.api.service.study.dto.GetAllStudiesStudyDto;
 import com.codelap.common.study.domain.*;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
@@ -15,10 +16,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
-import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
+import static com.codelap.common.study.domain.StudyDifficulty.*;
 import static com.codelap.common.study.domain.StudyStatus.DELETED;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
+import static com.codelap.common.support.TechStack.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
@@ -35,7 +35,7 @@ class DefaultStudyAppServiceTest {
     StudyAppService studyAppService;
 
     private User leader;
-    private List<TechStack> techStackList;
+    private List<StudyTechStack> techStackList;
 
     @Test
     void 유저가_참여한_스터디_조회_성공() {
@@ -57,7 +57,7 @@ class DefaultStudyAppServiceTest {
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Java, Spring);
+        techStackList = Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java));
 
         for (int i = 0; i < 5; i++) {
             studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList));
@@ -67,5 +67,48 @@ class DefaultStudyAppServiceTest {
         study.setStatus(DELETED);
 
         studyRepository.save(study);
+    }
+
+    @Test
+    void 모든_스터디_목록_조회_성공() {
+        UserCareer career = UserCareer.create("직무", 1);
+        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
+
+        모든_스터디_목록_조회_스터디_생성();
+
+        List<Study> studyList = studyRepository.findAll()
+                .stream()
+                .filter(study -> study.getStatus() != DELETED)
+                .collect(Collectors.toList());
+
+        List<GetAllStudiesStudyDto> allStudies = studyAppService.getAllStudies()
+                .stream()
+                .collect(Collectors.groupingBy(GetAllStudiesStudyDto::getId))
+                .values()
+                .stream()
+                .map(list -> {
+                    GetAllStudiesStudyDto dto = list.get(0);
+                    dto.setTechStackList(list.stream()
+                            .flatMap(s -> s.getTechStackList().stream())
+                            .distinct()
+                            .collect(Collectors.toList()));
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        assertThat(studyList.size()).isEqualTo(allStudies.size());
+    }
+
+    private void 모든_스터디_목록_조회_스터디_생성() {
+        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+
+        Study study1 = studyRepository.save(Study.create("팀1", "설명1", 4, EASY, period, needCareer, leader, List.of(new StudyTechStack(Spring), new StudyTechStack(Java))));
+        Study study2 = studyRepository.save(Study.create("팀2", "설명2", 5, NORMAL, period, needCareer, leader, List.of(new StudyTechStack(Spring), new StudyTechStack(Java))));
+        Study study3 = studyRepository.save(Study.create("팀3", "설명3", 6, HARD, period, needCareer, leader, List.of(new StudyTechStack(React), new StudyTechStack(JavaScript), new StudyTechStack(Python))));
+
+        Study study = studyRepository.save(Study.create("팀4", "설명4", 6, HARD, period, needCareer, leader, List.of(new StudyTechStack(Docker))));
+
+        study.delete();
     }
 }
