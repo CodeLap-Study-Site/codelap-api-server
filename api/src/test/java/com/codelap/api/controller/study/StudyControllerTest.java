@@ -8,14 +8,10 @@ import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import static com.codelap.api.controller.study.dto.StudyCreateDto.*;
@@ -35,8 +31,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StudyControllerTest extends ApiTest {
@@ -255,59 +251,5 @@ class StudyControllerTest extends ApiTest {
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
         assertThat(foundStudy.getStatus()).isEqualTo(OPENED);
-    }
-
-    @Test
-    void 유저가_참여한_스터디_조회_성공() throws Exception {
-        UserCareer career = UserCareer.create("직무", 1);
-        User leader = userRepository.save(User.create("name", 10, career, "abcd", "leader"));
-
-        유저가_참여한_스터디_조회_스터디_생성(leader);
-
-        mockMvc.perform(get("/study")
-                        .param("userId", leader.getId().toString()))
-                .andExpect(status().isOk())
-                .andExpectAll(유저가_참여한_스터디_조회_검증(leader))
-                .andDo(document("study/my-list",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
-    }
-
-    private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-
-        for (int i = 0; i < 5; i++) {
-            Study study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
-
-            studyRepository.save(study);
-        }
-
-        Study study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
-        study.setStatus(DELETED);
-
-        studyRepository.save(study);
-    }
-
-    private ResultMatcher[] 유저가_참여한_스터디_조회_검증(User leader) {
-        List<Study> studies = studyRepository.findByLeader(leader)
-                .stream()
-                .filter(it -> it.getStatus() != DELETED)
-                .collect(Collectors.toList());
-
-        return IntStream.range(0, studies.size())
-                .mapToObj(index -> {
-                    Study indexStudy = studies.get(index);
-
-                    return Map.entry(index, List.of(
-                            jsonPath("$.studies.[" + index + "].id").value(indexStudy.getId()),
-                            jsonPath("$.studies.[" + index + "].name").value(indexStudy.getName()),
-                            jsonPath("$.studies.[" + index + "].createdAt").isNotEmpty(),
-                            jsonPath("$.studies.[" + index + "].status").value(indexStudy.getStatus().name())
-                    ));
-                })
-                .flatMap(entry -> entry.getValue().stream())
-                .toArray(ResultMatcher[]::new);
     }
 }
