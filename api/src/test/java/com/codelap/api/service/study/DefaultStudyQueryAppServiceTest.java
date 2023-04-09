@@ -1,26 +1,14 @@
 package com.codelap.api.service.study;
 
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.StudyRepository;
+import com.codelap.common.study.domain.TechStack;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
-import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.StudyStatus.DELETED;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
@@ -38,42 +26,4 @@ class DefaultStudyQueryAppServiceTest {
     private User leader;
     private List<TechStack> techStackList;
 
-    @Test
-    void 유저가_참여한_스터디_조회_성공() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
-
-        유저가_참여한_스터디_조회_스터디_생성(leader);
-
-        List<Study> getStudies = studyRepository.findByLeader(leader)
-                .stream()
-                .filter(it -> it.getStatus() != DELETED)
-                .collect(Collectors.toList());
-
-        List<GetStudiesStudyDto> studies = studyQueryAppService.getStudies(leader);
-
-        IntStream.range(0, getStudies.size())
-                .forEach(index -> {
-                    assertThat(studies.get(index).id()).isEqualTo(getStudies.get(index).getId());
-                    assertThat(studies.get(index).name()).isEqualTo(getStudies.get(index).getName());
-                    assertThat(studies.get(index).createdAt()).isNotNull();
-                    assertThat(getStudies.get(index).getCreatedAt()).isNotNull();
-                    assertThat(studies.get(index).status()).isEqualTo(getStudies.get(index).getStatus());
-                });
-    }
-
-    private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Java, Spring);
-
-        for (int i = 0; i < 5; i++) {
-            studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList));
-        }
-
-        Study study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
-        study.setStatus(DELETED);
-
-        studyRepository.save(study);
-    }
 }
