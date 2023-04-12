@@ -72,10 +72,7 @@ class StudyNoticeCommentControllerTest extends ApiTest {
 
     @Test
     void 스터디_공지_댓글_생성_성공() throws Exception {
-        StudyNoticeCommentCreateRequestFileDto file = new StudyNoticeCommentCreateRequestFileDto("savedName", "originalName", 100L);
-        StudyNoticeCommentCreateRequestStudyNoticeDto studyNoticeDto = new StudyNoticeCommentCreateRequestStudyNoticeDto(study, "title", "content", List.of(file));
-
-        StudyNoticeCommentCreateRequest req = new StudyNoticeCommentCreateRequest(studyNoticeDto, member.getId(), "content");
+        StudyNoticeCommentCreateRequest req = new StudyNoticeCommentCreateRequest(studyNotice.getId(), member.getId(), "content");
 
         mockMvc.perform(post("/study-notice-comment")
                         .contentType(APPLICATION_JSON)

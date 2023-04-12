@@ -1,6 +1,7 @@
 package com.codelap.common.studyNoticeComment.service;
 
 import com.codelap.common.studyNotice.domain.StudyNotice;
+import com.codelap.common.studyNotice.domain.StudyNoticeRepository;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeComment;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentRepository;
 import com.codelap.common.user.domain.User;
@@ -17,12 +18,14 @@ import static com.codelap.common.support.Preconditions.actorValidate;
 public class StudyNoticeCommentDomainService implements StudyNoticeCommentService {
 
     private final StudyNoticeCommentRepository studyNoticeCommentRepository;
+    private final StudyNoticeRepository studyNoticeRepository;
     private final UserRepository userRepository;
 
 
     @Override
-    public StudyNoticeComment create(StudyNotice studyNotice, Long userId, String content) {
+    public StudyNoticeComment create(Long studyNoticeId, Long userId, String content) {
         User user = userRepository.findById(userId).orElseThrow();
+        StudyNotice studyNotice = studyNoticeRepository.findById(studyNoticeId).orElseThrow();
 
         StudyNoticeComment studyNoticeComment = StudyNoticeComment.create(studyNotice, user, content);
 
