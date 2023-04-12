@@ -18,7 +18,7 @@ public class StudyNoticeCommentController {
     public void create(
             @RequestBody StudyNoticeCommentCreateRequest req
     ) {
-        studyNoticeCommentService.create(req.studyNotice().toStudyNotice(), req.userId(), req.content());
+        studyNoticeCommentService.create(req.studyNoticeId(), req.userId(), req.content());
     }
 
     @DeleteMapping
