@@ -12,6 +12,7 @@ spring:
       hibernate:
         format_sql: false
         dialect: org.hibernate.dialect.MySQL8Dialect
+        show_sql: true
       javax:
         persistence:
           validation:

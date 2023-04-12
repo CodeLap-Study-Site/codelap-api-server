@@ -1,5 +1,6 @@
 package com.codelap.common.user.domain;
 
+import com.codelap.common.study.domain.Study;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,8 @@ import lombok.Setter;
 import org.apache.logging.log4j.util.Strings;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
@@ -35,6 +38,9 @@ public class User {
     private String name;
 
     private int age;
+
+    @ManyToMany
+    private final List<Study> studies = new ArrayList<>();
 
     @Embedded
     private UserCareer career;

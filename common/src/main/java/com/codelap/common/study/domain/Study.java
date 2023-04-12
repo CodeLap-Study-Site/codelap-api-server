@@ -1,5 +1,8 @@
 package com.codelap.common.study.domain;
 
+import com.codelap.common.bookmark.domain.Bookmark;
+import com.codelap.common.studyComment.domain.StudyComment;
+import com.codelap.common.studyView.domain.StudyView;
 import com.codelap.common.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -52,6 +55,15 @@ public class Study {
 
     @ManyToMany
     private final List<User> members = new ArrayList<>();
+
+    @OneToMany
+    private final List<StudyComment> comments = new ArrayList<>();
+
+    @OneToMany
+    private final List<StudyView> views = new ArrayList<>();
+
+    @OneToMany
+    private final List<Bookmark> bookmarks = new ArrayList<>();
 
     @Setter
     @Enumerated(STRING)
@@ -126,6 +138,19 @@ public class Study {
         check(status != DELETED);
 
         members.add(user);
+        user.getStudies().add(this);
+    }
+
+    public void addComment(StudyComment studyComment) {
+        comments.add(studyComment);
+    }
+
+    public void addView(StudyView studyView) {
+        views.add(studyView);
+    }
+
+    public void addBookmark(Bookmark bookmark) {
+        bookmarks.add(bookmark);
     }
 
     public void changeLeader(User user) {
