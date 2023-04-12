@@ -6,6 +6,7 @@ import com.codelap.common.study.domain.StudyPeriod;
 import com.codelap.common.study.domain.TechStack;
 import com.codelap.common.studyNotice.domain.StudyNotice;
 import com.codelap.common.studyNotice.domain.StudyNoticeFile;
+import com.codelap.common.studyNotice.domain.StudyNoticeRepository;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeComment;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentRepository;
 import com.codelap.common.user.domain.User;
@@ -43,6 +44,9 @@ public class StudyNoticeCommentDomainServiceTest {
     private UserRepository userRepository;
 
     @Autowired
+    private StudyNoticeRepository studyNoticeRepository;
+
+    @Autowired
     private StudyNoticeCommentRepository studyNoticeCommentRepository;
 
     private StudyNotice studyNotice;
@@ -65,12 +69,13 @@ public class StudyNoticeCommentDomainServiceTest {
         study.addMember(member);
 
         StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 100L);
-        studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
+
+        studyNotice = studyNoticeRepository.save(StudyNotice.create(study, "title", "contents", List.of(file)));
     }
 
     @Test
     void 스터디_공지_댓글_생성_성공() {
-        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice, member.getId(), "content");
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice.getId(), member.getId(), "content");
 
         studyNoticeComment = studyNoticeCommentRepository.findById(studyNoticeComment.getId()).orElseThrow();
 
@@ -80,12 +85,12 @@ public class StudyNoticeCommentDomainServiceTest {
     @ParameterizedTest
     @NullAndEmptySource
     void 스터디_공지_댓글_생성_실패__댓글_내용이_널이거나_공백(String content) {
-        assertThatIllegalArgumentException().isThrownBy(() -> studyNoticeCommentService.create(studyNotice, member.getId(), content));
+        assertThatIllegalArgumentException().isThrownBy(() -> studyNoticeCommentService.create(studyNotice.getId(), member.getId(), content));
     }
 
     @Test
     void 스터디_공지_댓글_삭제_성공() {
-        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice, member.getId(), "content");
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice.getId(), member.getId(), "content");
 
         studyNoticeCommentService.delete(studyNoticeComment.getId(), member.getId());
 
@@ -96,7 +101,7 @@ public class StudyNoticeCommentDomainServiceTest {
 
     @Test
     void 스터디_공지_댓글_삭제_실패__작성한_유저가_아님() {
-        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice, member.getId(), "content");
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice.getId(), member.getId(), "content");
 
         UserCareer career = UserCareer.create("직무", 1);
         User fakeUser = userRepository.save(User.create("fakeUser", 10, career, "abcd", "fakeUser"));
