@@ -36,6 +36,9 @@ public class Bookmark {
         check(study.getStatus() != StudyStatus.DELETED);
         check(user.getStatus() != UserStatus.DELETED);
 
-        return new Bookmark();
+        Bookmark bookmark = new Bookmark();
+        study.addBookmark(bookmark);
+
+        return bookmark;
     }
 }

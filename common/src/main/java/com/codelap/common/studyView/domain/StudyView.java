@@ -35,6 +35,9 @@ public class StudyView {
         require(nonNull(study));
         require(isNotBlank(ipAddress));
 
-        return new StudyView(study, ipAddress);
+        StudyView studyView = new StudyView(study, ipAddress);
+        study.addView(studyView);
+
+        return studyView;
     }
 }
