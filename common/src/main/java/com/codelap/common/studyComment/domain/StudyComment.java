@@ -47,6 +47,9 @@ public class StudyComment {
         require(nonNull(user));
         require(isNotBlank(comment));
 
-        return new StudyComment(study, user, comment);
+        StudyComment studyComment = new StudyComment(study, user, comment);
+        study.addComment(studyComment);
+
+        return studyComment;
     }
 }
