@@ -56,13 +56,13 @@ public class Study {
     @ManyToMany
     private final List<User> members = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "study")
     private final List<StudyComment> comments = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "study")
     private final List<StudyView> views = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "study")
     private final List<Bookmark> bookmarks = new ArrayList<>();
 
     @Setter

@@ -30,12 +30,20 @@ public class Bookmark {
 
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
+    private Bookmark(Study study, User user) {
+        this.study = study;
+        this.user = user;
+    }
+
     public static Bookmark create(Study study, User user) {
         require(!study.isLeader(user));
 
         check(study.getStatus() != StudyStatus.DELETED);
         check(user.getStatus() != UserStatus.DELETED);
 
-        return new Bookmark();
+        Bookmark bookmark = new Bookmark(study, user);
+        study.addBookmark(bookmark);
+
+        return bookmark;
     }
 }
