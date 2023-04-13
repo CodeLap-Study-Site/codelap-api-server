@@ -21,6 +21,8 @@ public class StudyViewDomainService implements StudyViewService{
     public void create(Long studyId, String ipAddress) {
         Study study = studyRepository.findById(studyId).orElseThrow();
 
-        studyViewRepository.save(StudyView.create(study, ipAddress));
+        StudyView studyView = studyViewRepository.save(StudyView.create(study, ipAddress));
+
+        study.addView(studyView);
     }
 }

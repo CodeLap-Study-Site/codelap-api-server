@@ -36,9 +36,10 @@ public class StudyComment {
     @Enumerated(STRING)
     private final StudyCommentStatus status = CREATED;
 
-    private StudyComment(User user, String comment) {
+    private StudyComment(Study study, User user, String comment) {
         this.user = user;
         this.comment = comment;
+        this.study = study;
     }
 
     public static StudyComment create(Study study, User user, String comment) {
@@ -46,6 +47,6 @@ public class StudyComment {
         require(nonNull(user));
         require(isNotBlank(comment));
 
-        return new StudyComment(user, comment);
+        return new StudyComment(study, user, comment);
     }
 }
