@@ -1,8 +1,8 @@
 package com.codelap.api.service.study;
 
+import com.codelap.api.service.study.dto.GetStudiesDto;
 import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.*;
-import com.codelap.common.study.dto.GetMyStudiesDto;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.studyView.service.StudyViewService;
 import com.codelap.common.user.domain.User;
@@ -59,7 +59,7 @@ class DefaultStudyAppServiceTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        List<GetMyStudiesDto> allStudies = studyAppService.getAllStudies(member);
+        List<GetStudiesDto.GetStudiesStudyDto> allStudies = studyAppService.getAllStudies(member.getId());
 
         List<Study> studies = studyRepository.findAll()
                 .stream()
