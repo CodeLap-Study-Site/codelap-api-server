@@ -116,7 +116,7 @@ class StudyNoticeCommentControllerTest extends ApiTest {
 
         StudyNoticeCommentUpdateReqeust req = new StudyNoticeCommentUpdateReqeust(studyNoticeComment.getId(), member.getId(), "content");
 
-        mockMvc.perform(put("/study-notice-comment")
+        mockMvc.perform(post("/study-notice-comment/update")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpectAll(

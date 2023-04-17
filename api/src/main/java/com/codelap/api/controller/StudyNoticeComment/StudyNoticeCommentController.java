@@ -29,7 +29,7 @@ public class StudyNoticeCommentController {
         studyNoticeCommentService.delete(req.studyNoticeCommentId(), req.userId());
     }
 
-    @PutMapping
+    @PostMapping("/update")
     public void update(
             @RequestBody StudyNoticeCommentUpdateReqeust req
     ) {
