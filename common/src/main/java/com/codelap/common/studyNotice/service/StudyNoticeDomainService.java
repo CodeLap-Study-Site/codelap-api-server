@@ -27,12 +27,22 @@ public class StudyNoticeDomainService implements StudyNoticeService {
     private final StudyNoticeRepository studyNoticeRepository;
 
     @Override
-    public void create(Long studyId, Long leaderId, String title, String contents, List<StudyNoticeFile> files) {
+    public StudyNotice create(Long studyId, Long leaderId, String title, String contents, List<StudyNoticeFile> files) {
         Study study = studyRepository.findById(studyId).orElseThrow();
         User leader = userRepository.findById(leaderId).orElseThrow();
 
         actorValidate(study.isLeader(leader));
 
-        studyNoticeRepository.save(StudyNotice.create(study, title, contents, files));
+        return studyNoticeRepository.save(StudyNotice.create(study, title, contents, files));
+    }
+
+    @Override
+    public void update(Long studyNoticeId, Long leaderId, String title, String contents, List<StudyNoticeFile> files) {
+        User leader = userRepository.findById(leaderId).orElseThrow();
+        StudyNotice studyNotice = studyNoticeRepository.findById(studyNoticeId).orElseThrow();
+
+        actorValidate(studyNotice.isLeader(leader));
+
+        studyNotice.update(title, contents, files);
     }
 }
