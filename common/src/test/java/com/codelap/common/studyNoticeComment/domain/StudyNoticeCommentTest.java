@@ -93,4 +93,21 @@ class StudyNoticeCommentTest {
 
         assertThatIllegalStateException().isThrownBy(() -> studyNoticeComment.delete());
     }
+
+    @Test
+    void 스터디_공지_댓글_수정_성공() {
+        StudyNoticeComment studyNoticeComment = StudyNoticeComment.create(studyNotice, leader, "content");
+
+        studyNoticeComment.update("content");
+
+        assertThat(studyNoticeComment.getContent()).isEqualTo("content");
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 스터디_공지_댓글_수정_실패__댓글내용이_널이거나_공백(String content) {
+        StudyNoticeComment studyNoticeComment = StudyNoticeComment.create(studyNotice, leader, "content");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyNoticeComment.update(content));
+    }
 }
