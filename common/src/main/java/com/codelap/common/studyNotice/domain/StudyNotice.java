@@ -55,4 +55,13 @@ public class StudyNotice {
 
         return new StudyNotice(study, title, contents, files);
     }
+
+    public void update(String title, String contents, List<StudyNoticeFile> files){
+        require(isNotBlank(title));
+        require(isNotBlank(contents));
+
+        this.title = title;
+        this.contents = contents;
+        this.files = files;
+    }
 }
