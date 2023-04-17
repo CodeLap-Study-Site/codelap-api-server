@@ -59,11 +59,11 @@ class DefaultStudyQueryAppServiceTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        List<GetMyStudiesDto> allStudies = studyQueryAppService.getAllStudies(member);
+        List<GetMyStudiesDto> allStudies = studyQueryAppService.getAttendedStudiesByUser(member);
 
         IntStream.range(0, member.getStudies().size())
                 .forEach(index -> {
-                    allStudies.get(index).setTechStackList(studyQueryAppService.findTechStack(member.getStudies().get(index)));
+                    allStudies.get(index).setTechStackList(studyQueryAppService.getTechStacks(member.getStudies().get(index)));
                 });
 
         IntStream.range(0, allStudies.size())

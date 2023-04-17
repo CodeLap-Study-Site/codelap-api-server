@@ -8,5 +8,5 @@ public interface StudyAppService {
 
     List<GetStudiesStudyDto> getStudies(Long userId);
 
-    List<GetStudiesStudyDto> getAllStudies(Long userId);
+    List<GetStudiesStudyDto> getAttendedStudiesByUser(Long userId);
 }
