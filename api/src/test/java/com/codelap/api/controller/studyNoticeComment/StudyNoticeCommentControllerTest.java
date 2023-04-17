@@ -1,5 +1,6 @@
 package com.codelap.api.controller.studyNoticeComment;
 
+import com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentUpdateDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.*;
 import com.codelap.common.studyNotice.domain.StudyNotice;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentCreateDto.*;
 import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentDeleteDto.StudyNoticeCommentDeleteRequest;
+import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentUpdateDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
@@ -28,8 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StudyNoticeCommentControllerTest extends ApiTest {
@@ -108,6 +109,25 @@ class StudyNoticeCommentControllerTest extends ApiTest {
 
         StudyNoticeComment foundStudyNoticeComment = studyNoticeCommentRepository.findById(studyNoticeComment.getId()).orElseThrow();
         assertThat(foundStudyNoticeComment.getStatus()).isEqualTo(DELETED);
+    }
+
+    @Test
+    void 스터디_공지_댓글_수정_성공() throws Exception {
+
+        StudyNoticeCommentUpdateReqeust req = new StudyNoticeCommentUpdateReqeust(studyNoticeComment.getId(), member.getId(), "content");
+
+        mockMvc.perform(post("/study-notice-comment/update")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study-notice-comment/update",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        StudyNoticeComment foundStudyNoticeComment = studyNoticeCommentRepository.findById(studyNoticeComment.getId()).orElseThrow();
+        assertThat(foundStudyNoticeComment.getContent()).isEqualTo("content");
     }
 }
 
