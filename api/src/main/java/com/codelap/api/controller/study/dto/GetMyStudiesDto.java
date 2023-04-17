@@ -1,35 +1,40 @@
 package com.codelap.api.controller.study.dto;
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
-import com.codelap.common.study.domain.StudyStatus;
+import com.codelap.common.study.domain.StudyPeriod;
+import com.codelap.common.study.domain.TechStack;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class GetMyStudiesDto {
 
     public record GetMyStudiesResponse(
-            List<GetMyStudiesResponseStudyDto> studies
+            List<GetStudiesDto> studies
 
     ) {
         public static GetMyStudiesResponse create(List<GetStudiesStudyDto> studies) {
             return new GetMyStudiesResponse(studies.stream()
-                    .map(GetMyStudiesResponseStudyDto::create)
+                    .map(GetStudiesDto::create)
                     .collect(Collectors.toList()));
         }
     }
 
-    public record GetMyStudiesResponseStudyDto(
-            Long id,
-            String name,
-            OffsetDateTime createdAt,
-            StudyStatus status
+    public record GetStudiesDto(
+            String studyName,
+            StudyPeriod studyPeriod,
+            String leaderName,
+            Long commentCount,
+            Long viewCount,
+            Long bookmarkCount,
+            int maxMemberSize,
+            List<TechStack> techStackList
     ) {
 
-        public static GetMyStudiesResponseStudyDto create(GetStudiesStudyDto study) {
-            return new GetMyStudiesResponseStudyDto(
-                    study.id(), study.name(), study.createdAt(), study.status()
+        public static GetStudiesDto create(GetStudiesStudyDto study) {
+            return new GetStudiesDto(
+                    study.studyName(), study.studyPeriod(), study.leaderName(), study.commentCount(),
+                    study.viewCount(), study.bookmarkCount(), study.maxMemberSize(), study.techStackList()
             );
         }
     }

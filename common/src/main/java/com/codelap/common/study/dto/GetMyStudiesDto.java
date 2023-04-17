@@ -30,17 +30,4 @@ public class GetMyStudiesDto {
         this.bookmarkCount = bookmarkCount;
         this.maxMemberSize = maxMemberSize;
     }
-
-    public GetMyStudiesDto(String studyName, StudyPeriod studyPeriod, String leaderName, Long commentCount, Long viewCount, Long bookmarkCount, int maxMemberSize, List<TechStack> techStackList) {
-        this.studyName = studyName;
-        this.studyPeriod = studyPeriod;
-        this.leaderName = leaderName;
-        this.commentCount = commentCount;
-        this.viewCount = viewCount;
-        this.bookmarkCount = bookmarkCount;
-        this.maxMemberSize = maxMemberSize;
-        this.techStackList = techStackList;
-    }
-
-
 }

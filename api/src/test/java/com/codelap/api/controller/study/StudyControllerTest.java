@@ -1,17 +1,24 @@
 package com.codelap.api.controller.study;
 
 import com.codelap.api.support.ApiTest;
+import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.*;
+import com.codelap.common.studyComment.service.StudyCommentService;
+import com.codelap.common.studyView.service.StudyViewService;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import static com.codelap.api.controller.study.dto.StudyCreateDto.*;
@@ -25,14 +32,13 @@ import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
+import static com.codelap.common.study.domain.TechStack.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StudyControllerTest extends ApiTest {
@@ -42,9 +48,23 @@ class StudyControllerTest extends ApiTest {
 
     @Autowired
     StudyRepository studyRepository;
+
+    @Autowired
+    StudyCommentService studyCommentService;
+
+    @Autowired
+    StudyViewService studyViewService;
+
+    @Autowired
+    BookmarkService bookmarkService;
+
     private User leader;
+    private User member;
     private Study study;
     private List<TechStack> techStackList;
+    private Study study1;
+    private Study study2;
+
 
     @BeforeEach
     void setUp() {
@@ -251,5 +271,72 @@ class StudyControllerTest extends ApiTest {
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
         assertThat(foundStudy.getStatus()).isEqualTo(OPENED);
+    }
+
+    @Test
+    void 유저가_참여한_스터디_조회_성공() throws Exception {
+        UserCareer career = UserCareer.create("직무", 1);
+        User leader = userRepository.save(User.create("name", 10, career, "abcd", "leader"));
+
+        member = userRepository.save(User.create("member", 10, career, "abcd", "email"));
+
+        유저가_참여한_스터디_조회_스터디_생성(leader);
+
+        mockMvc.perform(get("/study")
+                        .param("userId", member.getId().toString()))
+                .andExpect(status().isOk())
+                .andExpectAll(유저가_참여한_스터디_조회_검증())
+                .andDo(document("study/my-list",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+    }
+
+    private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
+        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
+        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+
+        techStackList = List.of(Spring, Java);
+
+        study1 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, List.of(Spring, Java)));
+
+        study1.addMember(member);
+
+        studyCommentService.create(study1.getId(), member.getId(), "message");
+        studyViewService.create(study1.getId(), "1.1.1.1");
+        bookmarkService.create(study1.getId(), member.getId());
+
+        study2 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, List.of(JavaScript, React)));
+
+        study2.addMember(member);
+
+        studyCommentService.create(study2.getId(), member.getId(), "message");
+        studyViewService.create(study2.getId(), "1.1.1.2");
+    }
+
+    private ResultMatcher[] 유저가_참여한_스터디_조회_검증() {
+        List<Study> studiesContainsMember = studyRepository.findAll()
+                .stream()
+                .filter(it -> it.getStatus() != DELETED)
+                .filter(it -> it.containsMember(member))
+                .collect(Collectors.toList());
+
+        return IntStream.range(0, studiesContainsMember.size())
+                .mapToObj(index -> {
+                    Study indexStudy = studiesContainsMember.get(index);
+
+                    return Map.entry(index, List.of(
+                            jsonPath("$.studies.[" + index + "].studyName").value(indexStudy.getName()),
+                            jsonPath("$.studies.[" + index + "].studyPeriod").isNotEmpty(),
+                            jsonPath("$.studies.[" + index + "].leaderName").value(indexStudy.getLeader().getName()),
+                            jsonPath("$.studies.[" + index + "].commentCount").value(indexStudy.getComments().size()),
+                            jsonPath("$.studies.[" + index + "].viewCount").value(indexStudy.getViews().size()),
+                            jsonPath("$.studies.[" + index + "].bookmarkCount").value(indexStudy.getBookmarks().size()),
+                            jsonPath("$.studies.[" + index + "].maxMemberSize").value(indexStudy.getMaxMembersSize()),
+                            jsonPath("$.studies.[" + index + "].techStackList.[" + index + "]").value(indexStudy.getTechStackList().get(index).toString())
+                    ));
+                })
+                .flatMap(entry -> entry.getValue().stream())
+                .toArray(ResultMatcher[]::new);
     }
 }

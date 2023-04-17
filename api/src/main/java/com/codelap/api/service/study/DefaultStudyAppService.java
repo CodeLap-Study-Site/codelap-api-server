@@ -1,5 +1,6 @@
 package com.codelap.api.service.study;
 
+import com.codelap.api.service.study.dto.GetStudiesDto;
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
 import com.codelap.common.study.dto.GetMyStudiesDto;
 import com.codelap.common.user.domain.User;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -27,7 +29,9 @@ public class DefaultStudyAppService implements StudyAppService {
     }
 
     @Override
-    public List<GetMyStudiesDto> getAllStudies(User user) {
+    public List<GetStudiesDto.GetStudiesStudyDto> getAllStudies(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+
         List<GetMyStudiesDto> allStudies = studyQueryAppService.getAllStudies(user);
 
         IntStream.range(0, user.getStudies().size())
@@ -35,6 +39,18 @@ public class DefaultStudyAppService implements StudyAppService {
                     allStudies.get(index).setTechStackList(studyQueryAppService.findTechStack(user.getStudies().get(index)));
                 });
 
-        return allStudies;
+        return allStudies.stream().map(study -> {
+            GetStudiesStudyDto studyDto = new GetStudiesStudyDto(
+                    study.getStudyName(),
+                    study.getStudyPeriod(),
+                    study.getLeaderName(),
+                    study.getCommentCount(),
+                    study.getViewCount(),
+                    study.getBookmarkCount(),
+                    study.getMaxMemberSize(),
+                    study.getTechStackList()
+            );
+            return studyDto;
+        }).collect(Collectors.toList());
     }
 }
