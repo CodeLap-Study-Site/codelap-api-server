@@ -59,4 +59,10 @@ public class StudyNoticeComment {
 
         this.status = DELETED;
     }
+
+    public void update(String content){
+        require(isNotBlank(content));
+
+        this.content = content;
+    }
 }
