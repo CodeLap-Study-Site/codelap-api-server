@@ -8,4 +8,6 @@ public interface StudyNoticeCommentService {
     StudyNoticeComment create(Long studyNoticeId, Long userId, String content);
 
     void delete(Long StudyNoticeCommentId, Long userId);
+
+    void update(Long StudyNoticeCommentId, Long userId, String content);
 }

@@ -41,4 +41,14 @@ public class StudyNoticeCommentDomainService implements StudyNoticeCommentServic
        actorValidate(studyNoticeComment.isUser(user));
        studyNoticeComment.delete();
     }
+
+    @Override
+    public void update(Long StudyNoticeCommentId, Long userId, String content) {
+        User user =  userRepository.findById(userId).orElseThrow();
+
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentRepository.findById(StudyNoticeCommentId).orElseThrow();
+
+        actorValidate(studyNoticeComment.isUser(user));
+        studyNoticeComment.update(content);
+    }
 }

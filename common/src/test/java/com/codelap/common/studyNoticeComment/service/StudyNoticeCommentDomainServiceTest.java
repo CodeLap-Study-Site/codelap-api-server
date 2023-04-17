@@ -108,4 +108,23 @@ public class StudyNoticeCommentDomainServiceTest {
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyNoticeCommentService.delete(studyNoticeComment.getId(), fakeUser.getId()));
     }
+
+    @Test
+    void 스터디_공지_댓글_수정_성공() {
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice.getId(), member.getId(), "content");
+
+        studyNoticeCommentService.update(studyNoticeComment.getId(), member.getId(), "content");
+
+        assertThat(studyNoticeComment.getContent()).isEqualTo("content");
+    }
+
+    @Test
+    void 스터디_공지_댓글_수정_실패__작성한_유저가_아님(){
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice.getId(), member.getId(), "content");
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeUser = userRepository.save(User.create("fakeUser", 10, career, "abcd", "fakeUser"));
+
+        assertThatActorValidateCodeLapException().isThrownBy(() -> studyNoticeCommentService.update(studyNoticeComment.getId(), fakeUser.getId(), "content"));
+    }
 }
