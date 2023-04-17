@@ -17,8 +17,8 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
             "JOIN s.members m LEFT JOIN s.comments c LEFT JOIN s.views v LEFT JOIN s.bookmarks b " +
             "WHERE m = :user " +
             "AND s.status <> 'DELETED' group by s")
-    List<GetMyStudiesDto> findAllStudy(@Param("user") User user);
+    List<GetMyStudiesDto> getAttendedStudiesByUser(@Param("user") User user);
 
     @Query("SELECT t FROM Study s JOIN s.techStackList t WHERE s = :study")
-    List<TechStack> findTechStack(@Param("study") Study study);
+    List<TechStack> getTechStacks(@Param("study") Study study);
 }

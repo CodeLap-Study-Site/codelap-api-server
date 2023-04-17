@@ -87,7 +87,7 @@ public class StudyController {
     public GetMyStudiesResponse findStudyListByUserId(
             Long userId
     ) {
-        List<GetStudiesStudyDto> studies = studyAppService.getAllStudies(userId);
+        List<GetStudiesStudyDto> studies = studyAppService.getAttendedStudiesByUser(userId);
 
         return GetMyStudiesResponse.create(studies);
     }
