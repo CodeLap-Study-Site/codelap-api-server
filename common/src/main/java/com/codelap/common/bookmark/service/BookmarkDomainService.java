@@ -22,8 +22,6 @@ public class BookmarkDomainService implements BookmarkService{
         Study study = studyRepository.findById(studyId).orElseThrow();
         User user = userRepository.findById(userId).orElseThrow();
 
-        Bookmark bookmark = bookmarkRepository.save(Bookmark.create(study, user));
-
-        study.addBookmark(bookmark);
+        bookmarkRepository.save(Bookmark.create(study, user));
     }
 }

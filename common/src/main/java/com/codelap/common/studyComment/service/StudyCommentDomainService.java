@@ -30,8 +30,6 @@ public class StudyCommentDomainService implements StudyCommentService {
 
         actorValidate(study.containsMember(user));
 
-        StudyComment studyComment = studyCommentRepository.save(StudyComment.create(study, user, message));
-
-        study.addComment(studyComment);
+        studyCommentRepository.save(StudyComment.create(study, user, message));
     }
 }
