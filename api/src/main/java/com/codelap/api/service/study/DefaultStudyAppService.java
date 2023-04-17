@@ -29,14 +29,14 @@ public class DefaultStudyAppService implements StudyAppService {
     }
 
     @Override
-    public List<GetStudiesDto.GetStudiesStudyDto> getAllStudies(Long userId) {
+    public List<GetStudiesDto.GetStudiesStudyDto> getAttendedStudiesByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
 
-        List<GetMyStudiesDto> allStudies = studyQueryAppService.getAllStudies(user);
+        List<GetMyStudiesDto> allStudies = studyQueryAppService.getAttendedStudiesByUser(user);
 
         IntStream.range(0, user.getStudies().size())
                 .forEach(index -> {
-                    allStudies.get(index).setTechStackList(studyQueryAppService.findTechStack(user.getStudies().get(index)));
+                    allStudies.get(index).setTechStackList(studyQueryAppService.getTechStacks(user.getStudies().get(index)));
                 });
 
         return allStudies.stream().map(study -> {

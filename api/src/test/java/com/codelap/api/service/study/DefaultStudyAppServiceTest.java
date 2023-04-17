@@ -59,7 +59,7 @@ class DefaultStudyAppServiceTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        List<GetStudiesDto.GetStudiesStudyDto> allStudies = studyAppService.getAllStudies(member.getId());
+        List<GetStudiesDto.GetStudiesStudyDto> allStudies = studyAppService.getAttendedStudiesByUser(member.getId());
 
         List<Study> studies = studyRepository.findAll()
                 .stream()

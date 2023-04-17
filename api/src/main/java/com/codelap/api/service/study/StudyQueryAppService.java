@@ -13,7 +13,7 @@ public interface StudyQueryAppService {
 
     List<GetStudiesStudyDto> getStudies(User user);
 
-    List<GetMyStudiesDto> getAllStudies(User user);
+    List<GetMyStudiesDto> getAttendedStudiesByUser(User user);
 
-    List<TechStack> findTechStack(Study study);
+    List<TechStack> getTechStacks(Study study);
 }
