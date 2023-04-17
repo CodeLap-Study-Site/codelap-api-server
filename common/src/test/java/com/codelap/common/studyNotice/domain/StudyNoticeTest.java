@@ -66,4 +66,34 @@ class StudyNoticeTest {
     void 스터디_공지_생성_실패__메시지가_널이거나_공백_파일이_널(String contents) {
         assertThatIllegalArgumentException().isThrownBy(() -> StudyNotice.create(study, "title", contents, null));
     }
+
+    @Test
+    void 스터디_공지_수정_성공(){
+        StudyNoticeFile file = new StudyNoticeFile("savedName", "originalName", 100L);
+        StudyNotice studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
+
+        studyNotice.update("title", "contents", List.of(file));
+
+        assertThat(studyNotice.getTitle()).isEqualTo("title");
+        assertThat(studyNotice.getContents()).isEqualTo("contents");
+        assertThat(studyNotice.getFiles()).isEqualTo(List.of(file));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 스터디_공지_수정_실패__제목이_널이거나_공백(String title) {
+        StudyNoticeFile file = new StudyNoticeFile("savedName", "originalName", 100L);
+        StudyNotice studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyNotice.update(title, "contents", List.of(file)));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 스터디_공지_수정_실패__내용이_널이거나_공백(String contents) {
+        StudyNoticeFile file = new StudyNoticeFile("savedName", "originalName", 100L);
+        StudyNotice studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyNotice.update("title", contents, List.of(file)));
+    }
 }
