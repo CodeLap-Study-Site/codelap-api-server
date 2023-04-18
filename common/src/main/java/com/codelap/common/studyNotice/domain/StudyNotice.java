@@ -20,7 +20,7 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
     public class StudyNotice {
-        @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
