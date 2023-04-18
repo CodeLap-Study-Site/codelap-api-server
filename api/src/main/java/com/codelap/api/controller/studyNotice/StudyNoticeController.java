@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeCreateDto.StudyNoticeCreateRequest;
+import static com.codelap.api.controller.studyNotice.dto.StudyNoticeUpdateDto.StudyNoticeUpdateRequest;
 
 @RestController
 @RequestMapping("/study-notice")
@@ -22,4 +23,12 @@ public class StudyNoticeController {
     ) {
         studyNoticeService.create(req.studyId(), req.userId(), req.title(), req.contents(), req.toStudyNoticeFiles());
     }
+
+    @PostMapping("/update")
+    public void update(
+            @RequestBody StudyNoticeUpdateRequest req
+    ) {
+        studyNoticeService.update(req.studyNoticeId(), req.leaderId(), req.title(), req.contents(), req.toStudyNoticeFiles());
+    }
+
 }

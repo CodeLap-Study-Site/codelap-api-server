@@ -1,8 +1,10 @@
 package com.codelap.api.controller.studyNotice;
 
+import com.codelap.api.controller.studyNotice.dto.StudyNoticeUpdateDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.*;
 import com.codelap.common.studyNotice.domain.StudyNotice;
+import com.codelap.common.studyNotice.domain.StudyNoticeFile;
 import com.codelap.common.studyNotice.domain.StudyNoticeRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
@@ -17,6 +19,7 @@ import java.util.List;
 
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeCreateDto.StudyNoticeCreateRequest;
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeCreateDto.StudyNoticeCreateRequestFileDto;
+import static com.codelap.api.controller.studyNotice.dto.StudyNoticeUpdateDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
@@ -43,6 +46,8 @@ class StudyNoticeControllerTest extends ApiTest {
     private Study study;
     private List<TechStack> techStackList;
 
+    private StudyNotice studyNotice;
+
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
@@ -53,6 +58,9 @@ class StudyNoticeControllerTest extends ApiTest {
         techStackList = Arrays.asList(Java, Spring);
 
         study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader, techStackList));
+
+        StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 100L);
+        studyNotice = studyNoticeRepository.save(StudyNotice.create(study, "title", "contents", List.of(file)));
     }
 
     @Test
@@ -78,6 +86,29 @@ class StudyNoticeControllerTest extends ApiTest {
         assertThat(studyNotice.getContents()).isEqualTo(req.contents());
         assertThat(studyNotice.getCreatedAt()).isNotNull();
         assertThat(studyNotice.getStatus()).isEqualTo(CREATED);
+    }
 
+    @Test
+    void 스터디_공지_수정_성공() throws Exception {
+        StudyNoticeUpdateRequestFileDto file = new StudyNoticeUpdateRequestFileDto("savedName", "originalName", 100L);
+
+        StudyNoticeUpdateRequest req = new StudyNoticeUpdateRequest(studyNotice.getId(), leader.getId(), "title", "contents", List.of(file));
+
+        mockMvc.perform(post("/study-notice/update")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study-notice/update",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        StudyNotice foundStudyNotice = studyNoticeRepository.findAll().get(0);
+
+        assertThat(foundStudyNotice.getTitle()).isEqualTo(req.title());
+        assertThat(foundStudyNotice.getContents()).isEqualTo(req.contents());
+        assertThat(foundStudyNotice.getCreatedAt()).isNotNull();
+        assertThat(foundStudyNotice.getStatus()).isEqualTo(CREATED);
     }
 }
