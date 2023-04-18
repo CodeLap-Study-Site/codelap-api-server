@@ -5,13 +5,18 @@ import com.codelap.common.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.*;
 import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.CREATED;
+import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.DELETED;
+import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
+import static jakarta.persistence.EnumType.STRING;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PROTECTED;
 import static org.apache.logging.log4j.util.Strings.isNotBlank;
@@ -39,7 +44,9 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
     private final OffsetDateTime createdAt = OffsetDateTime.now();
 
-    private final StudyNoticeStatus status = CREATED;
+    @Setter
+    @Enumerated(STRING)
+    private StudyNoticeStatus status = CREATED;
 
     public boolean isLeader(User leader) {
         return this.study.getLeader() == leader;
@@ -67,5 +74,11 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
         this.title = title;
         this.contents = contents;
         this.files = files;
+    }
+
+    public void delete(){
+        check(CAN_DELETE_STATUS.contains(status));
+
+        this.status = DELETED;
     }
 }
