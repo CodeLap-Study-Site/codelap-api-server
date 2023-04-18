@@ -19,7 +19,7 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class StudyNotice {
+    public class StudyNotice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,6 +40,10 @@ public class StudyNotice {
     private final OffsetDateTime createdAt = OffsetDateTime.now();
 
     private final StudyNoticeStatus status = CREATED;
+
+    public boolean isLeader(User leader) {
+        return this.study.getLeader() == leader;
+    }
 
     private StudyNotice(Study study, String title, String contents, List<StudyNoticeFile> files) {
         this.study = study;

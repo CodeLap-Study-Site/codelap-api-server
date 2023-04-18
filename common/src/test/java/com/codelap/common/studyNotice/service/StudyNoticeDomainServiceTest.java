@@ -76,4 +76,27 @@ class StudyNoticeDomainServiceTest {
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyNoticeService.create(study.getId(), fakeLeader.getId(), "title", "contents", List.of(file)));
     }
+
+    @Test
+    void 스터디_공지_수정_성공() {
+       StudyNotice studyNotice =  studyNoticeService.create(study.getId(), leader.getId(), "title", "contents", List.of(file));
+
+        studyNoticeService.update(studyNotice.getId(), leader.getId(), "updateTitle", "updatedContents", List.of(file));
+
+        StudyNotice foundStudyNotice = studyNoticeRepository.findById(study.getId()).get();
+
+        assertThat(foundStudyNotice.getTitle()).isEqualTo("updateTitle");
+        assertThat(foundStudyNotice.getContents()).isEqualTo("updatedContents");
+        assertThat(foundStudyNotice.getFiles()).isNotNull();
+    }
+
+    @Test
+    void 스터디_공지_수정_실패__리더가_아님() {
+        StudyNotice studyNotice =  studyNoticeService.create(study.getId(), leader.getId(), "title", "contents", List.of(file));
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "fakeLeader"));
+
+        assertThatActorValidateCodeLapException().isThrownBy(() -> studyNoticeService.update(studyNotice.getId(), fakeLeader.getId(), "updateTitle", "updatedContents", List.of(file)));
+    }
 }
