@@ -24,12 +24,22 @@ public class StudyCommentDomainService implements StudyCommentService {
     private final StudyCommentRepository studyCommentRepository;
 
     @Override
-    public void create(Long studyId, Long userId, String message) {
+    public StudyComment create(Long studyId, Long userId, String message) {
         Study study = studyRepository.findById(studyId).orElseThrow();
         User user = userRepository.findById(userId).orElseThrow();
 
         actorValidate(study.containsMember(user));
 
-        studyCommentRepository.save(StudyComment.create(study, user, message));
+        return studyCommentRepository.save(StudyComment.create(study, user, message));
+    }
+
+    @Override
+    public void update(Long studyCommentId, Long userId, String comment) {
+        StudyComment studyComment = studyCommentRepository.findById(studyCommentId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
+
+        actorValidate(studyComment.isUser(user));
+
+        studyComment.update(comment);
     }
 }

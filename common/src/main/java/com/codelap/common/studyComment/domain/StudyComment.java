@@ -36,6 +36,10 @@ public class StudyComment {
     @Enumerated(STRING)
     private final StudyCommentStatus status = CREATED;
 
+    public boolean isUser(User user) {
+        return this.user == user;
+    }
+
     private StudyComment(Study study, User user, String comment) {
         this.user = user;
         this.comment = comment;
