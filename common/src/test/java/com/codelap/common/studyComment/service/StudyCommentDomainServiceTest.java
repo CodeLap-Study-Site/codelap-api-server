@@ -9,6 +9,8 @@ import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -70,5 +72,26 @@ class StudyCommentDomainServiceTest {
         User fakeMember = userRepository.save(User.create("fakeMember", 10, career, "abcd", "fakeMember"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyCommentService.create(study.getId(), fakeMember.getId(), "message"));
+    }
+
+    @Test
+    void 스터디_댓글_수정_성공(){
+        StudyComment studyComment = studyCommentService.create(study.getId(), leader.getId(), "message");
+
+        studyCommentService.update(studyComment.getId(), leader.getId(), "updatedComment");
+
+        StudyComment foundstudyComment = studyCommentRepository.findAll().get(0);
+
+        assertThat(foundstudyComment.getComment()).isEqualTo("updatedComment");
+    }
+
+    @Test
+    void 스터디_댓글_수정_실패__작성자가_아님(){
+        StudyComment studyComment = studyCommentService.create(study.getId(), leader.getId(), "message");
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeMember = userRepository.save(User.create("fakeMember", 10, career, "abcd", "fakeMember"));
+
+        assertThatActorValidateCodeLapException().isThrownBy(() -> studyCommentService.update(studyComment.getId(), fakeMember.getId(), "updatedComment"));
     }
 }
