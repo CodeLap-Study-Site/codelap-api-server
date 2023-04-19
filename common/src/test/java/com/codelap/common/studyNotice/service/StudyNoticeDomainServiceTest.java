@@ -20,6 +20,7 @@ import java.util.List;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
+import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.DELETED;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -79,7 +80,7 @@ class StudyNoticeDomainServiceTest {
 
     @Test
     void 스터디_공지_수정_성공() {
-       StudyNotice studyNotice =  studyNoticeService.create(study.getId(), leader.getId(), "title", "contents", List.of(file));
+        StudyNotice studyNotice = studyNoticeService.create(study.getId(), leader.getId(), "title", "contents", List.of(file));
 
         studyNoticeService.update(studyNotice.getId(), leader.getId(), "updateTitle", "updatedContents", List.of(file));
 
@@ -92,11 +93,32 @@ class StudyNoticeDomainServiceTest {
 
     @Test
     void 스터디_공지_수정_실패__리더가_아님() {
-        StudyNotice studyNotice =  studyNoticeService.create(study.getId(), leader.getId(), "title", "contents", List.of(file));
+        StudyNotice studyNotice = studyNoticeService.create(study.getId(), leader.getId(), "title", "contents", List.of(file));
 
         UserCareer career = UserCareer.create("직무", 1);
         User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "fakeLeader"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyNoticeService.update(studyNotice.getId(), fakeLeader.getId(), "updateTitle", "updatedContents", List.of(file)));
+    }
+
+    @Test
+    void 스터디_공지_삭제_성공() {
+        StudyNotice studyNotice = studyNoticeService.create(study.getId(), leader.getId(), "title", "contents", List.of(file));
+
+        studyNoticeService.delete(studyNotice.getId(), leader.getId());
+
+        StudyNotice foundStudyNotice = studyNoticeRepository.findById(study.getId()).get();
+
+        assertThat(foundStudyNotice.getStatus()).isEqualTo(DELETED);
+    }
+
+    @Test
+    void 스터디_공지_삭제_실패__리더가_아님() {
+        StudyNotice studyNotice = studyNoticeService.create(study.getId(), leader.getId(), "title", "contents", List.of(file));
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "fakeLeader"));
+
+        assertThatActorValidateCodeLapException().isThrownBy(() -> studyNoticeService.delete(studyNotice.getId(), fakeLeader.getId()));
     }
 }

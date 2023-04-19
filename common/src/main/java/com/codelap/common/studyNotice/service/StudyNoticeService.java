@@ -9,4 +9,6 @@ public interface StudyNoticeService {
     StudyNotice create(Long studyId, Long leaderId, String title, String contents, List<StudyNoticeFile> files);
 
     void update(Long studyNoticeId, Long leaderId, String title, String contents, List<StudyNoticeFile> files);
+
+    void delete(Long studyNoticeId, Long leaderId);
 }
