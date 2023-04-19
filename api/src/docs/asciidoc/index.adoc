@@ -346,6 +346,20 @@ include::{snippets}/study-notice/update/http-response.adoc[]
 === ResponseBody
 include::{snippets}/study-notice/update/response-body.adoc[]
 
+== 스터디공지 삭제 API
+
+=== Request
+include::{snippets}/study-notice/delete/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study-notice/delete/request-body.adoc[]
+
+=== Response
+include::{snippets}/study-notice/delete/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study-notice/delete/response-body.adoc[]
+
 
 == 스터디공지 댓글 생성 API
 

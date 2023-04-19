@@ -1,11 +1,9 @@
 package com.codelap.api.controller.studyNotice;
 
+import com.codelap.api.controller.studyNotice.dto.StudyNoticeDeleteDto.StudyNoticeDeleteRequest;
 import com.codelap.common.studyNotice.service.StudyNoticeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeCreateDto.StudyNoticeCreateRequest;
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeUpdateDto.StudyNoticeUpdateRequest;
@@ -31,4 +29,10 @@ public class StudyNoticeController {
         studyNoticeService.update(req.studyNoticeId(), req.leaderId(), req.title(), req.contents(), req.toStudyNoticeFiles());
     }
 
+    @DeleteMapping
+    public void delete(
+            @RequestBody StudyNoticeDeleteRequest req
+    ) {
+        studyNoticeService.delete(req.studyNoticeId(), req.leaderId());
+    }
 }
