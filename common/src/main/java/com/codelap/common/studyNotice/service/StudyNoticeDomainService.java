@@ -45,4 +45,14 @@ public class StudyNoticeDomainService implements StudyNoticeService {
 
         studyNotice.update(title, contents, files);
     }
+
+    @Override
+    public void delete(Long studyNoticeId, Long leaderId) {
+        User leader = userRepository.findById(leaderId).orElseThrow();
+        StudyNotice studyNotice = studyNoticeRepository.findById(studyNoticeId).orElseThrow();
+
+        actorValidate(studyNotice.isLeader(leader));
+
+        studyNotice.delete();
+    }
 }
