@@ -4,11 +4,14 @@ import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
 import com.codelap.common.study.domain.StudyPeriod;
 import com.codelap.common.study.domain.TechStack;
+import com.codelap.common.studyNoticeComment.domain.StudyNoticeComment;
+import com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.time.OffsetDateTime;
@@ -19,8 +22,9 @@ import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 
 class StudyNoticeTest {
 
@@ -95,5 +99,26 @@ class StudyNoticeTest {
         StudyNotice studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
 
         assertThatIllegalArgumentException().isThrownBy(() -> studyNotice.update("title", contents, List.of(file)));
+    }
+
+    @Test
+    void 스터디_공지_삭제_성공() {
+        StudyNoticeFile file = new StudyNoticeFile("savedName", "originalName", 100L);
+        StudyNotice studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
+
+        studyNotice.delete();
+
+        assertThat(studyNotice.getStatus()).isEqualTo(DELETED);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyNoticeStatus.class, names = {"DELETED"}, mode = INCLUDE)
+    void 스터디_공지_삭제_실패__이미_삭제된_상태(StudyNoticeStatus status) {
+        StudyNoticeFile file = new StudyNoticeFile("savedName", "originalName", 100L);
+        StudyNotice studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
+
+        studyNotice.setStatus(status);
+
+        assertThatIllegalStateException().isThrownBy(() -> studyNotice.delete());
     }
 }
