@@ -52,4 +52,10 @@ public class StudyComment {
 
         return studyComment;
     }
+
+    public void update(String comment){
+        require(isNotBlank(comment));
+
+        this.comment = comment;
+    }
 }

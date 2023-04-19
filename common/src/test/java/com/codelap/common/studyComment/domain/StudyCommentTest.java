@@ -69,4 +69,21 @@ class StudyCommentTest {
     void 스터디_댓글_생성_실패__댓글이_널이거나_공백(String comment) {
         assertThatIllegalArgumentException().isThrownBy(() -> StudyComment.create(study, leader, comment));
     }
+
+    @Test
+    void 스터디_댓글_수정_성공() {
+        StudyComment studyComment = StudyComment.create(study, leader, "댓글");
+
+        studyComment.update("updatedComment");
+
+        assertThat(studyComment.getComment()).isEqualTo("updatedComment");
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 스터디_댓글_수정_실패__댓글이_널이거나_공백(String comment){
+        StudyComment studyComment = StudyComment.create(study, leader, "댓글");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyComment.update(comment));
+    }
 }
