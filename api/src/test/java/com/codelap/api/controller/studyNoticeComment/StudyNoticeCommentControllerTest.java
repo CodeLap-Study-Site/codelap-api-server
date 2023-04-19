@@ -113,8 +113,7 @@ class StudyNoticeCommentControllerTest extends ApiTest {
 
     @Test
     void 스터디_공지_댓글_수정_성공() throws Exception {
-
-        StudyNoticeCommentUpdateReqeust req = new StudyNoticeCommentUpdateReqeust(studyNoticeComment.getId(), member.getId(), "content");
+        StudyNoticeCommentUpdateReqeust req = new StudyNoticeCommentUpdateReqeust(studyNoticeComment.getId(), member.getId(), "contentt");
 
         mockMvc.perform(post("/study-notice-comment/update")
                         .contentType(APPLICATION_JSON)
@@ -127,7 +126,7 @@ class StudyNoticeCommentControllerTest extends ApiTest {
                 ));
 
         StudyNoticeComment foundStudyNoticeComment = studyNoticeCommentRepository.findById(studyNoticeComment.getId()).orElseThrow();
-        assertThat(foundStudyNoticeComment.getContent()).isEqualTo("content");
+        assertThat(foundStudyNoticeComment.getContent()).isEqualTo("contentt");
     }
 }
 
