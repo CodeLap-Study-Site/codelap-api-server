@@ -318,6 +318,20 @@ include::{snippets}/study-confirmation/reconfirm/http-response.adoc[]
 include::{snippets}/study-confirmation/reconfirm/response-body.adoc[]
 
 
+== 스터디 댓글 생성 API
+
+=== Request
+include::{snippets}/study-comment/create/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study-comment/create/request-body.adoc[]
+
+=== Response
+include::{snippets}/study-comment/create/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study-comment/create/response-body.adoc[]
+
 == 스터디 댓글 수정 API
 
 === Request

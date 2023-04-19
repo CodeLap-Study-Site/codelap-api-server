@@ -1,5 +1,6 @@
 package com.codelap.api.controller.studyComment;
 
+import com.codelap.api.controller.studyComment.dto.StudyCommentCreateDto;
 import com.codelap.api.controller.studyComment.dto.StudyCommentUpdateDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.*;
@@ -9,6 +10,7 @@ import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.codelap.api.controller.studyComment.dto.StudyCommentCreateDto.*;
 import static com.codelap.api.controller.studyComment.dto.StudyCommentUpdateDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.TechStack.Java;
@@ -66,13 +69,32 @@ public class StudyCommentControllerTest extends ApiTest {
         study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader, techStackList));
 
         study.addMember(member);
+    }
 
-        studyComment = studyCommentRepository.save(studyCommentService.create(study.getId(), member.getId(), "message"));
+    @Test
+    void 스터디_댓글_생성_성공() throws Exception {
+        StudyCommentCreateRequest req = new StudyCommentCreateRequest(study.getId(), member.getId(), "createMessage");
+
+        mockMvc.perform(post("/study-comment")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study-comment/create",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        StudyComment foundStudyComment = studyCommentRepository.findAll().get(0);
+
+        assertThat(foundStudyComment.getComment()).isEqualTo(req.message());
     }
 
     @Test
     void 스터디_댓글_수정_성공() throws Exception{
-        StudyCommentUpdateRequest req = new StudyCommentUpdateRequest(studyComment.getId(), member.getId(), "updatedComment");
+        studyComment = studyCommentRepository.save(StudyComment.create(study, member, "message"));
+
+        StudyCommentUpdateRequest req = new StudyCommentUpdateRequest(studyComment.getId(), member.getId(), "updatedMessage");
 
         mockMvc.perform(post("/study-comment/update")
                         .contentType(APPLICATION_JSON)
@@ -86,6 +108,6 @@ public class StudyCommentControllerTest extends ApiTest {
 
         StudyComment foundStudyComment = studyCommentRepository.findById(studyComment.getId()).orElseThrow();
 
-        assertThat(foundStudyComment.getComment()).isEqualTo("updatedComment");
+        assertThat(foundStudyComment.getComment()).isEqualTo(req.message());
     }
 }
