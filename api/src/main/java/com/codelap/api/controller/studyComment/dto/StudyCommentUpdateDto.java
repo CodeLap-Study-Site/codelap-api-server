@@ -5,6 +5,6 @@ public class StudyCommentUpdateDto {
             Long studyCommentId,
             Long userId,
             String message
-    ){
+    ) {
     }
 }

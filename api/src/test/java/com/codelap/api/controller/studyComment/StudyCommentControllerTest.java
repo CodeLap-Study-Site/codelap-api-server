@@ -1,7 +1,5 @@
 package com.codelap.api.controller.studyComment;
 
-import com.codelap.api.controller.studyComment.dto.StudyCommentCreateDto;
-import com.codelap.api.controller.studyComment.dto.StudyCommentUpdateDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.*;
 import com.codelap.common.studyComment.domain.StudyComment;
@@ -10,8 +8,6 @@ import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +16,15 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.codelap.api.controller.studyComment.dto.StudyCommentCreateDto.*;
-import static com.codelap.api.controller.studyComment.dto.StudyCommentUpdateDto.*;
+import static com.codelap.api.controller.studyComment.dto.StudyCommentCreateDto.StudyCommentCreateRequest;
+import static com.codelap.api.controller.studyComment.dto.StudyCommentUpdateDto.StudyCommentUpdateRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,6 +37,7 @@ public class StudyCommentControllerTest extends ApiTest {
 
     @Autowired
     private StudyCommentRepository studyCommentRepository;
+
     @Autowired
     private StudyCommentService studyCommentService;
 
@@ -56,7 +52,7 @@ public class StudyCommentControllerTest extends ApiTest {
     private StudyComment studyComment;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
         leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
         member = userRepository.save(User.create("user", 10, career, "abcd", "email"));
@@ -91,7 +87,7 @@ public class StudyCommentControllerTest extends ApiTest {
     }
 
     @Test
-    void 스터디_댓글_수정_성공() throws Exception{
+    void 스터디_댓글_수정_성공() throws Exception {
         studyComment = studyCommentRepository.save(StudyComment.create(study, member, "message"));
 
         StudyCommentUpdateRequest req = new StudyCommentUpdateRequest(studyComment.getId(), member.getId(), "updatedMessage");

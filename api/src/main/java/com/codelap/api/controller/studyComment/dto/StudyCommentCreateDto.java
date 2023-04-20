@@ -5,7 +5,6 @@ public class StudyCommentCreateDto {
             Long studyId,
             Long userId,
             String message
-    ){
-
+    ) {
     }
 }
