@@ -6,10 +6,13 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.OffsetDateTime;
 
+import static com.codelap.common.studyComment.domain.StudyCommentStatus.*;
 import static com.codelap.common.studyComment.domain.StudyCommentStatus.CREATED;
+import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
 import static jakarta.persistence.EnumType.STRING;
 import static java.util.Objects.nonNull;
@@ -33,8 +36,9 @@ public class StudyComment {
 
     private final OffsetDateTime createAt = OffsetDateTime.now();
 
+    @Setter
     @Enumerated(STRING)
-    private final StudyCommentStatus status = CREATED;
+    private StudyCommentStatus status = CREATED;
 
     public boolean isUser(User user) {
         return this.user == user;
@@ -61,5 +65,11 @@ public class StudyComment {
         require(isNotBlank(comment));
 
         this.comment = comment;
+    }
+
+    public void delete(){
+        check(CAN_DELETE_STATUS.contains(status));
+
+        this.status = DELETED;
     }
 }
