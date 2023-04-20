@@ -3,6 +3,7 @@ package com.codelap.common.studyComment.service;
 import com.codelap.common.study.domain.*;
 import com.codelap.common.studyComment.domain.StudyComment;
 import com.codelap.common.studyComment.domain.StudyCommentRepository;
+import com.codelap.common.studyComment.domain.StudyCommentStatus;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
@@ -19,6 +20,7 @@ import java.util.List;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
+import static com.codelap.common.studyComment.domain.StudyCommentStatus.*;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -96,5 +98,30 @@ class StudyCommentDomainServiceTest {
         User fakeMember = userRepository.save(User.create("fakeMember", 10, career, "abcd", "fakeMember"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyCommentService.update(studyComment.getId(), fakeMember.getId(), "updatedComment"));
+    }
+
+    @Test
+    void 스터디_댓글_삭제_성공() {
+        studyComment = studyCommentRepository.save(StudyComment.create(study, leader, "message"));
+
+        studyCommentService.create(study.getId(), leader.getId(), "message");
+
+        studyCommentService.delete(studyComment.getId(), leader.getId());
+
+        StudyComment foundStudyComment = studyCommentRepository.findAll().get(0);
+
+        assertThat(foundStudyComment.getStatus()).isEqualTo(DELETED);
+    }
+
+    @Test
+    void 스터디_댓글_삭제_실패__작성한_유저가_아님() {
+        studyComment = studyCommentRepository.save(StudyComment.create(study, leader, "message"));
+
+        studyCommentService.create(study.getId(), leader.getId(), "message");
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeMember = userRepository.save(User.create("fakeMember", 10, career, "abcd", "fakeMember"));
+
+        assertThatActorValidateCodeLapException().isThrownBy(() -> studyCommentService.delete(studyComment.getId(), fakeMember.getId()));
     }
 }
