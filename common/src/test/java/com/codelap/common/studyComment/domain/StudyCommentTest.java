@@ -9,6 +9,7 @@ import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.time.OffsetDateTime;
@@ -19,9 +20,12 @@ import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
+import static com.codelap.common.studyComment.domain.StudyCommentStatus.*;
 import static com.codelap.common.studyComment.domain.StudyCommentStatus.CREATED;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static com.codelap.common.studyComment.domain.StudyCommentStatus.DELETED;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.params.provider.EnumSource.*;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.*;
 
 class StudyCommentTest {
 
@@ -85,5 +89,24 @@ class StudyCommentTest {
         StudyComment studyComment = StudyComment.create(study, leader, "댓글");
 
         assertThatIllegalArgumentException().isThrownBy(() -> studyComment.update(comment));
+    }
+
+    @Test
+    void 스터디_댓글_삭제_성공() {
+        StudyComment studyComment = StudyComment.create(study, leader, "댓글");
+
+        studyComment.delete();
+
+        assertThat(studyComment.getStatus()).isEqualTo(DELETED);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StudyCommentStatus.class, names = {"DELETED"}, mode = INCLUDE)
+    void 스터디_댓글_삭제_실패__이미_삭제된_상태(StudyCommentStatus status) {
+        StudyComment studyComment = StudyComment.create(study, leader, "댓글");
+
+        studyComment.setStatus(status);
+
+        assertThatIllegalStateException().isThrownBy(() -> studyComment.delete());
     }
 }
