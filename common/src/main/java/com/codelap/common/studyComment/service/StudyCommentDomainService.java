@@ -42,4 +42,14 @@ public class StudyCommentDomainService implements StudyCommentService {
 
         studyComment.update(comment);
     }
+
+    @Override
+    public void delete(Long studyCommentid, Long userId) {
+        StudyComment studyComment = studyCommentRepository.findById(studyCommentid).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
+
+        actorValidate(studyComment.isUser(user));
+
+        studyComment.delete();
+    }
 }
