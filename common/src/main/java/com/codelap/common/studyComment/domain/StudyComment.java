@@ -41,9 +41,9 @@ public class StudyComment {
     }
 
     private StudyComment(Study study, User user, String comment) {
+        this.study = study;
         this.user = user;
         this.comment = comment;
-        this.study = study;
     }
 
     public static StudyComment create(Study study, User user, String comment) {
