@@ -44,6 +44,7 @@ public class BookmarkControllerTest extends ApiTest {
     private BookmarkService bookmarkService;
 
     private Bookmark bookmark;
+
     private User leader;
 
     private User member;
