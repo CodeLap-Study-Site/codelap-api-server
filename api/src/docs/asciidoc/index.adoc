@@ -444,3 +444,17 @@ include::{snippets}/study-notice-comment/update/http-response.adoc[]
 
 === ResponseBody
 include::{snippets}/study-notice-comment/update/response-body.adoc[]
+
+== 북마크 생성 API
+
+=== Request
+include::{snippets}/bookmark/create/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/bookmark/create/request-body.adoc[]
+
+=== Response
+include::{snippets}/bookmark/create/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/bookmark/create/response-body.adoc[]
