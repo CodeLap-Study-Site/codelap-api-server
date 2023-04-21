@@ -2,7 +2,7 @@ package com.codelap.api.controller.study.dto;
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
 import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.TechStack;
+import com.codelap.common.study.dto.GetTechStackDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ public class GetMyStudiesDto {
             Long viewCount,
             Long bookmarkCount,
             int maxMemberSize,
-            List<TechStack> techStackList
+            List<GetTechStackDto> techStackList
     ) {
 
         public static GetStudiesDto create(GetStudiesStudyDto study) {

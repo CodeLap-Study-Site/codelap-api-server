@@ -34,6 +34,7 @@ import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
 import static com.codelap.common.study.domain.TechStack.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -296,8 +297,6 @@ class StudyControllerTest extends ApiTest {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
 
-        techStackList = List.of(Spring, Java);
-
         study1 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, List.of(Spring, Java)));
 
         study1.addMember(member);
@@ -321,9 +320,14 @@ class StudyControllerTest extends ApiTest {
                 .filter(it -> it.containsMember(member))
                 .collect(Collectors.toList());
 
+
         return IntStream.range(0, studiesContainsMember.size())
                 .mapToObj(index -> {
                     Study indexStudy = studiesContainsMember.get(index);
+
+                    String[] toStringArray = indexStudy.getTechStackList().stream()
+                            .map(Enum::name)
+                            .toArray(String[]::new);
 
                     return Map.entry(index, List.of(
                             jsonPath("$.studies.[" + index + "].studyName").value(indexStudy.getName()),
@@ -333,7 +337,7 @@ class StudyControllerTest extends ApiTest {
                             jsonPath("$.studies.[" + index + "].viewCount").value(indexStudy.getViews().size()),
                             jsonPath("$.studies.[" + index + "].bookmarkCount").value(indexStudy.getBookmarks().size()),
                             jsonPath("$.studies.[" + index + "].maxMemberSize").value(indexStudy.getMaxMembersSize()),
-                            jsonPath("$.studies.[" + index + "].techStackList.[" + index + "]").value(indexStudy.getTechStackList().get(index).toString())
+                            jsonPath("$.studies.[" + index + "].techStackList.[*].techStackList").value(containsInAnyOrder(toStringArray))
                     ));
                 })
                 .flatMap(entry -> entry.getValue().stream())

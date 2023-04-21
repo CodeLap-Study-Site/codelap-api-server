@@ -1,7 +1,6 @@
 package com.codelap.api.service.study;
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
-import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.study.domain.TechStack;
 import com.codelap.common.study.dto.GetMyStudiesDto;
@@ -27,7 +26,7 @@ public class DefaultStudyQueryAppService implements StudyQueryAppService {
     }
 
     @Override
-    public List<TechStack> getTechStacks(Study study) {
-        return studyRepository.getTechStacks(study);
+    public List<GetTechStackDto> getTechStacks(List<Long> studyIds) {
+        return studyRepository.getTechStacks(studyIds);
     }
 }

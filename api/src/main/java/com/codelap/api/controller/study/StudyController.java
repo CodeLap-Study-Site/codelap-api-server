@@ -89,6 +89,8 @@ public class StudyController {
     ) {
         List<GetStudiesStudyDto> studies = studyAppService.getAttendedStudiesByUser(userId);
 
+        System.out.println(GetMyStudiesResponse.create(studies));
+
         return GetMyStudiesResponse.create(studies);
     }
 }
