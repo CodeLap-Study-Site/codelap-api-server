@@ -1,0 +1,74 @@
+name: Merge
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    types:
+      - closed
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: "application.yml Set"
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.RESOURCE_PATH }}
+        env:
+          spring.datasource.url: ${{ secrets.RDB_URL }}
+          spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
+          spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
+
+
+      - name: "integration.yml Set"
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.INTEGRATION_PATH }}
+        env:
+          spring.mail.username: ${{ secrets.MAIL_USER_NAME }}
+          spring.mail.password: ${{ secrets.MAIL_PASSWORD }}
+
+
+      - name: "API Test application.yml Set"
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.API_TEST_RESOURCE_PATH }}
+        env:
+          spring.datasource.url: ${{ secrets.RDB_TEST_URL }}
+          spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
+          spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
+
+
+      - name: "COMMON Test application.yml Set"
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.COMMON_TEST_RESOURCE_PATH }}
+        env:
+          spring.datasource.url: ${{ secrets.RDB_TEST_URL }}
+          spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
+          spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
+
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+
+
+      - name: Test with Gradle
+        run: ./gradlew clean test
+        shell: bash
+
+
+      - name: Build with Gradle
+        run: ./gradlew clean :api:buildNeeded --stacktrace --info -x test
+        shell: bash
