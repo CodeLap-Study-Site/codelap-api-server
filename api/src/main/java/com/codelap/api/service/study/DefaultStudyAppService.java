@@ -1,8 +1,10 @@
 package com.codelap.api.service.study;
 
-import com.codelap.api.service.study.dto.GetStudiesDto;
+
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
 import com.codelap.common.study.dto.GetMyStudiesDto;
+import com.codelap.common.study.dto.GetOpenedStudiesDto;
+import com.codelap.common.study.dto.GetTechStackDto;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
@@ -10,8 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+
 
 @Service
 @Transactional
@@ -29,16 +32,21 @@ public class DefaultStudyAppService implements StudyAppService {
     }
 
     @Override
-    public List<GetStudiesDto.GetStudiesStudyDto> getAttendedStudiesByUser(Long userId) {
+    public List<GetStudiesStudyDto> getAttendedStudiesByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
 
         List<GetMyStudiesDto> allStudies = studyQueryAppService.getAttendedStudiesByUser(user);
 
-        IntStream.range(0, user.getStudies().size())
-                .forEach(index -> {
-                    allStudies.get(index).setTechStackList(studyQueryAppService.getTechStacks(user.getStudies().get(index)));
-                });
+        Map<Long, List<GetTechStackDto>> techStacksMap = studyQueryAppService.getTechStacks(toStudyIds(allStudies))
+                .stream()
+                .collect(Collectors.groupingBy(GetTechStackDto::getStudyId));
 
+        allStudies.forEach(it -> it.setTechStackList(techStacksMap.get(it.getStudyId())));
+
+        return getGetStudiesStudyDto(allStudies);
+    }
+
+    private static List<GetStudiesStudyDto> getGetStudiesStudyDto(List<GetMyStudiesDto> allStudies) {
         return allStudies.stream().map(study -> {
             GetStudiesStudyDto studyDto = new GetStudiesStudyDto(
                     study.getStudyName(),
@@ -52,5 +60,14 @@ public class DefaultStudyAppService implements StudyAppService {
             );
             return studyDto;
         }).collect(Collectors.toList());
+    }
+
+    private static List<Long> toStudyIds(List<GetMyStudiesDto> allStudies) {
+        return allStudies.stream().map(study -> study.getStudyId()).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GetOpenedStudiesDto> getOpenedStudies() {
+        return studyQueryAppService.getOpenedStudies();
     }
 }

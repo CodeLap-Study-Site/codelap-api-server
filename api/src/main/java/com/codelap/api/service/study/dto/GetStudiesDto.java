@@ -1,7 +1,7 @@
 package com.codelap.api.service.study.dto;
 
 import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.TechStack;
+import com.codelap.common.study.dto.GetTechStackDto;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public class GetStudiesDto {
             Long viewCount,
             Long bookmarkCount,
             int maxMemberSize,
-            List<TechStack> techStackList
+            List<GetTechStackDto> techStackList
     ) {
     }
 }

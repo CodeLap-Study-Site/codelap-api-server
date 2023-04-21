@@ -13,6 +13,7 @@ spring:
       hibernate:
         format_sql: false
         dialect: org.hibernate.dialect.MySQL8Dialect
+        default_batch_fetch_size : 100
       javax:
         persistence:
           validation:

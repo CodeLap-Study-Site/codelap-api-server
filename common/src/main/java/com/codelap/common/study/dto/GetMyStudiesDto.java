@@ -1,7 +1,6 @@
 package com.codelap.common.study.dto;
 
 import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.TechStack;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,6 +11,7 @@ import java.util.List;
 @Setter
 @ToString
 public class GetMyStudiesDto {
+    private Long studyId;
     private String studyName;
     private StudyPeriod studyPeriod;
     private String leaderName;
@@ -19,9 +19,10 @@ public class GetMyStudiesDto {
     private Long viewCount;
     private Long bookmarkCount;
     private int maxMemberSize;
-    private List<TechStack> techStackList;
+    private List<GetTechStackDto> techStackList;
 
-    public GetMyStudiesDto(String studyName, StudyPeriod studyPeriod, String leaderName, Long commentCount, Long viewCount, Long bookmarkCount, int maxMemberSize) {
+    public GetMyStudiesDto(Long studyId, String studyName, StudyPeriod studyPeriod, String leaderName, Long commentCount, Long viewCount, Long bookmarkCount, int maxMemberSize) {
+        this.studyId = studyId;
         this.studyName = studyName;
         this.studyPeriod = studyPeriod;
         this.leaderName = leaderName;
