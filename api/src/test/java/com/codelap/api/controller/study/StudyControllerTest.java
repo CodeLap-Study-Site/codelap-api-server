@@ -283,11 +283,11 @@ class StudyControllerTest extends ApiTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        mockMvc.perform(get("/study")
+        mockMvc.perform(get("/study/my-study")
                         .param("userId", member.getId().toString()))
                 .andExpect(status().isOk())
                 .andExpectAll(유저가_참여한_스터디_조회_검증())
-                .andDo(document("study/my-list",
+                .andDo(document("study/my-study",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
                 ));
@@ -320,7 +320,6 @@ class StudyControllerTest extends ApiTest {
                 .filter(it -> it.containsMember(member))
                 .collect(Collectors.toList());
 
-
         return IntStream.range(0, studiesContainsMember.size())
                 .mapToObj(index -> {
                     Study indexStudy = studiesContainsMember.get(index);
@@ -330,14 +329,14 @@ class StudyControllerTest extends ApiTest {
                             .toArray(String[]::new);
 
                     return Map.entry(index, List.of(
-                            jsonPath("$.studies.[" + index + "].studyName").value(indexStudy.getName()),
-                            jsonPath("$.studies.[" + index + "].studyPeriod").isNotEmpty(),
-                            jsonPath("$.studies.[" + index + "].leaderName").value(indexStudy.getLeader().getName()),
-                            jsonPath("$.studies.[" + index + "].commentCount").value(indexStudy.getComments().size()),
-                            jsonPath("$.studies.[" + index + "].viewCount").value(indexStudy.getViews().size()),
-                            jsonPath("$.studies.[" + index + "].bookmarkCount").value(indexStudy.getBookmarks().size()),
-                            jsonPath("$.studies.[" + index + "].maxMemberSize").value(indexStudy.getMaxMembersSize()),
-                            jsonPath("$.studies.[" + index + "].techStackList.[*].techStackList").value(containsInAnyOrder(toStringArray))
+                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.studyName").value(indexStudy.getName()),
+                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.studyPeriod").isNotEmpty(),
+                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.leaderName").value(indexStudy.getLeader().getName()),
+                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.commentCount").value(indexStudy.getComments().size()),
+                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.viewCount").value(indexStudy.getViews().size()),
+                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.bookmarkCount").value(indexStudy.getBookmarks().size()),
+                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.maxMemberSize").value(indexStudy.getMaxMembersSize()),
+                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.techStackList.[*].techStackList").value(containsInAnyOrder(toStringArray))
                     ));
                 })
                 .flatMap(entry -> entry.getValue().stream())
