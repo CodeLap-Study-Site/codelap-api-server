@@ -21,12 +21,12 @@ public class DefaultStudyQueryAppService implements StudyQueryAppService {
     }
 
     @Override
-    public List<GetMyStudiesDto> getAttendedStudiesByUser(User user) {
+    public List<GetMyStudiesDto.GetStudyInfo> getAttendedStudiesByUser(User user) {
         return studyRepository.getAttendedStudiesByUser(user);
     }
 
     @Override
-    public List<GetTechStackDto> getTechStacks(List<Long> studyIds) {
+    public List<GetMyStudiesDto.GetTechStackInfo> getTechStacks(List<Long> studyIds) {
         return studyRepository.getTechStacks(studyIds);
     }
 }
