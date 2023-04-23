@@ -190,16 +190,16 @@ include::{snippets}/study/open/response-body.adoc[]
 == 내 스터디 목록 조회 API
 
 === Request
-include::{snippets}/study/my-list/curl-request.adoc[]
+include::{snippets}/study/my-study/curl-request.adoc[]
 
 === RequestBody
-include::{snippets}/study/my-list/request-body.adoc[]
+include::{snippets}/study/my-study/request-body.adoc[]
 
 === Response
-include::{snippets}/study/my-list/http-response.adoc[]
+include::{snippets}/study/my-study/http-response.adoc[]
 
 === ResponseBody
-include::{snippets}/study/my-list/response-body.adoc[]
+include::{snippets}/study/my-study/response-body.adoc[]
 
 [[Study-requestCreate]]
 == 스터디참가신청 생성 API
@@ -345,6 +345,20 @@ include::{snippets}/study-comment/update/http-response.adoc[]
 
 === ResponseBody
 include::{snippets}/study-comment/update/response-body.adoc[]
+
+== 스터디 댓글 삭제 API
+
+=== Request
+include::{snippets}/study-comment/delete/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study-comment/delete/request-body.adoc[]
+
+=== Response
+include::{snippets}/study-comment/delete/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study-comment/delete/response-body.adoc[]
 
 == 스터디공지 생성 API
 

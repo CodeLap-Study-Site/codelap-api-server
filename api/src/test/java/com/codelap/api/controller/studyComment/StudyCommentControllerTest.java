@@ -17,14 +17,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.codelap.api.controller.studyComment.dto.StudyCommentCreateDto.StudyCommentCreateRequest;
+import static com.codelap.api.controller.studyComment.dto.StudyCommentDeleteDto.StudyCommentDeleteRequest;
 import static com.codelap.api.controller.studyComment.dto.StudyCommentUpdateDto.StudyCommentUpdateRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
+import static com.codelap.common.studyComment.domain.StudyCommentStatus.DELETED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -105,5 +108,26 @@ public class StudyCommentControllerTest extends ApiTest {
         StudyComment foundStudyComment = studyCommentRepository.findById(studyComment.getId()).orElseThrow();
 
         assertThat(foundStudyComment.getComment()).isEqualTo(req.message());
+    }
+
+    @Test
+    void 스터디_댓글_삭제_성공() throws Exception {
+        studyComment = studyCommentRepository.save(StudyComment.create(study, member, "message"));
+
+        StudyCommentDeleteRequest req = new StudyCommentDeleteRequest(studyComment.getId(), member.getId());
+
+        mockMvc.perform(delete("/study-comment")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study-comment/delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        StudyComment foundStudyComment = studyCommentRepository.findById(studyComment.getId()).orElseThrow();
+
+        assertThat(foundStudyComment.getStatus()).isEqualTo(DELETED);
     }
 }

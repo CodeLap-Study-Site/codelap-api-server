@@ -3,12 +3,10 @@ package com.codelap.api.controller.studyComment;
 import com.codelap.api.controller.studyComment.dto.StudyCommentUpdateDto.StudyCommentUpdateRequest;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.codelap.api.controller.studyComment.dto.StudyCommentCreateDto.StudyCommentCreateRequest;
+import static com.codelap.api.controller.studyComment.dto.StudyCommentDeleteDto.StudyCommentDeleteRequest;
 
 @RestController
 @RequestMapping("/study-comment")
@@ -29,5 +27,12 @@ public class StudyCommentController {
             @RequestBody StudyCommentUpdateRequest req
     ) {
         studyCommentService.update(req.studyCommentId(), req.userId(), req.message());
+    }
+
+    @DeleteMapping
+    public void delete(
+            @RequestBody StudyCommentDeleteRequest req
+    ) {
+        studyCommentService.delete(req.studyCommentId(), req.userId());
     }
 }

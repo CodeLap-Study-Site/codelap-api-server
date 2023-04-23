@@ -83,7 +83,7 @@ public class StudyController {
         studyService.open(req.studyId(), req.leaderId(), req.period().toStudyPeriod());
     }
 
-    @GetMapping
+    @GetMapping("/my-study")
     public GetMyStudiesResponse findStudyListByUserId(
             Long userId
     ) {
