@@ -2,6 +2,7 @@ package com.codelap.common.study.domain;
 
 
 import com.codelap.common.study.dto.GetMyStudiesDto;
+import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
