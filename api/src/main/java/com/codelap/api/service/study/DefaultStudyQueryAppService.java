@@ -2,8 +2,8 @@ package com.codelap.api.service.study;
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
 import com.codelap.common.study.domain.StudyRepository;
-import com.codelap.common.study.domain.TechStack;
 import com.codelap.common.study.dto.GetMyStudiesDto;
+import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -28,5 +28,10 @@ public class DefaultStudyQueryAppService implements StudyQueryAppService {
     @Override
     public List<GetMyStudiesDto.GetTechStackInfo> getTechStacks(List<Long> studyIds) {
         return studyRepository.getTechStacks(studyIds);
+    }
+
+    @Override
+    public List<GetOpenedStudiesDto> getOpenedStudies() {
+        return null;
     }
 }
