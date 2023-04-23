@@ -50,12 +50,8 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
 
-      - name: Common Test
-        run: ./gradlew common:test
-        shell: bash
-
-      - name: API Test
-        run: ./gradlew api:test
+      - name: Build with Gradle
+        run: ./gradlew clean :api:buildNeeded --stacktrace
         shell: bash
 
       - name: Make zip file
