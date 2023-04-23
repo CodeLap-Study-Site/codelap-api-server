@@ -47,9 +47,9 @@ jobs:
         shell: bash
 
       - name: Common Test
-        run: ./gradlew common:test --parallel --max-workers=4 --fail-fast
+        run: ./gradlew common:test
         shell: bash
 
       - name: API Test
-        run: ./gradlew api:test --parallel --max-workers=4 --fail-fast
+        run: ./gradlew api:test
         shell: bash
