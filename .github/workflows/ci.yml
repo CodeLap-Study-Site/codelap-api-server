@@ -1,56 +1,56 @@
-#env:
-#  API_RESOURCE_PATH: ./api/src/test/resources/application.yml
-#  COMMON_RESOURCE_PATH: ./common/src/test/resources/application.yml
-#
-#
-#name: PR
-#
-#on:
-#  pull_request:
-#    branches: [ main ]
-#    types: [ opened, synchronize, edited ]
-#
-#permissions:
-#  contents: read
-#
-#jobs:
-#  Test:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: Set up JDK 17
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: 17
-#
-#      - name: "API Test application.yml Set"
-#        uses: microsoft/variable-substitution@v1
-#        with:
-#          files: ${{ env.API_RESOURCE_PATH }}
-#        env:
-#          spring.datasource.url: ${{ secrets.RDB_TEST_URL }}
-#          spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
-#          spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
-#
-#      - name: "COMMON Test application.yml Set"
-#        uses: microsoft/variable-substitution@v1
-#        with:
-#          files: ${{ env.COMMON_RESOURCE_PATH }}
-#        env:
-#          spring.datasource.url: ${{ secrets.RDB_TEST_URL }}
-#          spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
-#          spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
-#
-#      - name: Grant execute permission for gradlew
-#        run: chmod +x ./gradlew
-#        shell: bash
-#
-#      - name: Common Test
-#        run: ./gradlew common:test
-#        shell: bash
-#
-#      - name: API Test
-#        run: ./gradlew api:test
-#        shell: bash
+env:
+  API_RESOURCE_PATH: ./api/src/test/resources/application.yml
+  COMMON_RESOURCE_PATH: ./common/src/test/resources/application.yml
+
+
+name: PR
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [ opened, synchronize, edited ]
+
+permissions:
+  contents: read
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: "API Test application.yml Set"
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.API_RESOURCE_PATH }}
+        env:
+          spring.datasource.url: ${{ secrets.RDB_TEST_URL }}
+          spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
+          spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
+
+      - name: "COMMON Test application.yml Set"
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.COMMON_RESOURCE_PATH }}
+        env:
+          spring.datasource.url: ${{ secrets.RDB_TEST_URL }}
+          spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
+          spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+
+      - name: Common Test
+        run: ./gradlew common:test
+        shell: bash
+
+      - name: API Test
+        run: ./gradlew api:test
+        shell: bash

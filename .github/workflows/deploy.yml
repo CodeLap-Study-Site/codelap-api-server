@@ -11,16 +11,11 @@ env:
 
 name: Merge
 
-#on:
-#  pull_request:
-#    branches: [ "main" ]
-#    types:
-#      - closed
-
 on:
   pull_request:
-    branches: [ main ]
-    types: [ opened, synchronize, edited ]
+    branches: [ "main" ]
+    types:
+      - closed
 
 permissions:
   contents: read
