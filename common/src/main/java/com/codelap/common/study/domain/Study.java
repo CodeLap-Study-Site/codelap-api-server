@@ -138,7 +138,6 @@ public class Study {
         check(status != DELETED);
 
         members.add(user);
-        user.getStudies().add(this);
     }
 
     public void addComment(StudyComment studyComment) {
