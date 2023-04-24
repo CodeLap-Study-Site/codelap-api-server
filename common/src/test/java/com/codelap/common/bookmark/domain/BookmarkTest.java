@@ -77,7 +77,7 @@ class BookmarkTest {
 
         bookmark.delete(study, user);
 
-        assertThat(bookmark.getCreatedAt()).isNotNull();
+        assertThat(bookmark.getId()).isNull();
     }
 
     @Test
