@@ -1,8 +1,7 @@
 package com.codelap.api.controller.study.dto;
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
-import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.TechStack;
+import com.codelap.common.study.dto.GetMyStudiesDto.GetStudyInfo;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +10,6 @@ public class GetMyStudiesDto {
 
     public record GetMyStudiesResponse(
             List<GetStudiesDto> studies
-
     ) {
         public static GetMyStudiesResponse create(List<GetStudiesStudyDto> studies) {
             return new GetMyStudiesResponse(studies.stream()
@@ -21,21 +19,10 @@ public class GetMyStudiesDto {
     }
 
     public record GetStudiesDto(
-            String studyName,
-            StudyPeriod studyPeriod,
-            String leaderName,
-            Long commentCount,
-            Long viewCount,
-            Long bookmarkCount,
-            int maxMemberSize,
-            List<TechStack> techStackList
+            GetStudyInfo getMyStudiesDto
     ) {
-
         public static GetStudiesDto create(GetStudiesStudyDto study) {
-            return new GetStudiesDto(
-                    study.studyName(), study.studyPeriod(), study.leaderName(), study.commentCount(),
-                    study.viewCount(), study.bookmarkCount(), study.maxMemberSize(), study.techStackList()
-            );
+            return new GetStudiesDto(study.getMyStudiesDto());
         }
     }
 }

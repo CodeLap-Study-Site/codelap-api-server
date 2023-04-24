@@ -84,7 +84,7 @@ class StudyNoticeDomainServiceTest {
 
         studyNoticeService.update(studyNotice.getId(), leader.getId(), "updateTitle", "updatedContents", List.of(file));
 
-        StudyNotice foundStudyNotice = studyNoticeRepository.findById(study.getId()).orElseThrow();
+        StudyNotice foundStudyNotice = studyNoticeRepository.findById(studyNotice.getId()).orElseThrow();
 
         assertThat(foundStudyNotice.getTitle()).isEqualTo("updateTitle");
         assertThat(foundStudyNotice.getContents()).isEqualTo("updatedContents");
@@ -107,7 +107,7 @@ class StudyNoticeDomainServiceTest {
 
         studyNoticeService.delete(studyNotice.getId(), leader.getId());
 
-        StudyNotice foundStudyNotice = studyNoticeRepository.findById(study.getId()).orElseThrow();
+        StudyNotice foundStudyNotice = studyNoticeRepository.findById(studyNotice.getId()).orElseThrow();
 
         assertThat(foundStudyNotice.getStatus()).isEqualTo(DELETED);
     }

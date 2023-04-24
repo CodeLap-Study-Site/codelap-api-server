@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
@@ -54,33 +56,43 @@ class DefaultStudyQueryAppServiceTest {
     void 유저가_참여한_스터디_조회_성공() {
         UserCareer career = UserCareer.create("직무", 1);
         leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
-
         member = userRepository.save(User.create("member", 10, career, "abcd", "email"));
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        List<GetMyStudiesDto> allStudies = studyQueryAppService.getAttendedStudiesByUser(member);
+        List<GetMyStudiesDto.GetStudyInfo> allStudies = studyQueryAppService.getAttendedStudiesByUser(member);
 
-        IntStream.range(0, member.getStudies().size())
-                .forEach(index -> {
-                    allStudies.get(index).setTechStackList(studyQueryAppService.getTechStacks(member.getStudies().get(index)));
-                });
+        Map<Long, List<GetMyStudiesDto.GetTechStackInfo>> techStacksMap = studyQueryAppService.getTechStacks(스터디_아이디_리스트_가져오기(allStudies))
+                .stream()
+                .collect(Collectors.groupingBy(GetMyStudiesDto.GetTechStackInfo::getStudyId));
+
+        allStudies.forEach(it -> it.setTechStackList(techStacksMap.get(it.getStudyId())));
 
         IntStream.range(0, allStudies.size())
                 .forEach(index -> {
-                    GetMyStudiesDto study = allStudies.get(index);
+                    GetMyStudiesDto.GetStudyInfo study = allStudies.get(index);
+
+                    List<TechStack> techStacksByStudy = study.getTechStackList()
+                            .stream()
+                            .map(getTechStackDto -> getTechStackDto.getTechStackList())
+                            .collect(Collectors.toList());
+
                     if (index == 0) {
                         assertThat(study.getCommentCount()).isEqualTo(study1.getComments().size());
                         assertThat(study.getViewCount()).isEqualTo(study1.getViews().size());
                         assertThat(study.getBookmarkCount()).isEqualTo(study1.getBookmarks().size());
-                        assertThat(study.getTechStackList()).isEqualTo(List.of(Spring, Java));
+                        assertThat(techStacksByStudy).isEqualTo(study1.getTechStackList());
                     } else if (index == 1) {
                         assertThat(study.getCommentCount()).isEqualTo(study2.getComments().size());
                         assertThat(study.getViewCount()).isEqualTo(study2.getViews().size());
                         assertThat(study.getBookmarkCount()).isEqualTo(study2.getBookmarks().size());
-                        assertThat(study.getTechStackList()).isEqualTo(List.of(JavaScript, React));
+                        assertThat(techStacksByStudy).isEqualTo(study2.getTechStackList());
                     }
                 });
+    }
+
+    private List<Long> 스터디_아이디_리스트_가져오기(List<GetMyStudiesDto.GetStudyInfo> allStudies) {
+        return allStudies.stream().map(study -> study.getStudyId()).collect(Collectors.toList());
     }
 
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {

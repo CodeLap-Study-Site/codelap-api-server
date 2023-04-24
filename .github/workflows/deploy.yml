@@ -1,0 +1,88 @@
+env:
+  API_TEST_RESOURCE_PATH: ./api/src/test/resources/application.yml
+  COMMON_TEST_RESOURCE_PATH: ./common/src/test/resources/application.yml
+  RESOURCE_PATH: ./api/src/main/resources/application.yml
+  PROJECT_NAME: codelap_project
+  BUCKET_NAME: codelap
+  CODE_DEPLOY_APP_NAME: codelap
+  DEPLOYMENT_GROUP_NAME: codelap
+  REST_DOCS_BUCKET_NAME: codelapdocs
+  REST_DOCS: ./api/build/docs/asciidoc/index.html
+
+name: Merge
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    types:
+      - closed
+
+permissions:
+  contents: read
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: "application.yml Set"
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.RESOURCE_PATH }}
+        env:
+          spring.datasource.url: ${{ secrets.RDB_URL }}
+          spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
+          spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
+
+      - name: "API Test application.yml Set"
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.API_TEST_RESOURCE_PATH }}
+        env:
+          spring.datasource.url: ${{ secrets.RDB_TEST_URL }}
+          spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
+          spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
+
+      - name: "COMMON Test application.yml Set"
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.COMMON_TEST_RESOURCE_PATH }}
+        env:
+          spring.datasource.url: ${{ secrets.RDB_TEST_URL }}
+          spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
+          spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+
+      - name: Build with Gradle
+        run: ./gradlew clean :api:buildNeeded --stacktrace
+        shell: bash
+
+      - name: Make zip file
+        run: zip -r ./$GITHUB_SHA.zip .
+        shell: bash
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Server Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
+
+      - name: RestDocs Upload to S3
+        run: aws s3 cp --region ap-northeast-2 $REST_DOCS s3://$REST_DOCS_BUCKET_NAME/index.html
+
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name $CODE_DEPLOY_APP_NAME --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name $DEPLOYMENT_GROUP_NAME --s3-location bucket=$BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip

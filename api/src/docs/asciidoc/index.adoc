@@ -190,16 +190,16 @@ include::{snippets}/study/open/response-body.adoc[]
 == 내 스터디 목록 조회 API
 
 === Request
-include::{snippets}/study/my-list/curl-request.adoc[]
+include::{snippets}/study/my-study/curl-request.adoc[]
 
 === RequestBody
-include::{snippets}/study/my-list/request-body.adoc[]
+include::{snippets}/study/my-study/request-body.adoc[]
 
 === Response
-include::{snippets}/study/my-list/http-response.adoc[]
+include::{snippets}/study/my-study/http-response.adoc[]
 
 === ResponseBody
-include::{snippets}/study/my-list/response-body.adoc[]
+include::{snippets}/study/my-study/response-body.adoc[]
 
 [[Study-requestCreate]]
 == 스터디참가신청 생성 API
