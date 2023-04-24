@@ -3,7 +3,7 @@ create table study_notice
     id         bigint not null auto_increment,
     contents   varchar(255),
     created_at datetime(6),
-    status     smallint,
+    status     varchar(255),
     title      varchar(255),
     study_id   bigint,
     primary key (id)
