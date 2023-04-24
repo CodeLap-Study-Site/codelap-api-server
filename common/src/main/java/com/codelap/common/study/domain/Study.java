@@ -152,6 +152,10 @@ public class Study {
         bookmarks.add(bookmark);
     }
 
+    public void removeBookmark(Bookmark bookmark){
+       bookmarks.remove(bookmark);
+    }
+
     public void changeLeader(User user) {
         validate(containsMember(user), NOT_EXISTED_MEMBER);
         validate(!isLeader(user), NOT_ALLOWED_AS_LEADER);
