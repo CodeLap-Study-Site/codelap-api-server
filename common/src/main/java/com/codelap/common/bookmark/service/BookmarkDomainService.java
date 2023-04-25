@@ -37,6 +37,8 @@ public class BookmarkDomainService implements BookmarkService{
         Bookmark bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow();
         User user = userRepository.findById(userId).orElseThrow();
 
+        actorValidate(bookmark.isUser(user));
+
         bookmark.delete(study, user);
     }
 }

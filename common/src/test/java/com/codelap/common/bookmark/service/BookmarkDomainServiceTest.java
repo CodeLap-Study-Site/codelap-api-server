@@ -21,6 +21,7 @@ import java.util.Arrays;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
+import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -75,5 +76,17 @@ public class BookmarkDomainServiceTest {
         Bookmark bookmark = bookmarkRepository.findAll().get(0);
 
         bookmarkService.delete(bookmark.getId(), study.getId(), member.getId());
+    }
+
+    @Test
+    void 북마크_삭제_실패__북마크를_한_사용자가_아님() {
+        bookmarkService.create(study.getId(), member.getId());
+
+        Bookmark bookmark = bookmarkRepository.findAll().get(0);
+
+        UserCareer career = UserCareer.create("직무", 1);
+        User fakeMember = userRepository.save(User.create("name", 10, career, "abcd", "fakeMember"));
+
+        assertThatActorValidateCodeLapException().isThrownBy(() -> bookmarkService.delete(bookmark.getId(), fakeMember.getId()));
     }
 }
