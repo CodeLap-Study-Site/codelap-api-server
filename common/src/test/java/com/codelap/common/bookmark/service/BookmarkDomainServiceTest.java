@@ -67,4 +67,13 @@ public class BookmarkDomainServiceTest {
 
         assertThat(bookmark.getId()).isNotNull();
     }
+
+    @Test
+    void 북마크_삭제_성공() {
+        bookmarkService.create(study.getId(), member.getId());
+
+        Bookmark bookmark = bookmarkRepository.findAll().get(0);
+
+        bookmarkService.delete(bookmark.getId(), study.getId(), member.getId());
+    }
 }
