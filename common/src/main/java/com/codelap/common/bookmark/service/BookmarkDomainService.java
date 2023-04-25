@@ -32,13 +32,12 @@ public class BookmarkDomainService implements BookmarkService{
     }
 
     @Override
-    public void delete(Long bookmarkId, Long studyId, Long userId) {
-        Study study = studyRepository.findById(studyId).orElseThrow();
+    public void delete(Long bookmarkId, Long userId) {
         Bookmark bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow();
         User user = userRepository.findById(userId).orElseThrow();
 
         actorValidate(bookmark.isUser(user));
 
-        bookmark.delete(study, user);
+        bookmark.delete(bookmark.getStudy(), user);
     }
 }

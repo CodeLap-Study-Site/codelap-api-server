@@ -4,5 +4,5 @@ public interface BookmarkService {
 
     void create(Long studyId, Long userId);
 
-    void delete(Long bookmarkId, Long studyId, Long userId);
+    void delete(Long bookmarkId, Long userId);
 }
