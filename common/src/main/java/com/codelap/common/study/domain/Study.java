@@ -85,6 +85,10 @@ public class Study {
         return this.members.size() == 1;
     }
 
+    public boolean containsBookmark(Bookmark bookmark) {
+        return this.bookmarks.contains(bookmark);
+    }
+
     private Study(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader, List<TechStack> techStackList) {
         this.name = name;
         this.info = info;
@@ -150,6 +154,10 @@ public class Study {
 
     public void addBookmark(Bookmark bookmark) {
         bookmarks.add(bookmark);
+    }
+
+    public void removeBookmark(Bookmark bookmark){
+       bookmarks.remove(bookmark);
     }
 
     public void changeLeader(User user) {
