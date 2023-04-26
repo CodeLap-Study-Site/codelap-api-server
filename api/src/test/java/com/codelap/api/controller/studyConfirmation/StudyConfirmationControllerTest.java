@@ -144,6 +144,8 @@ class StudyConfirmationControllerTest extends ApiTest {
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "content", List.of(file)));
 
+        studyConfirmation.setStatus(REJECTED);
+
         StudyConfirmationreConfirmRequestFileDto refile = new StudyConfirmationreConfirmRequestFileDto("savedName", "originalName", 100L);
         StudyConfirmationreConfirmRequest req = new StudyConfirmationreConfirmRequest(studyConfirmation.getId(), member.getId(), "title", "content", List.of(refile));
 
