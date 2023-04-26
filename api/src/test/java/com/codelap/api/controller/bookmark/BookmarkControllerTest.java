@@ -104,6 +104,6 @@ public class BookmarkControllerTest extends ApiTest {
                 ));
 
         assertThat(bookmarkRepository.findById(bookmark.getId())).isEmpty();
-        assertThat(studyRepository.findById(bookmark.getStudy().getId()).isEmpty());
+        assertThat(study.containsBookmark(bookmark)).isFalse();
     }
 }
