@@ -6,7 +6,7 @@ import lombok.Data;
 
 import java.util.List;
 
-public class GetMyStudiesDto {
+public class GetStudiesCardDto {
     @Data
     public static class GetStudyInfo {
         private Long studyId;
