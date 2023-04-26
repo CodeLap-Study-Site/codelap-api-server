@@ -5,6 +5,7 @@ import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.*;
 import com.codelap.common.studyNotice.domain.StudyNotice;
 import com.codelap.common.studyNotice.domain.StudyNoticeFile;
+import com.codelap.common.studyNotice.domain.StudyNoticeRepository;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeComment;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentRepository;
 import com.codelap.common.user.domain.User;
@@ -42,6 +43,9 @@ class StudyNoticeCommentControllerTest extends ApiTest {
     private StudyRepository studyRepository;
 
     @Autowired
+    private  StudyNoticeRepository studyNoticeRepository;
+
+    @Autowired
     private StudyNoticeCommentRepository studyNoticeCommentRepository;
 
     private StudyNoticeComment studyNoticeComment;
@@ -66,7 +70,8 @@ class StudyNoticeCommentControllerTest extends ApiTest {
         study.addMember(member);
 
         StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 100L);
-        studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
+
+        studyNotice = studyNoticeRepository.save(StudyNotice.create(study, "title", "contents", List.of(file)));
 
         studyNoticeComment = studyNoticeCommentRepository.save(StudyNoticeComment.create(studyNotice, member, "content"));
     }
