@@ -38,6 +38,6 @@ public class BookmarkDomainService implements BookmarkService{
 
         actorValidate(bookmark.isUser(user));
 
-        bookmark.delete(bookmark.getStudy(), user);
+        bookmarkRepository.delete(bookmark);
     }
 }

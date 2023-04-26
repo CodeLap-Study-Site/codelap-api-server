@@ -50,13 +50,4 @@ public class Bookmark {
 
         return bookmark;
     }
-
-    public void delete(Study study, User user){
-        require(!study.isLeader(user));
-
-        check(study.getStatus() != StudyStatus.DELETED);
-        check(user.getStatus() != UserStatus.DELETED);
-
-        study.removeBookmark(this);
-    }
 }
