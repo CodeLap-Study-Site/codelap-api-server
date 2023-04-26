@@ -60,7 +60,6 @@ public class StudyCommentControllerTest extends ApiTest {
         leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
         member = userRepository.save(User.create("user", 10, career, "abcd", "email"));
 
-
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
         techStackList = Arrays.asList(Java, Spring);
