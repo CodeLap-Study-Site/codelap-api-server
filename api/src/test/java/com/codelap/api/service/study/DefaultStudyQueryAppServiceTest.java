@@ -2,7 +2,7 @@ package com.codelap.api.service.study;
 
 import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.*;
-import com.codelap.common.study.dto.GetMyStudiesDto;
+import com.codelap.common.study.dto.GetStudiesCardDto;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.studyView.service.StudyViewService;
 import com.codelap.common.user.domain.User;
@@ -60,17 +60,17 @@ class DefaultStudyQueryAppServiceTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        List<GetMyStudiesDto.GetStudyInfo> allStudies = studyQueryAppService.getAttendedStudiesByUser(member);
+        List<GetStudiesCardDto.GetStudyInfo> allStudies = studyQueryAppService.getAttendedStudiesByUser(member);
 
-        Map<Long, List<GetMyStudiesDto.GetTechStackInfo>> techStacksMap = studyQueryAppService.getTechStacks(스터디_아이디_리스트_가져오기(allStudies))
+        Map<Long, List<GetStudiesCardDto.GetTechStackInfo>> techStacksMap = studyQueryAppService.getTechStacks(스터디_아이디_리스트_가져오기(allStudies))
                 .stream()
-                .collect(Collectors.groupingBy(GetMyStudiesDto.GetTechStackInfo::getStudyId));
+                .collect(Collectors.groupingBy(GetStudiesCardDto.GetTechStackInfo::getStudyId));
 
         allStudies.forEach(it -> it.setTechStackList(techStacksMap.get(it.getStudyId())));
 
         IntStream.range(0, allStudies.size())
                 .forEach(index -> {
-                    GetMyStudiesDto.GetStudyInfo study = allStudies.get(index);
+                    GetStudiesCardDto.GetStudyInfo study = allStudies.get(index);
 
                     List<TechStack> techStacksByStudy = study.getTechStackList()
                             .stream()
@@ -91,7 +91,7 @@ class DefaultStudyQueryAppServiceTest {
                 });
     }
 
-    private List<Long> 스터디_아이디_리스트_가져오기(List<GetMyStudiesDto.GetStudyInfo> allStudies) {
+    private List<Long> 스터디_아이디_리스트_가져오기(List<GetStudiesCardDto.GetStudyInfo> allStudies) {
         return allStudies.stream().map(study -> study.getStudyId()).collect(Collectors.toList());
     }
 

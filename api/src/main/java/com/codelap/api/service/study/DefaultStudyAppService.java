@@ -2,8 +2,8 @@ package com.codelap.api.service.study;
 
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
-import com.codelap.common.study.dto.GetMyStudiesDto.GetStudyInfo;
-import com.codelap.common.study.dto.GetMyStudiesDto.GetTechStackInfo;
+import com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
+import com.codelap.common.study.dto.GetStudiesCardDto.GetTechStackInfo;
 import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;

@@ -1,7 +1,7 @@
 package com.codelap.api.controller.study.dto;
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
-import com.codelap.common.study.dto.GetMyStudiesDto.GetStudyInfo;
+import com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 
 import java.util.List;
 import java.util.stream.Collectors;

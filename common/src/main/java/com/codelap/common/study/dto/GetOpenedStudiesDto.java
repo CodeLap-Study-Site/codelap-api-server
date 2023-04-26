@@ -13,7 +13,7 @@ public class GetOpenedStudiesDto {
     private Long viewCount;
     private Long bookmarkCount;
     private int maxMemberSize;
-    private List<GetMyStudiesDto.GetTechStackInfo> techStackList;
+    private List<GetStudiesCardDto.GetTechStackInfo> techStackList;
 
     public GetOpenedStudiesDto(Long studyId, String studyName, StudyPeriod studyPeriod, String leaderName, Long commentCount, Long viewCount, Long bookmarkCount, int maxMemberSize) {
         this.studyId = studyId;
