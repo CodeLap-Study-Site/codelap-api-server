@@ -458,3 +458,17 @@ include::{snippets}/bookmark/create/http-response.adoc[]
 
 === ResponseBody
 include::{snippets}/bookmark/create/response-body.adoc[]
+
+== 북마크 삭제 API
+
+=== Request
+include::{snippets}/bookmark/delete/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/bookmark/delete/request-body.adoc[]
+
+=== Response
+include::{snippets}/bookmark/delete/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/bookmark/delete/response-body.adoc[]

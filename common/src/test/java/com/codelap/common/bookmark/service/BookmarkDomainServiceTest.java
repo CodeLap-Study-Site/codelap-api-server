@@ -78,6 +78,7 @@ public class BookmarkDomainServiceTest {
         bookmarkService.delete(bookmark.getId(), member.getId());
 
         assertThat(bookmarkRepository.findById(bookmark.getId()).isEmpty());
+        assertThat(study.containsBookmark(bookmark)).isFalse();
     }
 
     @Test

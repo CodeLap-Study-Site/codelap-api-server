@@ -1,13 +1,13 @@
 package com.codelap.api.controller.Bookmark;
 
+import com.codelap.api.controller.Bookmark.dto.BookmarkDeleteDto;
+import com.codelap.common.bookmark.domain.Bookmark;
 import com.codelap.common.bookmark.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import static com.codelap.api.controller.Bookmark.dto.BoomarkCreateDto.BoomarkCreateRequest;
+import static com.codelap.api.controller.Bookmark.dto.BookmarkCreateDto.BookmarkCreateRequest;
+import static com.codelap.api.controller.Bookmark.dto.BookmarkDeleteDto.*;
 
 @RestController
 @RequestMapping("/bookmark")
@@ -18,8 +18,15 @@ public class BookmarkController {
 
     @PostMapping
     public void create(
-            @RequestBody BoomarkCreateRequest req
-    ){
+            @RequestBody BookmarkCreateRequest req
+    ) {
         bookmarkService.create(req.studyId(), req.userId());
+    }
+
+    @DeleteMapping
+    public void delete(
+            @RequestBody BookmarkDeleteRequest req
+    ) {
+        bookmarkService.delete(req.bookmarkId(), req.userId());
     }
 }

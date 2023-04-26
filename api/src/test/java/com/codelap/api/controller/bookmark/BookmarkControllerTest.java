@@ -1,5 +1,6 @@
 package com.codelap.api.controller.bookmark;
 
+import com.codelap.api.controller.Bookmark.dto.BookmarkDeleteDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.bookmark.domain.Bookmark;
 import com.codelap.common.bookmark.domain.BookmarkRepository;
@@ -11,6 +12,7 @@ import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
+import jdk.swing.interop.SwingInterOpUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 
-import static com.codelap.api.controller.Bookmark.dto.BoomarkCreateDto.BoomarkCreateRequest;
+import static com.codelap.api.controller.Bookmark.dto.BookmarkCreateDto.BookmarkCreateRequest;
+import static com.codelap.api.controller.Bookmark.dto.BookmarkDeleteDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
@@ -26,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -66,7 +70,7 @@ public class BookmarkControllerTest extends ApiTest {
 
     @Test
     void 북마크_생성_성공() throws Exception {
-        BoomarkCreateRequest req = new BoomarkCreateRequest(study.getId(), member.getId());
+        BookmarkCreateRequest req = new BookmarkCreateRequest(study.getId(), member.getId());
 
         mockMvc.perform(post("/bookmark")
                         .contentType(APPLICATION_JSON)
@@ -81,5 +85,25 @@ public class BookmarkControllerTest extends ApiTest {
         Bookmark foundBookmark = bookmarkRepository.findAll().get(0);
 
         assertThat(foundBookmark.getCreatedAt()).isNotNull();
+    }
+
+    @Test
+    void 북마크_삭제_성공() throws  Exception {
+        Bookmark bookmark = bookmarkRepository.save(Bookmark.create(study, member));
+
+        BookmarkDeleteRequest req = new BookmarkDeleteRequest(bookmark.getId(), member.getId());
+
+        mockMvc.perform(delete("/bookmark")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("bookmark/delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        assertThat(bookmarkRepository.findById(bookmark.getId())).isEmpty();
+        assertThat(study.containsBookmark(bookmark)).isFalse();
     }
 }
