@@ -30,6 +30,10 @@ public class Bookmark {
 
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
+    public boolean isUser(User user) {
+        return this.user == user;
+    }
+
     private Bookmark(Study study, User user) {
         this.study = study;
         this.user = user;

@@ -10,6 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.validation.Validator;
+
+import static com.codelap.common.support.Preconditions.actorValidate;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -25,5 +29,15 @@ public class BookmarkDomainService implements BookmarkService{
         User user = userRepository.findById(userId).orElseThrow();
 
         bookmarkRepository.save(Bookmark.create(study, user));
+    }
+
+    @Override
+    public void delete(Long bookmarkId, Long userId) {
+        Bookmark bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
+
+        actorValidate(bookmark.isUser(user));
+
+        bookmark.delete(bookmark.getStudy(), user);
     }
 }
