@@ -12,6 +12,7 @@ import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
+import jdk.swing.interop.SwingInterOpUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,5 +104,6 @@ public class BookmarkControllerTest extends ApiTest {
                 ));
 
         assertThat(bookmarkRepository.findById(bookmark.getId())).isEmpty();
+        assertThat(studyRepository.findById(bookmark.getStudy().getId()).isEmpty());
     }
 }
