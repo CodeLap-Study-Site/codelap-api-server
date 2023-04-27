@@ -2,9 +2,9 @@ package com.codelap.api.service.study;
 
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
+import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import com.codelap.common.study.dto.GetStudiesCardDto.GetTechStackInfo;
-import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
@@ -21,23 +21,23 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DefaultStudyAppService implements StudyAppService {
 
-    private final StudyQueryAppService studyQueryAppService;
+    private final StudyQueryAppService studyQueryDslAppService;
     private final UserRepository userRepository;
 
     @Override
     public List<GetStudiesStudyDto> getStudies(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
 
-        return studyQueryAppService.getStudies(user);
+        return studyQueryDslAppService.getStudies(user);
     }
 
     @Override
     public List<GetStudiesStudyDto> getAttendedStudiesByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
 
-        List<GetStudyInfo> allStudies = studyQueryAppService.getAttendedStudiesByUser(user);
+        List<GetStudyInfo> allStudies = studyQueryDslAppService.getAttendedStudiesByUser(user);
 
-        Map<Long, List<GetTechStackInfo>> techStacksMap = studyQueryAppService.getTechStacks(toStudyIds(allStudies))
+        Map<Long, List<GetTechStackInfo>> techStacksMap = studyQueryDslAppService.getTechStacks(toStudyIds(allStudies))
                 .stream()
                 .collect(Collectors
                         .groupingBy(GetTechStackInfo::getStudyId));
@@ -63,6 +63,6 @@ public class DefaultStudyAppService implements StudyAppService {
 
     @Override
     public List<GetOpenedStudiesDto> getOpenedStudies() {
-        return studyQueryAppService.getOpenedStudies();
+        return studyQueryDslAppService.getOpenedStudies();
     }
 }

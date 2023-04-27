@@ -40,7 +40,7 @@ class DefaultStudyQueryAppServiceTest {
     StudyViewService studyViewService;
 
     @Autowired
-    StudyQueryAppService studyQueryAppService;
+    StudyQueryAppService studyQueryDslAppService;
 
     @Autowired
     BookmarkService bookmarkService;
@@ -60,9 +60,9 @@ class DefaultStudyQueryAppServiceTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        List<GetStudiesCardDto.GetStudyInfo> allStudies = studyQueryAppService.getAttendedStudiesByUser(member);
+        List<GetStudiesCardDto.GetStudyInfo> allStudies = studyQueryDslAppService.getAttendedStudiesByUser(member);
 
-        Map<Long, List<GetStudiesCardDto.GetTechStackInfo>> techStacksMap = studyQueryAppService.getTechStacks(스터디_아이디_리스트_가져오기(allStudies))
+        Map<Long, List<GetStudiesCardDto.GetTechStackInfo>> techStacksMap = studyQueryDslAppService.getTechStacks(스터디_아이디_리스트_가져오기(allStudies))
                 .stream()
                 .collect(Collectors.groupingBy(GetStudiesCardDto.GetTechStackInfo::getStudyId));
 
