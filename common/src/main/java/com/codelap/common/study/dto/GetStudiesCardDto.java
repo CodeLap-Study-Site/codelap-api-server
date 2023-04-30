@@ -34,11 +34,11 @@ public class GetStudiesCardDto {
     @Data
     public static class GetTechStackInfo {
         private Long studyId;
-        private TechStack techStackList;
+        private TechStack techStack;
 
-        public GetTechStackInfo(Long studyId, TechStack techStackList) {
+        public GetTechStackInfo(Long studyId, TechStack techStack) {
             this.studyId = studyId;
-            this.techStackList = techStackList;
+            this.techStack = techStack;
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.codelap.api.controller.studyNoticeComment;
 
-import com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentUpdateDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.study.domain.*;
 import com.codelap.common.studyNotice.domain.StudyNotice;
@@ -19,9 +18,9 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentCreateDto.*;
+import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentCreateDto.StudyNoticeCommentCreateRequest;
 import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentDeleteDto.StudyNoticeCommentDeleteRequest;
-import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentUpdateDto.*;
+import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentUpdateDto.StudyNoticeCommentUpdateReqeust;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
@@ -31,7 +30,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StudyNoticeCommentControllerTest extends ApiTest {
@@ -53,7 +53,7 @@ class StudyNoticeCommentControllerTest extends ApiTest {
     private User member;
     private Study study;
     private StudyNotice studyNotice;
-    private List<TechStack> techStackList;
+    private List<StudyTechStack> techStackList;
 
     @BeforeEach
     void setUp() {
@@ -63,7 +63,7 @@ class StudyNoticeCommentControllerTest extends ApiTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Java, Spring);
+        techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
 
         study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader, techStackList));
 

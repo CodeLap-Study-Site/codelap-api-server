@@ -43,7 +43,7 @@ class StudyRepositoryTest {
     void 스터디_생성_성공() {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        List<TechStack> techStackList = Arrays.asList(Java, Spring);
+        List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
 
         Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
 

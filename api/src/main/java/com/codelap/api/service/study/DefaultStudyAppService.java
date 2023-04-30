@@ -2,6 +2,7 @@ package com.codelap.api.service.study;
 
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
+import com.codelap.common.study.domain.TechStack;
 import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import com.codelap.common.study.dto.GetStudiesCardDto.GetTechStackInfo;
@@ -32,10 +33,10 @@ public class DefaultStudyAppService implements StudyAppService {
     }
 
     @Override
-    public List<GetStudiesStudyDto> getAttendedStudiesByUser(Long userId) {
+    public List<GetStudyInfo> getAttendedStudiesByUser(Long userId, String statusCond, List<TechStack> techStackList) {
         User user = userRepository.findById(userId).orElseThrow();
 
-        List<GetStudyInfo> allStudies = studyQueryDslAppService.getAttendedStudiesByUser(user);
+        List<GetStudyInfo> allStudies = studyQueryDslAppService.getAttendedStudiesByUser(user, statusCond, techStackList);
 
         Map<Long, List<GetTechStackInfo>> techStacksMap = studyQueryDslAppService.getTechStacks(toStudyIds(allStudies))
                 .stream()
@@ -44,7 +45,7 @@ public class DefaultStudyAppService implements StudyAppService {
 
         allStudies.forEach(study -> study.setTechStackList(techStacksMap.get(study.getStudyId())));
 
-        return getGetStudiesStudyDto(allStudies);
+        return allStudies;
     }
 
     private static List<GetStudiesStudyDto> getGetStudiesStudyDto(List<GetStudyInfo> allStudies) {

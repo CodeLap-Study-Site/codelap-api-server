@@ -2,6 +2,7 @@ package com.codelap.api.service.study;
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
 import com.codelap.common.study.domain.StudyRepository;
+import com.codelap.common.study.domain.TechStack;
 import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.study.dto.GetStudiesCardDto;
 import com.codelap.common.user.domain.User;
@@ -21,8 +22,8 @@ public class DefaultStudyQueryAppService implements StudyQueryAppService {
     }
 
     @Override
-    public List<GetStudiesCardDto.GetStudyInfo> getAttendedStudiesByUser(User user) {
-        return studyRepository.getAttendedStudiesByUser(user);
+    public List<GetStudiesCardDto.GetStudyInfo> getAttendedStudiesByUser(User userCond, String statusCond, List<TechStack> techStackList) {
+        return studyRepository.getAttendedStudiesByUser(userCond);
     }
 
     @Override

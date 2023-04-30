@@ -2,10 +2,7 @@ package com.codelap.common.bookmark.service;
 
 import com.codelap.common.bookmark.domain.Bookmark;
 import com.codelap.common.bookmark.domain.BookmarkRepository;
-import com.codelap.common.study.domain.Study;
-import com.codelap.common.study.domain.StudyNeedCareer;
-import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.StudyRepository;
+import com.codelap.common.study.domain.*;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
@@ -57,7 +54,7 @@ public class BookmarkDomainServiceTest {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
 
-        study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(Java, Spring)));
+        study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring))));
     }
 
     @Test
