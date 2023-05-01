@@ -20,7 +20,7 @@ public class StudyDomainService implements StudyService {
     private final UserRepository userRepository;
 
     @Override
-    public void create(Long leaderId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<TechStack> techStackList) {
+    public void create(Long leaderId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<StudyTechStack> techStackList) {
         User leader = userRepository.findById(leaderId).orElseThrow();
 
         Study study = Study.create(name, info, maxMembersSize, difficulty, period, needCareer, leader, techStackList);
@@ -29,7 +29,7 @@ public class StudyDomainService implements StudyService {
     }
 
     @Override
-    public void update(Long studyId, Long userId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<TechStack> techStackList) {
+    public void update(Long studyId, Long userId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<StudyTechStack> techStackList) {
         Study study = studyRepository.findById(studyId).orElseThrow();
         User leader = userRepository.findById(userId).orElseThrow();
 

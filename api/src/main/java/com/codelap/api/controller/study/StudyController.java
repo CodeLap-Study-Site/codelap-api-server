@@ -4,7 +4,8 @@ import com.codelap.api.controller.study.dto.GetMyStudiesDto.GetMyStudiesResponse
 import com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import com.codelap.api.controller.study.dto.StudyLeaveDto.StudyLeaveRequest;
 import com.codelap.api.service.study.StudyAppService;
-import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
+import com.codelap.common.study.domain.TechStack;
+import com.codelap.common.study.dto.GetStudiesCardDto;
 import com.codelap.common.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -85,9 +86,13 @@ public class StudyController {
 
     @GetMapping("/my-study")
     public GetMyStudiesResponse findStudyListByUserId(
-            Long userId
+            Long userId,
+            String statusCond,
+            @RequestParam List<TechStack> techStackList
     ) {
-        List<GetStudiesStudyDto> studies = studyAppService.getAttendedStudiesByUser(userId);
+        List<GetStudiesCardDto.GetStudyInfo> studies = studyAppService.getAttendedStudiesByUser(userId, statusCond, techStackList);
+
+        System.out.println(GetMyStudiesResponse.create(studies));
 
         return GetMyStudiesResponse.create(studies);
     }

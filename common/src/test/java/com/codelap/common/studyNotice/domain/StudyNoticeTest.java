@@ -3,9 +3,7 @@ package com.codelap.common.studyNotice.domain;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
 import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.TechStack;
-import com.codelap.common.studyNoticeComment.domain.StudyNoticeComment;
-import com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus;
+import com.codelap.common.study.domain.StudyTechStack;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +20,7 @@ import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.TechStack.Java;
 import static com.codelap.common.study.domain.TechStack.Spring;
-import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.*;
+import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.DELETED;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 
@@ -42,7 +40,7 @@ class StudyNoticeTest {
         period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         needCareer = StudyNeedCareer.create("직무", 1);
 
-        List<TechStack> techStackList = Arrays.asList(Java, Spring);
+        List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
 
         study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
     }

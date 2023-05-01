@@ -1,9 +1,12 @@
 package com.codelap.api.service.study;
 
 import com.codelap.api.service.study.dto.GetStudiesDto;
+import com.codelap.api.service.study.support.DynamicCond;
 import com.codelap.common.bookmark.domain.QBookmark;
 import com.codelap.common.study.domain.QStudy;
+import com.codelap.common.study.domain.QStudyTechStack;
 import com.codelap.common.study.domain.StudyRepository;
+import com.codelap.common.study.domain.TechStack;
 import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.studyComment.domain.QStudyComment;
 import com.codelap.common.studyView.domain.QStudyView;
@@ -17,7 +20,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.codelap.common.study.domain.StudyStatus.DELETED;
 import static com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import static com.codelap.common.study.dto.GetStudiesCardDto.GetTechStackInfo;
 import static com.querydsl.core.types.ExpressionUtils.count;
@@ -26,7 +28,7 @@ import static com.querydsl.core.types.Projections.constructor;
 @Repository
 @Primary
 @RequiredArgsConstructor
-public class DefaultStudyQueryDslAppService implements StudyQueryAppService {
+public class DefaultStudyQueryDslAppService extends DynamicCond implements StudyQueryAppService {
 
     private final JPAQueryFactory queryFactory;
 
@@ -36,9 +38,9 @@ public class DefaultStudyQueryDslAppService implements StudyQueryAppService {
         return null;
     }
     @Override
-    public List<GetStudyInfo> getAttendedStudiesByUser(User user) {
+    public List<GetStudyInfo> getAttendedStudiesByUser(User userCond, String statusCond, List<TechStack> techStackList) {
         return queryFactory
-                .select(
+                .selectDistinct(
                 constructor(
                         GetStudyInfo.class,
                         QStudy.study.id,
@@ -65,8 +67,10 @@ public class DefaultStudyQueryDslAppService implements StudyQueryAppService {
                         ),
                         QStudy.study.maxMembersSize))
                 .from(QStudy.study)
-                .where(QStudy.study.status.ne(DELETED))
-                .where(QStudy.study.members.contains(user))
+                .innerJoin(QStudy.study.techStackList, QStudyTechStack.studyTechStack)
+                .where(checkStatus(statusCond))
+                .where(userContains(userCond))
+                .where(techStackFilter(techStackList))
                 .fetch();
     }
 

@@ -3,6 +3,7 @@ package com.codelap.api.controller.study;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.*;
+import com.codelap.common.study.service.StudyService;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.studyView.service.StudyViewService;
 import com.codelap.common.user.domain.User;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -34,7 +37,6 @@ import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
 import static com.codelap.common.study.domain.TechStack.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -51,6 +53,9 @@ class StudyControllerTest extends ApiTest {
     StudyRepository studyRepository;
 
     @Autowired
+    StudyService studyService;
+
+    @Autowired
     StudyCommentService studyCommentService;
 
     @Autowired
@@ -62,10 +67,10 @@ class StudyControllerTest extends ApiTest {
     private User leader;
     private User member;
     private Study study;
-    private List<TechStack> techStackList;
+    private List<StudyTechStack> techStackList;
     private Study study1;
     private Study study2;
-
+    private MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
     @BeforeEach
     void setUp() {
@@ -74,7 +79,7 @@ class StudyControllerTest extends ApiTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Java, Spring);
+        techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
 
         study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList));
     }
@@ -283,8 +288,13 @@ class StudyControllerTest extends ApiTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
+        params.add("userId", member.getId().toString());
+        params.add("statusCond", "open");
+        params.add("techStackList", "Spring");
+        params.add("techStackList", "AWS");
+
         mockMvc.perform(get("/study/my-study")
-                        .param("userId", member.getId().toString()))
+                        .params(params))
                 .andExpect(status().isOk())
                 .andExpectAll(유저가_참여한_스터디_조회_검증())
                 .andDo(document("study/my-study",
@@ -297,7 +307,7 @@ class StudyControllerTest extends ApiTest {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
 
-        study1 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, List.of(Spring, Java)));
+        study1 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java))));
 
         study1.addMember(member);
 
@@ -305,38 +315,50 @@ class StudyControllerTest extends ApiTest {
         studyViewService.create(study1.getId(), "1.1.1.1");
         bookmarkService.create(study1.getId(), member.getId());
 
-        study2 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, List.of(JavaScript, React)));
+        study2 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(JavaScript), new StudyTechStack(React))));
 
         study2.addMember(member);
 
         studyCommentService.create(study2.getId(), member.getId(), "message");
         studyViewService.create(study2.getId(), "1.1.1.2");
+
+        Study study3 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(AWS))));
+        study3.addMember(member);
+
+        studyService.close(study3.getId(), leader.getId());
+
+        Study study4 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(ReactNative))));
     }
 
     private ResultMatcher[] 유저가_참여한_스터디_조회_검증() {
         List<Study> studiesContainsMember = studyRepository.findAll()
                 .stream()
-                .filter(it -> it.getStatus() != DELETED)
-                .filter(it -> it.containsMember(member))
+                .filter(it -> it.getStatus() != DELETED && it.getStatus() != CLOSED && it.containsMember(member))
+                .filter(study -> study.getTechStackList()
+                        .stream()
+                        .anyMatch(techStack -> params.get("techStackList").stream()
+                                .anyMatch(stack -> stack.equals(techStack.getTechStack().toString()))))
                 .collect(Collectors.toList());
 
         return IntStream.range(0, studiesContainsMember.size())
                 .mapToObj(index -> {
                     Study indexStudy = studiesContainsMember.get(index);
 
-                    String[] toStringArray = indexStudy.getTechStackList().stream()
+                    List<String> techStackList = indexStudy.getTechStackList()
+                            .stream()
+                            .map(StudyTechStack::getTechStack)
                             .map(Enum::name)
-                            .toArray(String[]::new);
+                            .collect(Collectors.toList());
 
                     return Map.entry(index, List.of(
-                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.studyName").value(indexStudy.getName()),
-                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.studyPeriod").isNotEmpty(),
-                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.leaderName").value(indexStudy.getLeader().getName()),
-                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.commentCount").value(indexStudy.getComments().size()),
-                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.viewCount").value(indexStudy.getViews().size()),
-                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.bookmarkCount").value(indexStudy.getBookmarks().size()),
-                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.maxMemberSize").value(indexStudy.getMaxMembersSize()),
-                            jsonPath("$.studies.[" + index + "].getMyStudiesDto.techStackList.[*].techStackList").value(containsInAnyOrder(toStringArray))
+                            jsonPath("$.studies.[" + index + "].studyName").value(indexStudy.getName()),
+                            jsonPath("$.studies.[" + index + "].studyPeriod").isNotEmpty(),
+                            jsonPath("$.studies.[" + index + "].leaderName").value(indexStudy.getLeader().getName()),
+                            jsonPath("$.studies.[" + index + "].commentCount").value(indexStudy.getComments().size()),
+                            jsonPath("$.studies.[" + index + "].viewCount").value(indexStudy.getViews().size()),
+                            jsonPath("$.studies.[" + index + "].bookmarkCount").value(indexStudy.getBookmarks().size()),
+                            jsonPath("$.studies.[" + index + "].maxMemberSize").value(indexStudy.getMaxMembersSize()),
+                            jsonPath("$.studies.[" + index + "].techStackList[*].techStack").value(techStackList)
                     ));
                 })
                 .flatMap(entry -> entry.getValue().stream())

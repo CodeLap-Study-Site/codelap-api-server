@@ -20,7 +20,7 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
             "AND s.status <> 'DELETED' group by s")
     List<GetStudiesCardDto.GetStudyInfo> getAttendedStudiesByUser(@Param("user") User user);
 
-    @Query("SELECT new com.codelap.common.study.dto.GetStudiesCardDto$GetTechStackInfo(s.id, t) FROM Study s JOIN s.techStackList t WHERE s in :studyIds")
+    @Query("SELECT new com.codelap.common.study.dto.GetStudiesCardDto$GetTechStackInfo(s.id, t.techStack) FROM Study s JOIN s.techStackList t WHERE s in :studyIds")
     List<GetStudiesCardDto.GetTechStackInfo> getTechStacks(@Param("studyIds") List<Long> studyIds);
 
     @Query("SELECT new com.codelap.common.study.dto.GetOpenedStudiesDto(s.id, s.name, s.period, s.leader.name, count(c), count(v), count(b), s.maxMembersSize) " +

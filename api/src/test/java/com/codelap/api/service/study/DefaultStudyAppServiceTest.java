@@ -1,8 +1,8 @@
 package com.codelap.api.service.study;
 
-import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
 import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.*;
+import com.codelap.common.study.dto.GetStudiesCardDto;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.studyView.service.StudyViewService;
 import com.codelap.common.user.domain.User;
@@ -15,11 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.StudyStatus.DELETED;
+import static com.codelap.common.study.domain.StudyStatus.OPENED;
 import static com.codelap.common.study.domain.TechStack.*;
 
 @Transactional
@@ -46,7 +47,7 @@ class DefaultStudyAppServiceTest {
 
     private User leader;
     private User member;
-    private List<TechStack> techStackList;
+    private List<StudyTechStack> techStackList;
     private Study study1;
     private Study study2;
 
@@ -59,11 +60,14 @@ class DefaultStudyAppServiceTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        List<GetStudiesStudyDto> allStudies = studyAppService.getAttendedStudiesByUser(member.getId());
+        List<GetStudiesCardDto.GetStudyInfo> allStudies = studyAppService.getAttendedStudiesByUser(member.getId(), "open", List.of((Java)));
         List<Study> studies = studyRepository.findAll()
                 .stream()
-                .filter(it -> it.getStatus() != DELETED)
-                .filter(it -> it.getMembers().contains(member))
+                .filter(study -> study.getStatus() == OPENED)
+                .filter(study -> study.containsMember(member))
+                .filter(study -> study.getTechStackList()
+                        .stream()
+                        .anyMatch(techStack -> techStack.getTechStack().equals(React)))
                 .collect(Collectors.toList());
 
         Assertions.assertThat(studies.size()).isEqualTo(allStudies.size());
@@ -73,9 +77,9 @@ class DefaultStudyAppServiceTest {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
 
-        techStackList = List.of(Spring, Java);
+        techStackList = Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java));
 
-        study1 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, List.of(Spring, Java)));
+        study1 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java))));
 
         study1.addMember(member);
 
@@ -83,7 +87,7 @@ class DefaultStudyAppServiceTest {
         studyViewService.create(study1.getId(), "1.1.1.1");
         bookmarkService.create(study1.getId(), member.getId());
 
-        study2 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, List.of(JavaScript, React)));
+        study2 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(JavaScript), new StudyTechStack(React))));
 
         study2.addMember(member);
 

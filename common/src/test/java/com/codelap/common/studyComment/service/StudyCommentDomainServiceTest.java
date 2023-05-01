@@ -42,7 +42,7 @@ class StudyCommentDomainServiceTest {
 
     private User leader;
     private Study study;
-    private List<TechStack> techStackList;
+    private List<StudyTechStack> techStackList;
     private StudyComment studyComment;
 
     @BeforeEach
@@ -52,7 +52,7 @@ class StudyCommentDomainServiceTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Java, Spring);
+        techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
 
         study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
         study = studyRepository.save(study);

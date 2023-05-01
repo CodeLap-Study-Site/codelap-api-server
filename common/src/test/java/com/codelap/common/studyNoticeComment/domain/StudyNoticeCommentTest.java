@@ -3,7 +3,7 @@ package com.codelap.common.studyNoticeComment.domain;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
 import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.TechStack;
+import com.codelap.common.study.domain.StudyTechStack;
 import com.codelap.common.studyNotice.domain.StudyNotice;
 import com.codelap.common.studyNotice.domain.StudyNoticeFile;
 import com.codelap.common.user.domain.User;
@@ -41,7 +41,7 @@ class StudyNoticeCommentTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        List<TechStack> techStackList = Arrays.asList(Java, Spring);
+        List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
 
         Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
         StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 100L);

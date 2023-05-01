@@ -42,7 +42,7 @@ class DefaultStudyRequestAppServiceTest {
     private User user;
     private User leader;
     private StudyRequest studyRequest;
-    private List<TechStack> techStackList;
+    private List<StudyTechStack> techStackList;
 
     @BeforeEach
     void setUp() {
@@ -51,7 +51,7 @@ class DefaultStudyRequestAppServiceTest {
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(Java, Spring);
+        techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
 
         study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList));
 
