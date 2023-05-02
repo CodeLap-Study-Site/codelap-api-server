@@ -32,7 +32,11 @@ public class DefaultUserAppServiceTest {
 
     @Test
     void 닉네임_중복_체크_실패__중복_이름_존재재() {
+        UserCareer career = UserCareer.create("직무", 1);
+        userRepository.save(User.create("member", 10, career, "abcd", "member"));
 
+        boolean result = userAppService.getDuplicateCheckByName("member");
+
+        Assertions.assertThat(result).isTrue();
     }
-
 }
