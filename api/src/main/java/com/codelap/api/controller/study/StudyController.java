@@ -3,11 +3,13 @@ package com.codelap.api.controller.study;
 import com.codelap.api.controller.study.dto.GetMyStudiesDto.GetMyStudiesResponse;
 import com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import com.codelap.api.controller.study.dto.StudyLeaveDto.StudyLeaveRequest;
+import com.codelap.api.security.user.DefaultCodeLapUser;
 import com.codelap.api.service.study.StudyAppService;
 import com.codelap.common.study.domain.TechStack;
 import com.codelap.common.study.dto.GetStudiesCardDto;
 import com.codelap.common.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,9 +32,10 @@ public class StudyController {
 
     @PostMapping
     public void create(
+            @AuthenticationPrincipal DefaultCodeLapUser user,
             @RequestBody StudyCreateRequest req
     ) {
-        studyService.create(req.leaderId(), req.name(), req.info(), req.maxMembersSize(), HARD, req.period().toStudyPeriod(), req.career().toStudyNeedCareer(), req.techStackList());
+        studyService.create(user.getId(), req.name(), req.info(), req.maxMembersSize(), HARD, req.period().toStudyPeriod(), req.career().toStudyNeedCareer(), req.techStackList());
     }
 
     @PostMapping("/update")
