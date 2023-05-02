@@ -46,9 +46,9 @@ jobs:
         with:
           files: ${{ env.INTEGRATION_PATH }}
         env:
-          discord.url: ${{ secrets.DISCORD_URL }}
+          discord.webhook-url: ${{ secrets.DISCORD_URL }}
           discord.username: Log
-          discord.avatar: ${{ secrets.DISCORD_AVATAR }}
+          discord.avatar-url: ${{ secrets.DISCORD_AVATAR }}
 
       - name: "API Test application.yml Set"
         uses: microsoft/variable-substitution@v1
