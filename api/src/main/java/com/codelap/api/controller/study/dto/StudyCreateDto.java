@@ -11,7 +11,6 @@ import java.util.List;
 public class StudyCreateDto {
 
     public record StudyCreateRequest(
-            Long leaderId,
             String name,
             String info,
             int maxMembersSize,
