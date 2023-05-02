@@ -93,22 +93,22 @@ project(":api") {
 
     bootJar {
         enabled = true
-        dependsOn asciidoctor
+//        dependsOn asciidoctor
     }
-
-    ext {
-        snippetsDir = file(getBuildDir().name + '/generated-snippets')
-    }
-
-    test {
-        useJUnitPlatform()
-        outputs.dir snippetsDir
-    }
-
-    asciidoctor {
-        dependsOn test
-        inputs.dir snippetsDir
-    }
+//
+//    ext {
+//        snippetsDir = file(getBuildDir().name + '/generated-snippets')
+//    }
+//
+//    test {
+//        useJUnitPlatform()
+//        outputs.dir snippetsDir
+//    }
+//
+//    asciidoctor {
+//        dependsOn test
+//        inputs.dir snippetsDir
+//    }
 }
 
 project(":integration") {
