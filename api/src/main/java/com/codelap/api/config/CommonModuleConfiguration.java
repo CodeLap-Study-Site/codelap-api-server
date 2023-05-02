@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories(basePackages = {"com.codelap.common"})
 @ComponentScans({
         @ComponentScan(value = "com.codelap.common"),
-//        @ComponentScan(value = "com.codelap.integration")
+        @ComponentScan(value = "com.codelap.integration")
 })
 @Configuration
 public class CommonModuleConfiguration {
