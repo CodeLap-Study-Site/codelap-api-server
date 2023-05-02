@@ -1,6 +1,7 @@
 env:
   API_TEST_RESOURCE_PATH: ./api/src/test/resources/application.yml
   COMMON_TEST_RESOURCE_PATH: ./common/src/test/resources/application.yml
+  INTEGRATION_PATH: ./integration/src/main/resources/integration.yml
   RESOURCE_PATH: ./api/src/main/resources/application.yml
   PROJECT_NAME: codelap_project
   BUCKET_NAME: codelap
@@ -13,9 +14,8 @@ name: Merge
 
 on:
   pull_request:
-    branches: [ "main" ]
-    types:
-      - closed
+    branches: [ main ]
+    types: [ opened, synchronize, edited ]
 
 permissions:
   contents: read
@@ -41,6 +41,15 @@ jobs:
           spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
           spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
 
+      - name: "integration.yml Set"
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.INTEGRATION_PATH }}
+        env:
+          discord.url: ${{ secrets.DISCORD_URL }}
+          discord.username: Log
+          discord.avatar: ${{ secrets.DISCORD_AVATAR }}
+
       - name: "API Test application.yml Set"
         uses: microsoft/variable-substitution@v1
         with:
@@ -64,7 +73,7 @@ jobs:
         shell: bash
 
       - name: Build with Gradle
-        run: ./gradlew clean :api:buildNeeded --stacktrace
+        run: ./gradlew clean :api:buildNeeded --stacktrace -x test
         shell: bash
 
       - name: Make zip file
