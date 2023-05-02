@@ -12,6 +12,7 @@ import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -85,11 +86,14 @@ class StudyControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_생성_성공() throws Exception {
+        User leader = prepareLoggedInUser();
+
         StudyCreateRequestStudyPeriodDto periodDto = new StudyCreateRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyCreateRequestStudyNeedCareerDto careerDto = new StudyCreateRequestStudyNeedCareerDto("직무", 10);
 
-        StudyCreateRequest req = new StudyCreateRequest(leader.getId(), "팀", "정보", 4, HARD, periodDto, careerDto, techStackList);
+        StudyCreateRequest req = new StudyCreateRequest("팀", "정보", 4, HARD, periodDto, careerDto, techStackList);
 
         mockMvc.perform(post("/study")
                         .contentType(APPLICATION_JSON)
