@@ -27,8 +27,8 @@ public class JwtComponent {
         val expiration = new Date(now.getTime() + jwtProperties.getTokenExpireTime(type));
 
         return Jwts.builder()
-                .setSubject("MCJ User " + type.name() + " Api Token")
-                .setIssuer("MCJ")
+                .setSubject("CodeLap User " + type.name() + " Api Token")
+                .setIssuer("CodeLap")
                 .setIssuedAt(now)
                 .setId(id.toString())
                 .setAudience(audience)
@@ -42,6 +42,8 @@ public class JwtComponent {
             return Long.valueOf(Jwts.parser().setSigningKey(jwtProperties.getEncodedSecretKey()).parseClaimsJws(token).getBody().getId());
         } catch (ExpiredJwtException ex) {
             return Long.valueOf(ex.getClaims().getId());
+        } catch (Exception ex) {
+            throw new CodeLapUserException("Invalid Signature", UNAUTHORIZED);
         }
     }
 
@@ -83,7 +85,7 @@ public class JwtComponent {
             notNull(Jwts.parser().setSigningKey(jwtProperties.getEncodedSecretKey()).parseClaimsJws(token).getBody());
         } catch (ExpiredJwtException ex) {
             throw new CodeLapUserException("Expired " + type.name() + " token", UNAUTHORIZED);
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             throw new CodeLapUserException("Invalid " + type.name() + " token", UNAUTHORIZED);
         }
     }

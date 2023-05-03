@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import static com.codelap.api.security.component.JwtType.ACCESS;
 import static com.codelap.api.security.component.JwtType.REFRESH;
 import static java.util.Objects.nonNull;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Component
 @RequiredArgsConstructor
@@ -47,7 +48,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.clearContext();
 
-            response.sendError(ex.getStatus().value(), ex.getMessage());
+            response.setStatus(UNAUTHORIZED.value());
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"UNAUTHORIZED\", \"message\": \"" + ex.getMessage() + "\"}");
 
             return;
         }
