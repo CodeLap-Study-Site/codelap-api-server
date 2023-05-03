@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @SpringBootTest
 @Transactional
 public class DefaultUserAppServiceTest {
@@ -22,21 +25,25 @@ public class DefaultUserAppServiceTest {
     private User user;
 
     @Test
-    void 닉네임_중복_체크_성공() {
-        String name = "name";
-
-        boolean result = userAppService.getDuplicateCheckByName(name);
-
-        Assertions.assertThat(result).isFalse();
-    }
-
-    @Test
-    void 닉네임_중복_체크_실패__중복_이름_존재재() {
+    void 닉네임_중복_체크_성공_닉네임_있음() {
         UserCareer career = UserCareer.create("직무", 1);
         userRepository.save(User.create("member", 10, career, "abcd", "member"));
 
         boolean result = userAppService.getDuplicateCheckByName("member");
 
+        List<User> nameList = userRepository.findAll().stream()
+                .filter(user -> user.getName() != null)
+                .collect(Collectors.toList());
+
         Assertions.assertThat(result).isTrue();
+        Assertions.assertThat(nameList.contains("member"));
     }
+
+    @Test
+    void 닉네임_중복_체크_실패__중복_이름_없음() {
+        String name = "name";
+
+        boolean result = userAppService.getDuplicateCheckByName(name);
+
+        Assertions.assertThat(result).isFalse();}
 }
