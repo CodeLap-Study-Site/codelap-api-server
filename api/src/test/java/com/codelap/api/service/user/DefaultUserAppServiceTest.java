@@ -27,21 +27,7 @@ public class DefaultUserAppServiceTest {
         UserCareer career = UserCareer.create("직무", 1);
         userRepository.save(User.create("member", 10, career, "abcd", "member"));
 
-        boolean result = userAppService.getDuplicateCheckByName("member");
-
-        List<User> nameList = userRepository.findAll().stream()
-                .filter(user -> user.getName() != null)
-                .collect(Collectors.toList());
-
-        Assertions.assertThat(result).isTrue();
-        Assertions.assertThat(nameList.contains("member"));
+        Assertions.assertThat(userAppService.getDuplicateCheckByName("member")).isTrue();
+        Assertions.assertThat(userAppService.getDuplicateCheckByName("fakeName")).isFalse();
     }
-
-    @Test
-    void 닉네임_중복_체크_실패__중복_이름_없음() {
-        String name = "name";
-
-        boolean result = userAppService.getDuplicateCheckByName(name);
-
-        Assertions.assertThat(result).isFalse();}
 }
