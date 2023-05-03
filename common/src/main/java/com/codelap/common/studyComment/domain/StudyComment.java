@@ -11,7 +11,6 @@ import lombok.Setter;
 import java.time.OffsetDateTime;
 
 import static com.codelap.common.studyComment.domain.StudyCommentStatus.*;
-import static com.codelap.common.studyComment.domain.StudyCommentStatus.CREATED;
 import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
 import static jakarta.persistence.EnumType.STRING;
@@ -61,13 +60,13 @@ public class StudyComment {
         return studyComment;
     }
 
-    public void update(String comment){
+    public void update(String comment) {
         require(isNotBlank(comment));
 
         this.comment = comment;
     }
 
-    public void delete(){
+    public void delete() {
         check(CAN_DELETE_STATUS.contains(status));
 
         this.status = DELETED;

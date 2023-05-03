@@ -38,9 +38,11 @@ public class StudyNoticeComment {
     @Setter
     @Enumerated(STRING)
     private StudyNoticeCommentStatus status = CREATED;
+
     public boolean isUser(User user) {
         return this.user == user;
     }
+
     private StudyNoticeComment(User user, String content) {
         this.user = user;
         this.content = content;
@@ -60,7 +62,7 @@ public class StudyNoticeComment {
         this.status = DELETED;
     }
 
-    public void update(String content){
+    public void update(String content) {
         require(isNotBlank(content));
 
         this.content = content;

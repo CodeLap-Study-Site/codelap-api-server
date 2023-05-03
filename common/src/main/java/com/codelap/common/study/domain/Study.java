@@ -155,8 +155,8 @@ public class Study {
         bookmarks.add(bookmark);
     }
 
-    public void removeBookmark(Bookmark bookmark){
-       bookmarks.remove(bookmark);
+    public void removeBookmark(Bookmark bookmark) {
+        bookmarks.remove(bookmark);
     }
 
     public void changeLeader(User user) {
