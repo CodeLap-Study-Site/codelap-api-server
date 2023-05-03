@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import static com.codelap.common.user.domain.User.MIN_AGE;
 import static com.codelap.common.user.domain.UserStatus.CREATED;
 import static com.codelap.common.user.domain.UserStatus.DELETED;
+import static com.codelap.fixture.UserFixture.createUser;
 import static org.assertj.core.api.Assertions.*;
 
 class UserTest {
@@ -16,8 +17,7 @@ class UserTest {
 
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        user = User.create("name", 10, career, "abcd", "setup");
+        user = createUser("setUp");
     }
 
     @Test
@@ -145,7 +145,7 @@ class UserTest {
 
     @Test
     void 유저_비밀번호_변경_실패__입력받은_비밀번호와_새로운_비밀번호가_같음() {
-        assertThatIllegalArgumentException().isThrownBy(() -> user.changePassword(user.getPassword(), "abcd"));
+        assertThatIllegalArgumentException().isThrownBy(() -> user.changePassword(user.getPassword(), user.getPassword()));
     }
 
     @Test

@@ -1,52 +1,37 @@
 package com.codelap.common.studyNoticeComment.domain;
 
 import com.codelap.common.study.domain.Study;
-import com.codelap.common.study.domain.StudyNeedCareer;
-import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.StudyTechStack;
 import com.codelap.common.studyNotice.domain.StudyNotice;
-import com.codelap.common.studyNotice.domain.StudyNoticeFile;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.codelap.common.study.domain.Study.create;
-import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.CREATED;
 import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.DELETED;
+import static com.codelap.fixture.StudyFixture.createStudy;
+import static com.codelap.fixture.StudyNoticeCommentFixture.createStudyNoticeComment;
+import static com.codelap.fixture.StudyNoticeFixture.createStudyNotice;
+import static com.codelap.fixture.UserFixture.createUser;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 
 class StudyNoticeCommentTest {
 
     private User leader;
+    private Study study;
     private StudyNotice studyNotice;
 
     private StudyNoticeComment studyNoticeComment;
 
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = User.create("name", 10, career, "abcd", "setUp");
-
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
-
-        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
-        StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 100L);
-
-        studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
+        leader = createUser("leader");
+        study = createStudy(leader);
+        studyNotice = createStudyNotice(study);
+        studyNoticeComment = createStudyNoticeComment(studyNotice, leader);
     }
 
     @Test
@@ -77,8 +62,6 @@ class StudyNoticeCommentTest {
 
     @Test
     void 스터디_공지_댓글_삭제_성공() {
-        StudyNoticeComment studyNoticeComment = StudyNoticeComment.create(studyNotice, leader, "content");
-
         studyNoticeComment.delete();
 
         assertThat(studyNoticeComment.getStatus()).isEqualTo(DELETED);
@@ -87,8 +70,6 @@ class StudyNoticeCommentTest {
     @ParameterizedTest
     @EnumSource(value = StudyNoticeCommentStatus.class, names = {"DELETED"}, mode = INCLUDE)
     void 스터디_공지_댓글_삭제_실패__이미_삭제된_상태(StudyNoticeCommentStatus status) {
-        StudyNoticeComment studyNoticeComment = StudyNoticeComment.create(studyNotice, leader, "content");
-
         studyNoticeComment.setStatus(status);
 
         assertThatIllegalStateException().isThrownBy(() -> studyNoticeComment.delete());
@@ -96,8 +77,6 @@ class StudyNoticeCommentTest {
 
     @Test
     void 스터디_공지_댓글_수정_성공() {
-        StudyNoticeComment studyNoticeComment = StudyNoticeComment.create(studyNotice, leader, "content");
-
         studyNoticeComment.update("content");
 
         assertThat(studyNoticeComment.getContent()).isEqualTo("content");
@@ -106,8 +85,6 @@ class StudyNoticeCommentTest {
     @ParameterizedTest
     @NullAndEmptySource
     void 스터디_공지_댓글_수정_실패__댓글내용이_널이거나_공백(String content) {
-        StudyNoticeComment studyNoticeComment = StudyNoticeComment.create(studyNotice, leader, "content");
-
         assertThatIllegalArgumentException().isThrownBy(() -> studyNoticeComment.update(content));
     }
 }
