@@ -72,11 +72,9 @@ class StudyControllerTest extends ApiTest {
     private Study study1;
     private Study study2;
     private MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
+        leader = prepareLoggedInUser();
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
@@ -88,8 +86,6 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_생성_성공() throws Exception {
-        User leader = prepareLoggedInUser();
-
         StudyCreateRequestStudyPeriodDto periodDto = new StudyCreateRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyCreateRequestStudyNeedCareerDto careerDto = new StudyCreateRequestStudyNeedCareerDto("직무", 10);
 
@@ -123,11 +119,12 @@ class StudyControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_수정_성공() throws Exception {
         StudyUpdateRequestStudyPeriodDto periodDto = new StudyUpdateRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyUpdateRequestStudyNeedCareerDto careerDto = new StudyUpdateRequestStudyNeedCareerDto("updateOccupation", 5);
 
-        StudyUpdateRequest req = new StudyUpdateRequest(study.getId(), leader.getId(), "updateTeam", "updateInfo", 5, HARD, periodDto, careerDto, techStackList);
+        StudyUpdateRequest req = new StudyUpdateRequest(study.getId(), "updateTeam", "updateInfo", 5, HARD, periodDto, careerDto, techStackList);
 
         mockMvc.perform(post("/study/update")
                         .contentType(APPLICATION_JSON)
@@ -157,8 +154,9 @@ class StudyControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_진행_성공() throws Exception {
-        StudyProceedRequest req = new StudyProceedRequest(study.getId(), leader.getId());
+        StudyProceedRequest req = new StudyProceedRequest(study.getId());
 
         mockMvc.perform(post("/study/proceed")
                         .contentType(APPLICATION_JSON)
@@ -176,13 +174,14 @@ class StudyControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_멤버_추방_성공() throws Exception {
         UserCareer career = UserCareer.create("직무", 1);
-        User member = userRepository.save(User.create("member", 10, career, "abcd", "member"));
+        member = userRepository.save(User.create("member", 10, career, "abcd", "member"));
 
         study.addMember(member);
 
-        StudyRemoveMemberRequest req = new StudyRemoveMemberRequest(study.getId(), member.getId(), leader.getId());
+        StudyRemoveMemberRequest req = new StudyRemoveMemberRequest(study.getId(), member.getId());
 
         mockMvc.perform(post("/study/remove-member")
                         .contentType(APPLICATION_JSON)
@@ -200,8 +199,9 @@ class StudyControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_닫기_성공() throws Exception {
-        StudyCloseRequest req = new StudyCloseRequest(study.getId(), leader.getId());
+        StudyCloseRequest req = new StudyCloseRequest(study.getId());
 
         mockMvc.perform(post("/study/close")
                         .contentType(APPLICATION_JSON)
@@ -219,10 +219,9 @@ class StudyControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_나가기_성공() throws Exception {
-        UserCareer career = UserCareer.create("직무", 1);
-        User member = userRepository.save(User.create("member", 10, career, "abcd", "member"));
-
+        member = prepareLoggedInUser("member@email.com");
         study.addMember(member);
 
         StudyLeaveRequest req = new StudyLeaveRequest(study.getId(), member.getId());
@@ -243,8 +242,9 @@ class StudyControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_삭제_성공() throws Exception {
-        StudyDeleteRequest req = new StudyDeleteRequest(study.getId(), leader.getId());
+        StudyDeleteRequest req = new StudyDeleteRequest(study.getId());
 
         mockMvc.perform(delete("/study/delete")
                         .contentType(APPLICATION_JSON)
@@ -262,6 +262,7 @@ class StudyControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_오픈_성공() throws Exception {
         study.proceed();
 
@@ -284,13 +285,13 @@ class StudyControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 유저가_참여한_스터디_조회_성공() throws Exception {
         UserCareer career = UserCareer.create("직무", 1);
-        User leader = userRepository.save(User.create("name", 10, career, "abcd", "leader"));
-
         member = userRepository.save(User.create("member", 10, career, "abcd", "email"));
+        User studyLeader = userRepository.save(User.create("leader", 10, career, "abcd", "leader"));
 
-        유저가_참여한_스터디_조회_스터디_생성(leader);
+        유저가_참여한_스터디_조회_스터디_생성(studyLeader);
 
         params.add("userId", member.getId().toString());
         params.add("statusCond", "open");
