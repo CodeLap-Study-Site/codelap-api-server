@@ -36,8 +36,10 @@ public class User {
 
     private int age;
 
+    private Long socialId;
+
     @Embedded
-    private UserCareer career;
+    private UserCareer career = new UserCareer();
 
     @Setter
     private UserStatus status = CREATED;
@@ -46,12 +48,21 @@ public class User {
 
     public static int MIN_AGE = 0;
 
+    public User(Long socialId) {
+        this.socialId = socialId;
+    }
+
     private User(String name, int age, UserCareer career, String password, String email) {
         this.name = name;
         this.age = age;
         this.career = career;
         this.password = password;
         this.email = email;
+    }
+
+    public static User create(Long socialId) {
+
+        return new User(socialId);
     }
 
     public static User create(String name, int age, UserCareer career, String password, String email) {

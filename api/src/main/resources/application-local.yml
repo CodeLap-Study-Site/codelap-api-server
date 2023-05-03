@@ -19,3 +19,11 @@ spring:
           validation:
             mode: none
     show-sql: true
+
+oauth2:
+  frontUri: ${FRONT_URI:http://localhost:3000/token}
+
+jwt:
+  secretKey: ${JWT_SECRET_KEY:keykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykey}
+  accessTokenExpireTime: 180000
+  refreshTokenExpireTime: 600000

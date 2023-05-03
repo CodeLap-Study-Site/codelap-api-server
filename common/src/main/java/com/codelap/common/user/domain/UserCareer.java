@@ -1,7 +1,6 @@
 package com.codelap.common.user.domain;
 
 import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
@@ -10,7 +9,7 @@ import static com.codelap.common.support.Preconditions.require;
 
 @Getter
 @Embeddable
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class UserCareer {
 
     private String occupation;
