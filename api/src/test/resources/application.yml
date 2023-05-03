@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: classpath:integration-test.yml
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${db.url:jdbc:mysql://localhost:3306/codelaptest}

@@ -1,0 +1,4 @@
+discord:
+  webhook-url: ${DISCORD_URL:1234}
+  username: ${DISCORD_USERNAME:1234}
+  avatar-url: ${DISCORD_AVATAR:1234}

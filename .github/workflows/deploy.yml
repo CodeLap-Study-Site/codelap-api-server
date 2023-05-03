@@ -1,6 +1,7 @@
 env:
   API_TEST_RESOURCE_PATH: ./api/src/test/resources/application.yml
   COMMON_TEST_RESOURCE_PATH: ./common/src/test/resources/application.yml
+  INTEGRATION_PATH: ./integration/src/main/resources/integration.yml
   RESOURCE_PATH: ./api/src/main/resources/application.yml
   PROJECT_NAME: codelap_project
   BUCKET_NAME: codelap
@@ -40,6 +41,15 @@ jobs:
           spring.datasource.url: ${{ secrets.RDB_URL }}
           spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
           spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
+
+      - name: "integration.yml Set"
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.INTEGRATION_PATH }}
+        env:
+          discord.webhook-url: ${{ secrets.DISCORD_URL }}
+          discord.username: Log
+          discord.avatar-url: ${{ secrets.DISCORD_AVATAR }}
 
       - name: "API Test application.yml Set"
         uses: microsoft/variable-substitution@v1
