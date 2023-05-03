@@ -66,7 +66,7 @@ public abstract class ApiTest {
         return user;
     }
 
-    private void login(Long id) {
+    protected void login(Long id) {
         DefaultCodeLapUser codeLapUser = (DefaultCodeLapUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         codeLapUser.setId(id);

@@ -5,22 +5,21 @@ import com.codelap.common.studyConfirmation.domain.StudyConfirmationFile;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class StudyConfirmationreConfirmDto {
-    public record StudyConfirmationreConfirmRequest(
+public class StudyConfirmationReConfirmDto {
+    public record StudyConfirmationReConfirmRequest(
             Long studyConfirmId,
-            Long userId,
             String title,
             String content,
-            List<StudyConfirmationreConfirmRequestFileDto> files
+            List<StudyConfirmationReConfirmRequestFileDto> files
     ) {
-        public List<StudyConfirmationFile> toStudyreConfirmationFiles() {
+        public List<StudyConfirmationFile> toStudyReConfirmationFiles() {
             return files.stream()
-                    .map(StudyConfirmationreConfirmRequestFileDto::toStudyConfirmationFile)
+                    .map(StudyConfirmationReConfirmRequestFileDto::toStudyConfirmationFile)
                     .collect(Collectors.toList());
         }
     }
 
-    public record StudyConfirmationreConfirmRequestFileDto(
+    public record StudyConfirmationReConfirmRequestFileDto(
             String savedName,
             String originalName,
             Long size

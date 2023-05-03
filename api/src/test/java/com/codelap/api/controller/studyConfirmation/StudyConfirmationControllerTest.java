@@ -1,42 +1,37 @@
 package com.codelap.api.controller.studyConfirmation;
 
+import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationReConfirmDto.StudyConfirmationReConfirmRequest;
+import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationReConfirmDto.StudyConfirmationReConfirmRequestFileDto;
+import com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.StudyConfirmationRejectRequest;
 import com.codelap.api.support.ApiTest;
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.studyConfirmation.domain.StudyConfirmation;
-import com.codelap.common.studyConfirmation.domain.StudyConfirmationFile;
 import com.codelap.common.studyConfirmation.domain.StudyConfirmationRepository;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
-import com.codelap.common.user.domain.UserRepository;
+import com.codelap.fixture.StudyConfirmationFixture;
+import com.codelap.fixture.StudyFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithUserDetails;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationConfirmDto.StudyConfirmationConfirmRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationCreateDto.StudyConfirmationCreateRequestFileDto;
-import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.StudyConfirmationRejectRequest;
-import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto.StudyConfirmationreConfirmRequest;
-import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto.StudyConfirmationreConfirmRequestFileDto;
-import static com.codelap.common.study.domain.StudyDifficulty.HARD;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
+import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationDeleteDto.StudyConfirmationDeleteRequest;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StudyConfirmationControllerTest extends ApiTest {
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private StudyRepository studyRepository;
@@ -47,29 +42,25 @@ class StudyConfirmationControllerTest extends ApiTest {
     private User leader;
     private User member;
     private Study study;
-    private List<StudyTechStack> techStackList;
-
+    private StudyConfirmation studyConfirmation;
 
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
+        leader = prepareLoggedInUser();
+        member = prepareLoggedInUser("email.com");
 
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
-
-        study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader, techStackList));
-
-        member = userRepository.save(User.create("candidate", 10, career, "abcd", "email"));
+        study = studyRepository.save(StudyFixture.createStudy(leader));
 
         study.addMember(member);
     }
 
     @Test
+    @WithUserDetails
     void 스터디_인증_생성_성공() throws Exception {
+        login(member.getId());
+
         StudyConfirmationCreateRequestFileDto file = new StudyConfirmationCreateRequestFileDto("savedName", "originalName", 100L);
-        StudyConfirmationCreateRequest req = new StudyConfirmationCreateRequest(study.getId(), member.getId(), "title", "contents", List.of(file));
+        StudyConfirmationCreateRequest req = new StudyConfirmationCreateRequest(study.getId(), "title", "contents", List.of(file));
 
         mockMvc.perform(post("/study-confirmation")
                         .contentType(APPLICATION_JSON)
@@ -93,14 +84,13 @@ class StudyConfirmationControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_인증_확인_성공() throws Exception {
-        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 100L);
+        studyConfirmation = studyConfirmationRepository.save(StudyConfirmationFixture.createStudyConfirmation(study, member));
 
-        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "contents", List.of(file)));
+        login(leader.getId());
 
-        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
-
-        StudyConfirmationConfirmRequest req = new StudyConfirmationConfirmRequest(studyConfirmation.getId(), leader.getId());
+        StudyConfirmationConfirmRequest req = new StudyConfirmationConfirmRequest(studyConfirmation.getId());
 
         mockMvc.perform(post("/study-confirmation/confirm")
                         .contentType(APPLICATION_JSON)
@@ -116,14 +106,13 @@ class StudyConfirmationControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_인증_거절_성공() throws Exception {
-        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 100L);
+        studyConfirmation = studyConfirmationRepository.save(StudyConfirmationFixture.createStudyConfirmation(study, member));
 
-        studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "contents", List.of(file)));
+        login(leader.getId());
 
-        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
-
-        StudyConfirmationRejectRequest req = new StudyConfirmationRejectRequest(studyConfirmation.getId(), leader.getId());
+        StudyConfirmationRejectRequest req = new StudyConfirmationRejectRequest(studyConfirmation.getId());
 
         mockMvc.perform(post("/study-confirmation/reject")
                         .contentType(APPLICATION_JSON)
@@ -139,15 +128,16 @@ class StudyConfirmationControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_인증_재인증_성공() throws Exception {
-        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 100L);
+        studyConfirmation = studyConfirmationRepository.save(StudyConfirmationFixture.createStudyConfirmation(study, member));
 
-        StudyConfirmation studyConfirmation = studyConfirmationRepository.save(StudyConfirmation.create(study, member, "title", "content", List.of(file)));
+        login(member.getId());
 
         studyConfirmation.setStatus(REJECTED);
 
-        StudyConfirmationreConfirmRequestFileDto refile = new StudyConfirmationreConfirmRequestFileDto("savedName", "originalName", 100L);
-        StudyConfirmationreConfirmRequest req = new StudyConfirmationreConfirmRequest(studyConfirmation.getId(), member.getId(), "title", "content", List.of(refile));
+        StudyConfirmationReConfirmRequestFileDto refile = new StudyConfirmationReConfirmRequestFileDto("savedName", "originalName", 100L);
+        StudyConfirmationReConfirmRequest req = new StudyConfirmationReConfirmRequest(studyConfirmation.getId(), "title", "content", List.of(refile));
 
         mockMvc.perform(post("/study-confirmation/reconfirm")
                         .contentType(APPLICATION_JSON)
@@ -160,5 +150,27 @@ class StudyConfirmationControllerTest extends ApiTest {
                 ));
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(CREATED);
+    }
+
+    @Test
+    @WithUserDetails
+    void 스터디_인증_삭제_성공() throws Exception {
+        studyConfirmation = studyConfirmationRepository.save(StudyConfirmationFixture.createStudyConfirmation(study, member));
+
+        login(member.getId());
+
+        StudyConfirmationDeleteRequest req = new StudyConfirmationDeleteRequest(studyConfirmation.getId());
+
+        mockMvc.perform(delete("/study-confirmation")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpectAll(
+                        status().isOk()
+                ).andDo(document("study-confirmation/delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        assertThat(studyConfirmation.getStatus()).isEqualTo(DELETED);
     }
 }
