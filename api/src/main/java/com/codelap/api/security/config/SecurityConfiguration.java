@@ -12,7 +12,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -30,21 +32,27 @@ public class SecurityConfiguration {
             JwtAuthenticationProvider jwtAuthenticationProvider,
             SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> jwtFilterConfigurer
     ) throws Exception {
-        http.authorizeHttpRequests()
-                .requestMatchers("/auth/**", "/user/create", "/email-auth/**").permitAll()
-                .anyRequest().authenticated();
-
         http.formLogin().disable();
         http.httpBasic().disable();
         http.cors().disable();
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
+
+        http.oauth2Login()
+                .authorizationEndpoint()
+                .baseUri("/login/oauth2/authorization")
+                .and()
+                .successHandler(oAuth2SuccessHandler)
+                .userInfoEndpoint().userService(oAuth2UserService);
+
+        http.authorizeRequests()
+                .anyRequest().authenticated();
+
         http.authenticationProvider(jwtAuthenticationProvider);
         http.apply(jwtFilterConfigurer);
 
-        http.oauth2Login()
-                .successHandler(oAuth2SuccessHandler)
-                .userInfoEndpoint().userService(oAuth2UserService);
+        http.exceptionHandling()
+                .authenticationEntryPoint(new HttpStatusEntryPoint(FORBIDDEN));
 
         return http.build();
     }

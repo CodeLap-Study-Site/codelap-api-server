@@ -17,15 +17,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
 
-        System.out.println("시작");
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
-        System.out.println("끝");
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String userNameAttributeName = userRequest.getClientRegistration()
                 .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
-
-        System.out.println(oAuth2User.getAttributes());
 
         log.info("registrationId = {}", registrationId);
         log.info("userNameAttributeName = {}", userNameAttributeName);
