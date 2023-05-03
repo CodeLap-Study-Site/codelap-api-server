@@ -1,26 +1,20 @@
 package com.codelap.common.studyConfirmation.domain;
 
 import com.codelap.common.study.domain.Study;
-import com.codelap.common.study.domain.StudyNeedCareer;
-import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.StudyTechStack;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
+import com.codelap.fixture.StudyFixture;
+import com.codelap.fixture.UserFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 
-import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmation.create;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
+import static com.codelap.fixture.StudyConfirmationFixture.createStudyConfirmation;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
@@ -29,28 +23,22 @@ class StudyConfirmationTest {
     private User leader;
     private User member;
     private Study study;
-    private StudyConfirmationFile file;
+    private StudyConfirmation studyConfirmation;
 
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = User.create("name", 10, career, "abcd", "setUp");
+        leader = UserFixture.createUser("leader");
+        member = UserFixture.createUser("member");
 
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
-
-        study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
-
-        member = User.create("name", 10, career, "abcd", "user");
-
+        study = StudyFixture.createStudy(leader);
         study.addMember(member);
 
-        file = StudyConfirmationFile.create("saved", "original", 10L);
+        studyConfirmation = createStudyConfirmation(study, member);
     }
 
     @Test
     void 스터디_인증_생성_성공() {
+        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 10L);
         StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
 
         assertThat(studyConfirmation.getStudy()).isSameAs(study);
@@ -63,23 +51,31 @@ class StudyConfirmationTest {
 
     @Test
     void 스터디_인증_생성_실패__스터디가_널() {
+        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 10L);
+
         assertThatIllegalArgumentException().isThrownBy(() -> create(null, member, "title", "content", List.of(file)));
     }
 
     @Test
     void 스터디_인증_생성_실패__맴버가_널() {
+        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 10L);
+
         assertThatIllegalArgumentException().isThrownBy(() -> create(study, null, "title", "content", List.of(file)));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     void 스터디_인증_생성_실패__타이틀이_공백_혹은_널(String title) {
+        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 10L);
+
         assertThatIllegalArgumentException().isThrownBy(() -> create(study, member, title, "content", List.of(file)));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     void 스터디_인증_생성_실패__컨텐츠가_공백_혹은_널(String content) {
+        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 10L);
+
         assertThatIllegalArgumentException().isThrownBy(() -> create(study, member, "title", content, List.of(file)));
     }
 
@@ -90,8 +86,6 @@ class StudyConfirmationTest {
 
     @Test
     void 스터디_인증_확인_성공() {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
-
         studyConfirmation.confirm();
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(CONFIRMED);
@@ -101,8 +95,6 @@ class StudyConfirmationTest {
     @ParameterizedTest
     @EnumSource(value = StudyConfirmationStatus.class, names = {"CREATED"}, mode = EXCLUDE)
     void 스터디_인증_확인_실패__확인_가능한_상태가_아님(StudyConfirmationStatus status) {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
-
         studyConfirmation.setStatus(status);
 
         assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.confirm());
@@ -110,8 +102,6 @@ class StudyConfirmationTest {
 
     @Test
     void 스터디_인증_거절_성공() {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
-
         studyConfirmation.reject("부적합");
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(REJECTED);
@@ -122,16 +112,12 @@ class StudyConfirmationTest {
     @ParameterizedTest
     @NullAndEmptySource
     void 스터디_인증_거절_실패__거절_메시지가_널이거나_공백(String rejectedMessage) {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
-
         assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.reject(rejectedMessage));
     }
 
     @ParameterizedTest
     @EnumSource(value = StudyConfirmationStatus.class, names = {"CREATED"}, mode = EXCLUDE)
     void 스터디_인증_거절_실패__확인_가능한_상태가_아님(StudyConfirmationStatus status) {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
-
         studyConfirmation.setStatus(status);
 
         assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.reject("부적합"));
@@ -139,9 +125,9 @@ class StudyConfirmationTest {
 
     @Test
     void 스터디_인증_재인증_성공() {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
-
         studyConfirmation.setStatus(REJECTED);
+
+        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 10L);
 
         studyConfirmation.reConfirm("modifyTitle", "modifyContent", List.of(file));
 
@@ -151,7 +137,7 @@ class StudyConfirmationTest {
     @ParameterizedTest
     @NullAndEmptySource
     void 스터디_인증_재인증_실패__타이틀이_공백_혹은_널(String modifyTitle) {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 10L);
 
         assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.reConfirm(modifyTitle, "modifyContent", List.of(file)));
     }
@@ -159,22 +145,20 @@ class StudyConfirmationTest {
     @ParameterizedTest
     @NullAndEmptySource
     void 스터디_인증_재인증_실패__컨텐츠가_공백_혹은_널(String modifyContent) {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 10L);
 
         assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.reConfirm("title", modifyContent, List.of(file)));
     }
 
     @Test
     void 스터디_인증_재인증_실패__파일이_공백_혹은_널() {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
-
         assertThatIllegalArgumentException().isThrownBy(() -> studyConfirmation.reConfirm("title", "content", null));
     }
 
     @ParameterizedTest
     @EnumSource(value = StudyConfirmationStatus.class, names = {"REJECTED"}, mode = EXCLUDE)
     void 스터디_인증_재인증_실패__거절된_상태가_아님(StudyConfirmationStatus status) {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
+        StudyConfirmationFile file = StudyConfirmationFile.create("savedName", "originalName", 10L);
 
         studyConfirmation.setStatus(status);
 
@@ -183,8 +167,6 @@ class StudyConfirmationTest {
 
     @Test
     void 스터디_인증_삭제_성공() {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
-
         studyConfirmation.delete();
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(DELETED);
@@ -192,8 +174,6 @@ class StudyConfirmationTest {
 
     @Test
     void 스터디_인증_삭제_실패__이미_삭제된_인증() {
-        StudyConfirmation studyConfirmation = create(study, member, "title", "content", List.of(file));
-
         studyConfirmation.setStatus(DELETED);
 
         assertThatIllegalStateException().isThrownBy(() -> studyConfirmation.delete());
