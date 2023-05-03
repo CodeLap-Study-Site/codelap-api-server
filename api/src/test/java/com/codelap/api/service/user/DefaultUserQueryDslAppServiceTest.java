@@ -25,28 +25,12 @@ public class DefaultUserQueryDslAppServiceTest {
     @Autowired
     UserQueryAppService userQueryAppService;
 
-
     @Test
     void 닉네임_중복_체크_성공_닉네임_있음() {
         UserCareer career = UserCareer.create("직무", 1);
         userRepository.save(User.create("member", 10, career, "abcd", "member"));
 
-        boolean result = userQueryAppService.getDuplicateCheckByName("member");
-
-        List<User> nameList = userRepository.findAll().stream()
-                .filter(user -> user.getName() != null)
-                .collect(Collectors.toList());
-
-        Assertions.assertThat(result).isTrue();
-        Assertions.assertThat(nameList.contains("member"));
-    }
-
-    @Test
-    void 닉네임_중복_체크_실패__중복_이름_없음() {
-        String name = "name";
-
-        boolean result = userQueryAppService.getDuplicateCheckByName(name);
-
-        Assertions.assertThat(result).isFalse();
+        Assertions.assertThat(userQueryAppService.getDuplicateCheckByName("member")).isTrue();
+        Assertions.assertThat(userQueryAppService.getDuplicateCheckByName("fakeName")).isFalse();
     }
 }

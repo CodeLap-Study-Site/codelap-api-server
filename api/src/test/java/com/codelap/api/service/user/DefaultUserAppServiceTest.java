@@ -22,8 +22,6 @@ public class DefaultUserAppServiceTest {
     @Autowired
     UserAppService userAppService;
 
-    private User user;
-
     @Test
     void 닉네임_중복_체크_성공_닉네임_있음() {
         UserCareer career = UserCareer.create("직무", 1);
