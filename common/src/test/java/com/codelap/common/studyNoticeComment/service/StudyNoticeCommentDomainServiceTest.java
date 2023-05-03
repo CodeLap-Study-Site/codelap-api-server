@@ -120,7 +120,7 @@ public class StudyNoticeCommentDomainServiceTest {
     }
 
     @Test
-    void 스터디_공지_댓글_수정_실패__작성한_유저가_아님(){
+    void 스터디_공지_댓글_수정_실패__작성한_유저가_아님() {
         StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice.getId(), member.getId(), "content");
 
         UserCareer career = UserCareer.create("직무", 1);

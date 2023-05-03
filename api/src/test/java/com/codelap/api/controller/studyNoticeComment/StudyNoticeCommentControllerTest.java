@@ -43,7 +43,7 @@ class StudyNoticeCommentControllerTest extends ApiTest {
     private StudyRepository studyRepository;
 
     @Autowired
-    private  StudyNoticeRepository studyNoticeRepository;
+    private StudyNoticeRepository studyNoticeRepository;
 
     @Autowired
     private StudyNoticeCommentRepository studyNoticeCommentRepository;

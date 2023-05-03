@@ -21,3 +21,11 @@ spring:
             mode: none
   flyway:
     enabled: false
+
+oauth2:
+  frontUri: ${FRONT_URI:http://localhost:3000/token}
+
+jwt:
+  secretKey: ${JWT_SECRET_KEY:testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttest}
+  accessTokenExpireTime: 180000
+  refreshTokenExpireTime: 600000

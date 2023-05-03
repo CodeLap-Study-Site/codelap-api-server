@@ -10,14 +10,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.validation.Validator;
-
 import static com.codelap.common.support.Preconditions.actorValidate;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class BookmarkDomainService implements BookmarkService{
+public class BookmarkDomainService implements BookmarkService {
 
     private final StudyRepository studyRepository;
     private final UserRepository userRepository;

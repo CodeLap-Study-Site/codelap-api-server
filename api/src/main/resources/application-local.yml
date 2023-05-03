@@ -13,9 +13,17 @@ spring:
       hibernate:
         format_sql: false
         dialect: org.hibernate.dialect.MySQL8Dialect
-        default_batch_fetch_size : 100
+        default_batch_fetch_size: 100
       javax:
         persistence:
           validation:
             mode: none
     show-sql: true
+
+oauth2:
+  frontUri: ${FRONT_URI:http://localhost:3000/token}
+
+jwt:
+  secretKey: ${JWT_SECRET_KEY:keykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykey}
+  accessTokenExpireTime: 180000
+  refreshTokenExpireTime: 600000

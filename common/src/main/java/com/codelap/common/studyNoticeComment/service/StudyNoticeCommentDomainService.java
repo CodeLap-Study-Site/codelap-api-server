@@ -34,17 +34,17 @@ public class StudyNoticeCommentDomainService implements StudyNoticeCommentServic
 
     @Override
     public void delete(Long StudyNoticeCommentId, Long userId) {
-       User user =  userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
 
-       StudyNoticeComment studyNoticeComment = studyNoticeCommentRepository.findById(StudyNoticeCommentId).orElseThrow();
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentRepository.findById(StudyNoticeCommentId).orElseThrow();
 
-       actorValidate(studyNoticeComment.isUser(user));
-       studyNoticeComment.delete();
+        actorValidate(studyNoticeComment.isUser(user));
+        studyNoticeComment.delete();
     }
 
     @Override
     public void update(Long StudyNoticeCommentId, Long userId, String content) {
-        User user =  userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
 
         StudyNoticeComment studyNoticeComment = studyNoticeCommentRepository.findById(StudyNoticeCommentId).orElseThrow();
 

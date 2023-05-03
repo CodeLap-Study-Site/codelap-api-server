@@ -41,6 +41,10 @@ jobs:
           spring.datasource.url: ${{ secrets.RDB_URL }}
           spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
           spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
+          oauth2.frontUri: ${{ secrets.OAUTH2_FRONT_URI }}
+          spring.security.oauth2.client.registration.github.client-id: ${{ secrets.OAUTH2_CLIENT_ID }}
+          spring.security.oauth2.client.registration.github.client-secret: ${{ secrets.OAUTH2_CLIENT_SECRET }}
+          spring.security.oauth2.client.registration.github.redirect-uri: ${{ secrets.OAUTH2_REDIRECT_URI }}
 
       - name: "integration.yml Set"
         uses: microsoft/variable-substitution@v1
