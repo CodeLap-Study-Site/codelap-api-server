@@ -63,6 +63,10 @@ subprojects {
 }
 
 project(":common") {
+    apply {
+        plugin("java-test-fixtures")
+    }
+
     bootJar {
         enabled = false
     }
