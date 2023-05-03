@@ -11,6 +11,7 @@ import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -54,7 +55,7 @@ class StudyNoticeControllerTest extends ApiTest {
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
+        leader = prepareLoggedInUser();
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
@@ -67,9 +68,10 @@ class StudyNoticeControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_공지_생성_성공() throws Exception {
         StudyNoticeCreateRequestFileDto file = new StudyNoticeCreateRequestFileDto("savedName", "originalName", 100L);
-        StudyNoticeCreateRequest req = new StudyNoticeCreateRequest(study.getId(), leader.getId(), "title", "contents", List.of(file));
+        StudyNoticeCreateRequest req = new StudyNoticeCreateRequest(study.getId(), "title", "contents", List.of(file));
 
         mockMvc.perform(post("/study-notice")
                         .contentType(APPLICATION_JSON)
@@ -92,10 +94,11 @@ class StudyNoticeControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_공지_수정_성공() throws Exception {
         StudyNoticeUpdateRequestFileDto file = new StudyNoticeUpdateRequestFileDto("savedName", "originalName", 100L);
 
-        StudyNoticeUpdateRequest req = new StudyNoticeUpdateRequest(studyNotice.getId(), leader.getId(), "title", "contents", List.of(file));
+        StudyNoticeUpdateRequest req = new StudyNoticeUpdateRequest(studyNotice.getId(),"title", "contents", List.of(file));
 
         mockMvc.perform(post("/study-notice/update")
                         .contentType(APPLICATION_JSON)
@@ -116,8 +119,9 @@ class StudyNoticeControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_공지_삭제_성공() throws Exception {
-        StudyNoticeDeleteRequest req = new StudyNoticeDeleteRequest(studyNotice.getId(), leader.getId());
+        StudyNoticeDeleteRequest req = new StudyNoticeDeleteRequest(studyNotice.getId());
 
         mockMvc.perform(delete("/study-notice")
                         .contentType(APPLICATION_JSON)

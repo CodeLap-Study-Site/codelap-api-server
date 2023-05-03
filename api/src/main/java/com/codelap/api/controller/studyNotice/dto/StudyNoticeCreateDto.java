@@ -9,7 +9,6 @@ public class StudyNoticeCreateDto {
 
     public record StudyNoticeCreateRequest(
             Long studyId,
-            Long userId,
             String title,
             String contents,
             List<StudyNoticeCreateRequestFileDto> files

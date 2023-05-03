@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 public class StudyNoticeUpdateDto {
     public record StudyNoticeUpdateRequest(
             Long studyNoticeId,
-            Long leaderId,
             String title,
             String contents,
             List<StudyNoticeUpdateRequestFileDto> files
