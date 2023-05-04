@@ -86,6 +86,4 @@ public abstract class ApiTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()));
     }
-
-
 }
