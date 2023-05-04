@@ -1,8 +1,10 @@
 package com.codelap.api.controller.studyRequest;
 
+import com.codelap.api.security.user.DefaultCodeLapUser;
 import com.codelap.api.service.studyrequest.StudyRequestAppService;
 import com.codelap.common.studyRequest.service.StudyRequestService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,29 +25,33 @@ public class StudyRequestController {
 
     @PostMapping
     public void create(
+            @AuthenticationPrincipal DefaultCodeLapUser user,
             @RequestBody StudyRequestCreateRequest dto
     ) {
-        studyRequestService.create(dto.userId(), dto.studyId(), dto.message());
+        studyRequestService.create(user.getId(), dto.studyId(), dto.message());
     }
 
     @PostMapping("approve")
     public void approve(
+            @AuthenticationPrincipal DefaultCodeLapUser leader,
             @RequestBody StudyRequestApproveRequest dto
     ) {
-        studyRequestAppService.approve(dto.studyRequestId(), dto.leaderId());
+        studyRequestAppService.approve(dto.studyRequestId(), leader.getId());
     }
 
     @PostMapping("reject")
     public void reject(
+            @AuthenticationPrincipal DefaultCodeLapUser leader,
             @RequestBody StudyRequestRejectRequest dto
     ) {
-        studyRequestService.reject(dto.studyRequestId(), dto.leaderId(), dto.rejectMessage());
+        studyRequestService.reject(dto.studyRequestId(), leader.getId(), dto.rejectMessage());
     }
 
     @PostMapping("cancel")
     public void cancel(
+            @AuthenticationPrincipal DefaultCodeLapUser user,
             @RequestBody StudyRequestCancelRequest dto
     ) {
-        studyRequestService.cancel(dto.studyRequestId(), dto.userId());
+        studyRequestService.cancel(dto.studyRequestId(), user.getId());
     }
 }
