@@ -42,6 +42,10 @@ public class User {
 
     private final OffsetDateTime createdAt = OffsetDateTime.now();
 
+    public boolean isActivated() {
+        return this.status == ACTIVATED;
+    }
+
     public User(Long socialId) {
         this.socialId = socialId;
     }

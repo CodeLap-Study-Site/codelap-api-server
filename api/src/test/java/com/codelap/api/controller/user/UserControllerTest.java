@@ -21,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -101,5 +101,20 @@ class UserControllerTest extends ApiTest {
                 ));
 
         assertThat(user.getStatus()).isEqualTo(DELETED);
+    }
+
+    @Test
+    @WithUserDetails
+    void 유저_활성화_상태_체크() throws Exception {
+        prepareLoggedInActiveUser();
+
+        mockMvc.perform(get("/user/is-activated"))
+                .andExpectAll(
+                        jsonPath("$").value(true),
+                        status().isOk()
+                ).andDo(document("user/is-activated",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 }
