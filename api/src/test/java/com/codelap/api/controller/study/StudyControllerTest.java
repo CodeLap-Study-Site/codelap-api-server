@@ -33,6 +33,7 @@ import static com.codelap.api.controller.study.dto.StudyOpenDto.StudyOpenRequest
 import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedRequest;
 import static com.codelap.api.controller.study.dto.StudyRemoveMemberDto.StudyRemoveMemberRequest;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
+import static com.codelap.api.support.HttpMethod.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyStatus.*;
 import static com.codelap.common.support.TechStack.*;
@@ -40,12 +41,7 @@ import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static com.codelap.fixture.UserFixture.createUser;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StudyControllerTest extends ApiTest {
 
@@ -88,15 +84,7 @@ class StudyControllerTest extends ApiTest {
 
         StudyCreateRequest req = new StudyCreateRequest("팀", "정보", 4, HARD, periodDto, careerDto, List.of(studyTechStack));
 
-        mockMvc.perform(post("/study")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study/create",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/study","study/create");
 
         Study foundStudy = studyRepository.findAll().get(1);
 
@@ -124,15 +112,7 @@ class StudyControllerTest extends ApiTest {
 
         StudyUpdateRequest req = new StudyUpdateRequest(study.getId(), "updateTeam", "updateInfo", 5, HARD, periodDto, careerDto, List.of(studyTechStack));
 
-        mockMvc.perform(post("/study/update")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study/update",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/study/update");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -156,15 +136,7 @@ class StudyControllerTest extends ApiTest {
     void 스터디_진행_성공() throws Exception {
         StudyProceedRequest req = new StudyProceedRequest(study.getId());
 
-        mockMvc.perform(post("/study/proceed")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study/proceed",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/study/proceed");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -180,15 +152,7 @@ class StudyControllerTest extends ApiTest {
 
         StudyRemoveMemberRequest req = new StudyRemoveMemberRequest(study.getId(), member.getId());
 
-        mockMvc.perform(post("/study/remove-member")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study/remove-member",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/study/remove-member");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -200,15 +164,7 @@ class StudyControllerTest extends ApiTest {
     void 스터디_닫기_성공() throws Exception {
         StudyCloseRequest req = new StudyCloseRequest(study.getId());
 
-        mockMvc.perform(post("/study/close")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study/close",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/study/close");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -223,15 +179,7 @@ class StudyControllerTest extends ApiTest {
 
         StudyLeaveRequest req = new StudyLeaveRequest(study.getId(), member.getId());
 
-        mockMvc.perform(post("/study/leave")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study/leave",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/study/leave");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -243,15 +191,7 @@ class StudyControllerTest extends ApiTest {
     void 스터디_삭제_성공() throws Exception {
         StudyDeleteRequest req = new StudyDeleteRequest(study.getId());
 
-        mockMvc.perform(delete("/study/delete")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study/delete",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(DELETE, req, "/study/delete");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -266,12 +206,7 @@ class StudyControllerTest extends ApiTest {
         StudyOpenRequestStudyPeriodDto periodDto = new StudyOpenRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyOpenRequest req = new StudyOpenRequest(study.getId(), leader.getId(), periodDto);
 
-        mockMvc.perform(post("/study/open")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(restDocsSet("/study/open"));
+        setMockMvcPerform(POST, req, "/study/open");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -291,14 +226,7 @@ class StudyControllerTest extends ApiTest {
         params.add("techStackList", "Spring");
         params.add("techStackList", "AWS");
 
-        mockMvc.perform(get("/study/my-study")
-                        .params(params))
-                .andExpect(status().isOk())
-                .andExpectAll(유저가_참여한_스터디_조회_검증(params))
-                .andDo(document("study/my-study",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(GET, params, 유저가_참여한_스터디_조회_검증(params), "/study/my-study");
     }
 
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
