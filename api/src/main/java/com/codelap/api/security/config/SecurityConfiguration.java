@@ -1,6 +1,7 @@
 package com.codelap.api.security.config;
 
 import com.codelap.api.security.oauth2.CustomOAuth2UserService;
+import com.codelap.api.security.oauth2.OAuth2FailureHandler;
 import com.codelap.api.security.oauth2.OAuth2SuccessHandler;
 import com.codelap.api.security.provider.JwtAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,9 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final CustomOAuth2UserService oAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -43,6 +45,7 @@ public class SecurityConfiguration {
                 .baseUri("/login/oauth2/authorization")
                 .and()
                 .successHandler(oAuth2SuccessHandler)
+                .failureHandler(oAuth2FailureHandler)
                 .userInfoEndpoint().userService(oAuth2UserService);
 
         http.authorizeRequests()
