@@ -11,6 +11,7 @@ import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -56,9 +57,9 @@ public class StudyCommentControllerTest extends ApiTest {
 
     @BeforeEach
     void setUp() {
+        member = prepareLoggedInUser();
         UserCareer career = UserCareer.create("직무", 1);
         leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
-        member = userRepository.save(User.create("user", 10, career, "abcd", "email"));
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
@@ -70,8 +71,9 @@ public class StudyCommentControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_댓글_생성_성공() throws Exception {
-        StudyCommentCreateRequest req = new StudyCommentCreateRequest(study.getId(), member.getId(), "createMessage");
+        StudyCommentCreateRequest req = new StudyCommentCreateRequest(study.getId(),"createMessage");
 
         mockMvc.perform(post("/study-comment")
                         .contentType(APPLICATION_JSON)
@@ -89,10 +91,11 @@ public class StudyCommentControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_댓글_수정_성공() throws Exception {
         studyComment = studyCommentRepository.save(StudyComment.create(study, member, "message"));
 
-        StudyCommentUpdateRequest req = new StudyCommentUpdateRequest(studyComment.getId(), member.getId(), "updatedMessage");
+        StudyCommentUpdateRequest req = new StudyCommentUpdateRequest(studyComment.getId(), "updatedMessage");
 
         mockMvc.perform(post("/study-comment/update")
                         .contentType(APPLICATION_JSON)
@@ -110,10 +113,11 @@ public class StudyCommentControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_댓글_삭제_성공() throws Exception {
         studyComment = studyCommentRepository.save(StudyComment.create(study, member, "message"));
 
-        StudyCommentDeleteRequest req = new StudyCommentDeleteRequest(studyComment.getId(), member.getId());
+        StudyCommentDeleteRequest req = new StudyCommentDeleteRequest(studyComment.getId());
 
         mockMvc.perform(delete("/study-comment")
                         .contentType(APPLICATION_JSON)
