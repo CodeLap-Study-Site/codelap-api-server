@@ -13,6 +13,7 @@ import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -57,9 +58,8 @@ class StudyNoticeCommentControllerTest extends ApiTest {
 
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
-        member = userRepository.save(User.create("user", 10, career, "abcd", "email"));
+        leader = prepareLoggedInUser();
+        member = prepareLoggedInUser("email.com");
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
@@ -77,8 +77,9 @@ class StudyNoticeCommentControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_공지_댓글_생성_성공() throws Exception {
-        StudyNoticeCommentCreateRequest req = new StudyNoticeCommentCreateRequest(studyNotice.getId(), member.getId(), "content");
+        StudyNoticeCommentCreateRequest req = new StudyNoticeCommentCreateRequest(studyNotice.getId(), "content");
 
         mockMvc.perform(post("/study-notice-comment")
                         .contentType(APPLICATION_JSON)
@@ -99,8 +100,9 @@ class StudyNoticeCommentControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_공지_댓글_삭제_성공() throws Exception {
-        StudyNoticeCommentDeleteRequest req = new StudyNoticeCommentDeleteRequest(studyNoticeComment.getId(), member.getId());
+        StudyNoticeCommentDeleteRequest req = new StudyNoticeCommentDeleteRequest(studyNoticeComment.getId());
 
         mockMvc.perform(delete("/study-notice-comment")
                         .contentType(APPLICATION_JSON)
@@ -117,8 +119,9 @@ class StudyNoticeCommentControllerTest extends ApiTest {
     }
 
     @Test
+    @WithUserDetails
     void 스터디_공지_댓글_수정_성공() throws Exception {
-        StudyNoticeCommentUpdateReqeust req = new StudyNoticeCommentUpdateReqeust(studyNoticeComment.getId(), member.getId(), "contentt");
+        StudyNoticeCommentUpdateReqeust req = new StudyNoticeCommentUpdateReqeust(studyNoticeComment.getId(), "contentt");
 
         mockMvc.perform(post("/study-notice-comment/update")
                         .contentType(APPLICATION_JSON)
