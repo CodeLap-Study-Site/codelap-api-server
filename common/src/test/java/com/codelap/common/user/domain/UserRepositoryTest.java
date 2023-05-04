@@ -18,16 +18,12 @@ class UserRepositoryTest {
 
     @Test
     void 유저_생성_성공() {
-        UserCareer career = UserCareer.create("직무", 1);
-
-        User user = User.create("name", 10, career, "abcd", "email");
+        User user = User.create(10L);
 
         user = userRepository.save(user);
 
         assertThat(user.getId()).isNotNull();
-        assertThat(user.getName()).isEqualTo("name");
-        assertThat(user.getAge()).isEqualTo(10);
-        assertThat(user.getCareer()).isSameAs(career);
+        assertThat(user.getSocialId()).isEqualTo(10L);
         assertThat(user.getStatus()).isEqualTo(CREATED);
         assertThat(user.getCreatedAt()).isNotNull();
     }

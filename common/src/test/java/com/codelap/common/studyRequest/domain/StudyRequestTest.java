@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.*;
 import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.StudyRequestFixture.createStudyRequest;
-import static com.codelap.fixture.UserFixture.createUser;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
@@ -24,8 +24,8 @@ class StudyRequestTest {
 
     @BeforeEach
     void setUp() {
-        leader = createUser("leader");
-        user = createUser("user");
+        leader = createActivateUser("leader");
+        user = createActivateUser("user");
         study = createStudy(leader);
         studyRequest = createStudyRequest(study, user);
     }

@@ -10,7 +10,6 @@ import com.codelap.common.studyNotice.domain.StudyNoticeRepository;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeComment;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentRepository;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,10 +25,11 @@ import java.util.List;
 
 import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.DELETED;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
@@ -57,9 +57,8 @@ public class StudyNoticeCommentDomainServiceTest {
 
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = User.create("name", 10, career, "abcd", "setUp");
-        member = userRepository.save(User.create("user", 10, career, "abcd", "email"));
+        leader = userRepository.save(createActivateUser("leader"));
+        member = userRepository.save(createActivateUser("member"));
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
@@ -104,8 +103,7 @@ public class StudyNoticeCommentDomainServiceTest {
     void 스터디_공지_댓글_삭제_실패__작성한_유저가_아님() {
         StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice.getId(), member.getId(), "content");
 
-        UserCareer career = UserCareer.create("직무", 1);
-        User fakeUser = userRepository.save(User.create("fakeUser", 10, career, "abcd", "fakeUser"));
+        User fakeUser = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyNoticeCommentService.delete(studyNoticeComment.getId(), fakeUser.getId()));
     }
@@ -123,8 +121,7 @@ public class StudyNoticeCommentDomainServiceTest {
     void 스터디_공지_댓글_수정_실패__작성한_유저가_아님() {
         StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice.getId(), member.getId(), "content");
 
-        UserCareer career = UserCareer.create("직무", 1);
-        User fakeUser = userRepository.save(User.create("fakeUser", 10, career, "abcd", "fakeUser"));
+        User fakeUser = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyNoticeCommentService.update(studyNoticeComment.getId(), fakeUser.getId(), "content"));
     }

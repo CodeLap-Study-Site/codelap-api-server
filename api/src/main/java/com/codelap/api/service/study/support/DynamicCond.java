@@ -2,7 +2,7 @@ package com.codelap.api.service.study.support;
 
 import com.codelap.common.study.domain.QStudy;
 import com.codelap.common.study.domain.QStudyTechStack;
-import com.codelap.common.study.domain.TechStack;
+import com.codelap.common.support.TechStack;
 import com.codelap.common.user.domain.User;
 import com.querydsl.core.types.dsl.BooleanExpression;
 

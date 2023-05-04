@@ -4,7 +4,6 @@ import com.codelap.common.bookmark.domain.Bookmark;
 import com.codelap.common.bookmark.domain.BookmarkRepository;
 import com.codelap.common.study.domain.*;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,9 +15,10 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -46,10 +46,8 @@ public class BookmarkDomainServiceTest {
 
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setUp"));
-
-        member = userRepository.save(User.create("member", 10, career, "abcd", "member"));
+        leader = userRepository.save(createActivateUser());
+        member = userRepository.save(createActivateUser());
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
@@ -84,8 +82,7 @@ public class BookmarkDomainServiceTest {
 
         Bookmark bookmark = bookmarkRepository.findAll().get(0);
 
-        UserCareer career = UserCareer.create("직무", 1);
-        User fakeMember = userRepository.save(User.create("name", 10, career, "abcd", "fakeMember"));
+        User fakeMember = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> bookmarkService.delete(bookmark.getId(), fakeMember.getId()));
     }

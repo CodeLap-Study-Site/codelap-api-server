@@ -92,6 +92,7 @@ project(":api") {
         runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
         runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
+        testImplementation(testFixtures(project(":common")))
         testImplementation 'org.springframework.security:spring-security-test'
         testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     }

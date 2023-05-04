@@ -12,7 +12,7 @@ import static com.codelap.common.studyComment.domain.StudyCommentStatus.CREATED;
 import static com.codelap.common.studyComment.domain.StudyCommentStatus.DELETED;
 import static com.codelap.fixture.StudyCommentFixture.createStudyComment;
 import static com.codelap.fixture.StudyFixture.createStudy;
-import static com.codelap.fixture.UserFixture.createUser;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 
@@ -25,7 +25,7 @@ class StudyCommentTest {
 
     @BeforeEach
     void setUp() {
-        leader = createUser("leader");
+        leader = createActivateUser("leader");
         study = createStudy(leader);
         studyComment = createStudyComment(study, leader);
     }

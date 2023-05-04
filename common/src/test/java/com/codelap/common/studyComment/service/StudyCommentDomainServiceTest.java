@@ -4,7 +4,6 @@ import com.codelap.common.study.domain.*;
 import com.codelap.common.studyComment.domain.StudyComment;
 import com.codelap.common.studyComment.domain.StudyCommentRepository;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,10 +16,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyComment.domain.StudyCommentStatus.DELETED;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
@@ -46,8 +46,7 @@ class StudyCommentDomainServiceTest {
 
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
+        leader = userRepository.save(createActivateUser());
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
@@ -68,8 +67,7 @@ class StudyCommentDomainServiceTest {
 
     @Test
     void 스터디_댓글_생성_실패__스터디의_맴버가_아님() {
-        UserCareer career = UserCareer.create("직무", 1);
-        User fakeMember = userRepository.save(User.create("fakeMember", 10, career, "abcd", "fakeMember"));
+        User fakeMember = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyCommentService.create(study.getId(), fakeMember.getId(), "message"));
     }
@@ -93,8 +91,7 @@ class StudyCommentDomainServiceTest {
 
         studyCommentService.create(study.getId(), leader.getId(), "message");
 
-        UserCareer career = UserCareer.create("직무", 1);
-        User fakeMember = userRepository.save(User.create("fakeMember", 10, career, "abcd", "fakeMember"));
+        User fakeMember = userRepository.save(createActivateUser("fakeMember"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyCommentService.update(studyComment.getId(), fakeMember.getId(), "updatedComment"));
     }
@@ -118,8 +115,7 @@ class StudyCommentDomainServiceTest {
 
         studyCommentService.create(study.getId(), leader.getId(), "message");
 
-        UserCareer career = UserCareer.create("직무", 1);
-        User fakeMember = userRepository.save(User.create("fakeMember", 10, career, "abcd", "fakeMember"));
+        User fakeMember = userRepository.save(createActivateUser("fakeMember"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyCommentService.delete(studyComment.getId(), fakeMember.getId()));
     }

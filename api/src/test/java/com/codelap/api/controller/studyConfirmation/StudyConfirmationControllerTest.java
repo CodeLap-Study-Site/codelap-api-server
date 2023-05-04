@@ -23,9 +23,10 @@ import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmation
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto.StudyConfirmationreConfirmRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationreConfirmDto.StudyConfirmationreConfirmRequestFileDto;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -53,7 +54,7 @@ class StudyConfirmationControllerTest extends ApiTest {
     @BeforeEach
     void setUp() {
         UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
+        leader = userRepository.save(createActivateUser());
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
@@ -61,7 +62,7 @@ class StudyConfirmationControllerTest extends ApiTest {
 
         study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader, techStackList));
 
-        member = userRepository.save(User.create("candidate", 10, career, "abcd", "email"));
+        member = userRepository.save(createActivateUser());
 
         study.addMember(member);
     }

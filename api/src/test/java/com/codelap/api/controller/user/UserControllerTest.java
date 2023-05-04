@@ -1,20 +1,21 @@
 package com.codelap.api.controller.user;
 
-import com.codelap.api.controller.user.dto.UserCreateDto.UserCreateRequest;
-import com.codelap.api.controller.user.dto.UserCreateDto.UserCreateRequestUserCareerDto;
+import com.codelap.api.controller.user.dto.UserActivateDto.UserActivateRequest;
+import com.codelap.api.controller.user.dto.UserActivateDto.UserActivateRequestUserCareerDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.codelap.common.user.domain.UserTechStack;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithUserDetails;
 
-import static com.codelap.api.controller.user.dto.UserChangePasswordDto.UserChangePasswordRequest;
-import static com.codelap.api.controller.user.dto.UserDeleteDto.UserDeleteRequest;
+import java.util.List;
+
 import static com.codelap.api.controller.user.dto.UserUpdateDto.UserUpdateRequest;
 import static com.codelap.api.controller.user.dto.UserUpdateDto.UserUpdateRequestUserCareerDto;
-import static com.codelap.common.user.domain.UserStatus.CREATED;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.user.domain.UserStatus.ACTIVATED;
 import static com.codelap.common.user.domain.UserStatus.DELETED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -30,48 +31,44 @@ class UserControllerTest extends ApiTest {
     @Autowired
     UserRepository userRepository;
 
-    private User user;
-
-    @BeforeEach
-    void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        user = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
-    }
 
     @Test
-    void 유저_생성_성공() throws Exception {
-        UserCreateRequestUserCareerDto dto = new UserCreateRequestUserCareerDto("직무", 10);
+    @WithUserDetails
+    void 유저_활성화_성공() throws Exception {
+        User user = prepareLoggedInUser();
 
-        UserCreateRequest req = new UserCreateRequest("email", "name", 10, "abcd", dto);
+        UserTechStack techStack = new UserTechStack(Java);
+        UserActivateRequestUserCareerDto dto = new UserActivateRequestUserCareerDto("직무", 10);
 
-        mockMvc.perform(post("/user")
+        UserActivateRequest req = new UserActivateRequest("name", dto, List.of(techStack));
+
+        mockMvc.perform(post("/user/activate")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpectAll(
                         status().isOk()
-                ).andDo(document("user/create",
+                ).andDo(document("user/activate",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
                 ));
 
-        User foundUser = userRepository.findAll().get(1);
-
-        assertThat(foundUser.getId()).isNotNull();
-        assertThat(foundUser.getName()).isEqualTo("name");
-        assertThat(foundUser.getAge()).isEqualTo(10);
-        assertThat(foundUser.getPassword()).isEqualTo("abcd");
-        assertThat(foundUser.getCareer().getOccupation()).isEqualTo(dto.occupation());
-        assertThat(foundUser.getCareer().getYear()).isEqualTo(dto.year());
-        assertThat(foundUser.getStatus()).isEqualTo(CREATED);
-        assertThat(foundUser.getCreatedAt()).isNotNull();
-
+        assertThat(user.getStatus()).isEqualTo(ACTIVATED);
+        assertThat(user.getName()).isEqualTo("name");
+        assertThat(user.getCareer().getOccupation()).isEqualTo(dto.occupation());
+        assertThat(user.getCareer().getYear()).isEqualTo(dto.year());
+        assertThat(user.getTechStacks().stream().map(UserTechStack::getTechStack))
+                .containsExactly(techStack.getTechStack());
     }
 
     @Test
+    @WithUserDetails
     void 유저_수정_성공() throws Exception {
+        User user = prepareLoggedInActiveUser();
+
+        UserTechStack techStack = new UserTechStack(Java);
         UserUpdateRequestUserCareerDto dto = new UserUpdateRequestUserCareerDto("직무", 10);
 
-        UserUpdateRequest req = new UserUpdateRequest(user.getId(), "updatedName", 11, dto);
+        UserUpdateRequest req = new UserUpdateRequest("updatedName", dto, List.of(techStack));
 
         mockMvc.perform(post("/user/update")
                         .contentType(APPLICATION_JSON)
@@ -84,35 +81,18 @@ class UserControllerTest extends ApiTest {
                 ));
 
         assertThat(user.getName()).isEqualTo("updatedName");
-        assertThat(user.getAge()).isEqualTo(11);
         assertThat(user.getCareer().getOccupation()).isEqualTo(dto.occupation());
         assertThat(user.getCareer().getYear()).isEqualTo(dto.year());
+        assertThat(user.getTechStacks().stream().map(UserTechStack::getTechStack))
+                .containsExactly(techStack.getTechStack());
     }
 
     @Test
-    void 유저_비밀번호_수정_성공() throws Exception {
-        UserChangePasswordRequest req = new UserChangePasswordRequest(user.getId(), user.getPassword(), "newPassword");
-
-        mockMvc.perform(post("/user/change-password")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("user/change-password",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
-
-        assertThat(user.getPassword()).isEqualTo("newPassword");
-    }
-
-    @Test
+    @WithUserDetails
     void 유저_삭제_성공() throws Exception {
-        UserDeleteRequest req = new UserDeleteRequest(user.getId());
+        User user = prepareLoggedInActiveUser();
 
-        mockMvc.perform(delete("/user")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
+        mockMvc.perform(delete("/user"))
                 .andExpectAll(
                         status().isOk()
                 ).andDo(document("user/delete",

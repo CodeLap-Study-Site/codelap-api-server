@@ -7,7 +7,6 @@ import com.codelap.common.study.service.StudyService;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.studyView.service.StudyViewService;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,8 @@ import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
-import static com.codelap.common.study.domain.TechStack.*;
+import static com.codelap.common.support.TechStack.*;
+import static com.codelap.fixture.UserFixture.createUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -72,6 +72,7 @@ class StudyControllerTest extends ApiTest {
     private Study study1;
     private Study study2;
     private MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
     @BeforeEach
     void setUp() {
         leader = prepareLoggedInUser();
@@ -176,8 +177,7 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_멤버_추방_성공() throws Exception {
-        UserCareer career = UserCareer.create("직무", 1);
-        member = userRepository.save(User.create("member", 10, career, "abcd", "member"));
+        member = userRepository.save(createUser());
 
         study.addMember(member);
 
@@ -221,7 +221,7 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_나가기_성공() throws Exception {
-        member = prepareLoggedInUser("member@email.com");
+        member = prepareLoggedInUser();
         study.addMember(member);
 
         StudyLeaveRequest req = new StudyLeaveRequest(study.getId(), member.getId());
@@ -287,11 +287,11 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 유저가_참여한_스터디_조회_성공() throws Exception {
-        UserCareer career = UserCareer.create("직무", 1);
-        member = userRepository.save(User.create("member", 10, career, "abcd", "email"));
-        User studyLeader = userRepository.save(User.create("leader", 10, career, "abcd", "leader"));
+        User leader = prepareLoggedInActiveUser();
 
-        유저가_참여한_스터디_조회_스터디_생성(studyLeader);
+        member = userRepository.save(createUser());
+
+        유저가_참여한_스터디_조회_스터디_생성(leader);
 
         params.add("userId", member.getId().toString());
         params.add("statusCond", "open");

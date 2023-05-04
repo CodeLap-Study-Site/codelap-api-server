@@ -1,7 +1,6 @@
 package com.codelap.common.study.domain;
 
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +15,9 @@ import java.util.List;
 import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.OPENED;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
@@ -35,8 +35,7 @@ class StudyRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
+        leader = userRepository.save(createActivateUser());
     }
 
     @Test

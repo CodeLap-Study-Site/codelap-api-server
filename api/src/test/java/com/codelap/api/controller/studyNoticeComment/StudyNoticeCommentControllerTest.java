@@ -8,7 +8,6 @@ import com.codelap.common.studyNotice.domain.StudyNoticeRepository;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeComment;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentRepository;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,10 +22,10 @@ import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeComme
 import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentDeleteDto.StudyNoticeCommentDeleteRequest;
 import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentUpdateDto.StudyNoticeCommentUpdateReqeust;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.CREATED;
 import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.DELETED;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -59,7 +58,7 @@ class StudyNoticeCommentControllerTest extends ApiTest {
     @BeforeEach
     void setUp() {
         leader = prepareLoggedInUser();
-        member = prepareLoggedInUser("email.com");
+        member = prepareLoggedInUser();
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);

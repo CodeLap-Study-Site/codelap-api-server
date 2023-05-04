@@ -19,11 +19,12 @@ import java.util.List;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatCodeLapException;
 import static com.codelap.common.support.ErrorCode.ANOTHER_EXISTED_MEMBER;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 
@@ -46,8 +47,7 @@ class StudyDomainServiceTest {
 
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
+        leader = userRepository.save(createActivateUser());
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
@@ -92,7 +92,7 @@ class StudyDomainServiceTest {
         StudyNeedCareer updateNeedCareer = StudyNeedCareer.create("직무", 1);
 
         UserCareer career = UserCareer.create("직무", 1);
-        User fakeLeader = userRepository.save(User.create("name", 10, career, "abcd", "fakeLeader"));
+        User fakeLeader = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() ->
                 studyService.update(study.getId(), fakeLeader.getId(), "updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer, techStackList)
@@ -101,8 +101,7 @@ class StudyDomainServiceTest {
 
     @Test
     void 스터디_멤버_추가_성공() {
-        UserCareer career = UserCareer.create("직무", 1);
-        User user = userRepository.save(User.create("name", 10, career, "abcd", "user"));
+        User user = userRepository.save(createActivateUser());
 
         studyService.addMember(study.getId(), user.getId(), leader.getId());
 
@@ -113,9 +112,8 @@ class StudyDomainServiceTest {
 
     @Test
     void 스터디_멤버_추가_실패__사용자가_스터디의_주인이_아님() {
-        UserCareer career = UserCareer.create("직무", 1);
-        User user = userRepository.save(User.create("name", 10, career, "abcd", "user"));
-        User fakeLeader = userRepository.save(User.create("name", 10, career, "abcd", "fakeLeader"));
+        User user = userRepository.save(createActivateUser());
+        User fakeLeader = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() ->
                 studyService.addMember(study.getId(), user.getId(), fakeLeader.getId())
@@ -131,16 +129,14 @@ class StudyDomainServiceTest {
 
     @Test
     void 스터디_진행_실패__리더가_아님() {
-        UserCareer career = UserCareer.create("직무", 1);
-        User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "email"));
+        User fakeLeader = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyService.proceed(study.getId(), fakeLeader.getId()));
     }
 
     @Test
     void 스터디_멤버_추방_성공() {
-        UserCareer career = UserCareer.create("직무", 1);
-        User member = userRepository.save(User.create("name", 10, career, "abcd", "member"));
+        User member = userRepository.save(createActivateUser("member"));
 
         studyService.addMember(study.getId(), member.getId(), leader.getId());
 
@@ -154,11 +150,11 @@ class StudyDomainServiceTest {
     @Test
     void 스터디_멤버_추방_실패__사용자가_스터디의_주인이_아님() {
         UserCareer career = UserCareer.create("직무", 1);
-        User member = userRepository.save(User.create("name", 10, career, "abcd", "member"));
+        User member = userRepository.save(createActivateUser("member"));
 
         studyService.addMember(study.getId(), member.getId(), leader.getId());
 
-        User fakeLeader = userRepository.save(User.create("name", 10, career, "abcd", "fakeLeader"));
+        User fakeLeader = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() ->
                 studyService.removeMember(study.getId(), member.getId(), fakeLeader.getId())
@@ -177,7 +173,7 @@ class StudyDomainServiceTest {
     @Test
     void 스터디_닫기_실패__리더가_아님() {
         UserCareer career = UserCareer.create("직무", 1);
-        User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "email"));
+        User fakeLeader = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyService.close(study.getId(), fakeLeader.getId()));
     }
@@ -185,7 +181,7 @@ class StudyDomainServiceTest {
     @Test
     void 스터디_나가기_성공() {
         UserCareer career = UserCareer.create("직무", 1);
-        User member = userRepository.save(User.create("name", 10, career, "abcd", "member"));
+        User member = userRepository.save(createActivateUser("member"));
 
         studyService.addMember(study.getId(), member.getId(), leader.getId());
 
@@ -208,7 +204,7 @@ class StudyDomainServiceTest {
     @Test
     void 스터디_삭제_실패__리더가_아닌_멤버가_있을때() {
         UserCareer career = UserCareer.create("직무", 1);
-        User member = userRepository.save(User.create("name", 10, career, "abcd", "member"));
+        User member = userRepository.save(createActivateUser("member"));
 
         studyService.addMember(study.getId(), member.getId(), leader.getId());
 
@@ -217,8 +213,7 @@ class StudyDomainServiceTest {
 
     @Test
     void 스터디_삭제_실패__리더가_아닐때() {
-        UserCareer career = UserCareer.create("직무", 1);
-        User fakeLeader = userRepository.save(User.create("name", 10, career, "abcd", "fakeLeader"));
+        User fakeLeader = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyService.delete(study.getId(), fakeLeader.getId()));
     }
@@ -240,9 +235,8 @@ class StudyDomainServiceTest {
     @Test
     void 스터디_오픈_실패__리더가_아님() {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        UserCareer career = UserCareer.create("직무", 1);
 
-        User fakeLeader = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "email"));
+        User fakeLeader = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyService.open(study.getId(), fakeLeader.getId(), period));
     }

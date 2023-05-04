@@ -13,7 +13,7 @@ import java.util.List;
 import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.DELETED;
 import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.StudyNoticeFixture.createStudyNotice;
-import static com.codelap.fixture.UserFixture.createUser;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 
@@ -25,7 +25,7 @@ class StudyNoticeTest {
 
     @BeforeEach
     void setUp() {
-        leader = createUser("leader");
+        leader = createActivateUser("leader");
         study = createStudy(leader);
         studyNotice = createStudyNotice(study);
     }

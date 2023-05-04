@@ -6,7 +6,6 @@ import com.codelap.common.studyComment.domain.StudyComment;
 import com.codelap.common.studyComment.domain.StudyCommentRepository;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,9 +20,10 @@ import static com.codelap.api.controller.studyComment.dto.StudyCommentCreateDto.
 import static com.codelap.api.controller.studyComment.dto.StudyCommentDeleteDto.StudyCommentDeleteRequest;
 import static com.codelap.api.controller.studyComment.dto.StudyCommentUpdateDto.StudyCommentUpdateRequest;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyComment.domain.StudyCommentStatus.DELETED;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -58,8 +58,7 @@ public class StudyCommentControllerTest extends ApiTest {
     @BeforeEach
     void setUp() {
         member = prepareLoggedInUser();
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
+        leader = userRepository.save(createActivateUser());
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
@@ -73,7 +72,7 @@ public class StudyCommentControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_댓글_생성_성공() throws Exception {
-        StudyCommentCreateRequest req = new StudyCommentCreateRequest(study.getId(),"createMessage");
+        StudyCommentCreateRequest req = new StudyCommentCreateRequest(study.getId(), "createMessage");
 
         mockMvc.perform(post("/study-comment")
                         .contentType(APPLICATION_JSON)

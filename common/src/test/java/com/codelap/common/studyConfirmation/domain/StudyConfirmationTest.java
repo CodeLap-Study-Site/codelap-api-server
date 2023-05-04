@@ -3,7 +3,6 @@ package com.codelap.common.studyConfirmation.domain;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.user.domain.User;
 import com.codelap.fixture.StudyFixture;
-import com.codelap.fixture.UserFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,6 +14,7 @@ import java.util.List;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmation.create;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static com.codelap.fixture.StudyConfirmationFixture.createStudyConfirmation;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
@@ -27,8 +27,8 @@ class StudyConfirmationTest {
 
     @BeforeEach
     void setUp() {
-        leader = UserFixture.createUser("leader");
-        member = UserFixture.createUser("member");
+        leader = createActivateUser("leader");
+        member = createActivateUser("member");
 
         study = StudyFixture.createStudy(leader);
         study.addMember(member);

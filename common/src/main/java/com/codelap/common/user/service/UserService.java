@@ -2,16 +2,17 @@ package com.codelap.common.user.service;
 
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
+import com.codelap.common.user.domain.UserTechStack;
+
+import java.util.List;
 
 public interface UserService {
 
     User loadUser(Long socialId);
 
-    User create(String name, int age, UserCareer career, String password, String email);
+    void activate(Long userId, String name, UserCareer career, List<UserTechStack> techStacks);
 
-    void update(Long userId, String name, int age, UserCareer career);
-
-    void changePassword(Long userId, String password, String newPassword);
+    void update(Long userId, String name, UserCareer career, List<UserTechStack> techStacks);
 
     void delete(Long userId);
 }

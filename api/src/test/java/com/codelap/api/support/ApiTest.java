@@ -2,7 +2,6 @@ package com.codelap.api.support;
 
 import com.codelap.api.security.user.DefaultCodeLapUser;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import static com.codelap.fixture.UserFixture.createActivateUser;
+import static com.codelap.fixture.UserFixture.createUser;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @Transactional
@@ -45,18 +46,19 @@ public abstract class ApiTest {
                 .build();
     }
 
+    protected User prepareLoggedInActiveUser() {
+        User activateUser = createActivateUser();
+
+        return prepareLoggedInUserInternal(activateUser);
+    }
+
     protected User prepareLoggedInUser() {
-        return prepareLoggedInUserInternal("test@email.com");
+        User user = createUser();
+
+        return prepareLoggedInUserInternal(user);
     }
 
-    protected User prepareLoggedInUser(String email) {
-        return prepareLoggedInUserInternal(email);
-    }
-
-    private User prepareLoggedInUserInternal(String email) {
-        UserCareer career = UserCareer.create("Test", 10);
-        User user = User.create("security", 10, career, "1234", email);
-
+    private User prepareLoggedInUserInternal(User user) {
         user = userRepository.save(user);
 
         userRepository.flush();

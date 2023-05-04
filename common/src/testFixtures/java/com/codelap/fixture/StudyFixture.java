@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
 import static com.codelap.fixture.UserFixture.createUser;
 
 public class StudyFixture {
@@ -20,7 +20,7 @@ public class StudyFixture {
         return Study.create(
                 "name", "info", 4, NORMAL,
                 createStudyPeriod(), createStudyNeedCareer(),
-                createUser("leader"), createStudyTechStacks()
+                createUser(), createStudyTechStacks()
         );
     }
 
@@ -28,7 +28,7 @@ public class StudyFixture {
         return Study.create(
                 "name", "info", maxMemberSize, NORMAL,
                 createStudyPeriod(), createStudyNeedCareer(),
-                createUser("leader"), createStudyTechStacks()
+                createUser(), createStudyTechStacks()
         );
     }
 

@@ -9,7 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import static com.codelap.fixture.StudyFixture.createStudy;
-import static com.codelap.fixture.UserFixture.createUser;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class StudyViewTest {
@@ -19,7 +19,7 @@ class StudyViewTest {
 
     @BeforeEach
     void setUp() {
-        leader = createUser("leader");
+        leader = createActivateUser("leader");
         study = createStudy(leader);
     }
 

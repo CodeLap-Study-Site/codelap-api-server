@@ -5,16 +5,16 @@ import com.codelap.common.user.domain.UserTechStack;
 
 import java.util.List;
 
-public class UserUpdateDto {
+public class UserActivateDto {
 
-    public record UserUpdateRequest(
+    public record UserActivateRequest(
             String name,
-            UserUpdateRequestUserCareerDto career,
+            UserActivateRequestUserCareerDto career,
             List<UserTechStack> techStacks
     ) {
     }
 
-    public record UserUpdateRequestUserCareerDto(
+    public record UserActivateRequestUserCareerDto(
             String occupation,
             int year
     ) {
