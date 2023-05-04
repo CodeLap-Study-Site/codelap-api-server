@@ -10,6 +10,49 @@ ifndef::snippets[]
 :snippets: ./build/generated-snippets
 endif::[]
 
+[[LoginEndPoint]]
+== 로그인 EndPoint
+
+=== Request
+```
+http://server-address/login/oauth2/authorization/github
+```
+
+=== Redirect
+```
+http://front-address/token?accessToken=???&refreshToken=???
+```
+
+[[JWTAccessToken]]
+== JWT AccessToken
+
+=== Request Header
+```
+Authorization: Bearer accessToken
+```
+
+[[JWTRefreshToken]]
+== JWT RefreshToken
+
+=== Tip
+```
+AccessToken 만료로 인해 오류가 발생할 때 진행 해야합니다.
+Request Header 에 AccessToken 과 RefreshToken 을 함께 넣으면
+Response Header 를 통해 새로운 AccessToken 과 RefreshToken 을 발급 받습니다.
+```
+
+=== Request Header
+```
+Authorization: Bearer accessToken
+X-Refresh-Token: Bearer refreshToken
+```
+
+=== Response Header
+```
+Authorization: Bearer newAccessToken
+X-Refresh-Token: Bearer newRefreshToken
+```
+
 [[UserCreate]]
 == 유저 생성 API
 

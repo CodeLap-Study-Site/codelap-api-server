@@ -12,7 +12,6 @@ public class StudyUpdateDto {
 
     public record StudyUpdateRequest(
             Long studyId,
-            Long leaderId,
             String name,
             String info,
             int maxMembersSize,

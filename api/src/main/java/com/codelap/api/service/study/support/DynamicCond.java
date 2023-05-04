@@ -9,7 +9,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import java.util.List;
 import java.util.Optional;
 
-import static com.codelap.common.study.domain.StudyStatus.*;
+import static com.codelap.common.study.domain.StudyStatus.DELETED;
+import static com.codelap.common.study.domain.StudyStatus.OPENED;
 
 public class DynamicCond {
     protected static BooleanExpression userContains(User userCond) {

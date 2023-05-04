@@ -7,12 +7,27 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UserDomainService implements UserService {
 
     private final UserRepository userRepository;
+
+    public User loadUser(Long socialId) {
+        Optional<User> userOptional = userRepository.findBySocialId(socialId);
+
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        } else {
+            User newUser = User.create(socialId);
+
+            return userRepository.save(newUser);
+        }
+    }
+
 
     @Override
     public User create(String name, int age, UserCareer career, String password, String email) {

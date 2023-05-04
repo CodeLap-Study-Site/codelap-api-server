@@ -20,3 +20,26 @@ spring:
           validation:
             mode: none
     show-sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${OAUTH2_CLIENT_ID:745945261b2a35bd816c}
+            client-secret: ${OAUTH2_CLIENT_SECRET:b482e6d26c8cecd8d4040989382368c01aebf848}
+            scope: user, user:email
+            redirect-uri: ${OAUTH2_REDIRECT_URI:http://localhost:8080/login/oauth2/code/github}
+        provider:
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
+            user-name-attribute: login
+
+oauth2:
+  frontUri: ${OAUTH2_FRONT_URI:http://localhost:3000/token}
+
+jwt:
+  secretKey: ${JWT_SECRET_KEY:keykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykey}
+  accessTokenExpireTime: 180000
+  refreshTokenExpireTime: 600000

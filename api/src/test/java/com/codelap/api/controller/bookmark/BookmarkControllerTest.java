@@ -83,7 +83,7 @@ public class BookmarkControllerTest extends ApiTest {
     }
 
     @Test
-    void 북마크_삭제_성공() throws  Exception {
+    void 북마크_삭제_성공() throws Exception {
         Bookmark bookmark = bookmarkRepository.save(Bookmark.create(study, member));
 
         BookmarkDeleteRequest req = new BookmarkDeleteRequest(bookmark.getId(), member.getId());

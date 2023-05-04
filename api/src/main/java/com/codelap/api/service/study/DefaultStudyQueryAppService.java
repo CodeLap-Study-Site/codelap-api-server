@@ -16,6 +16,7 @@ import java.util.List;
 public class DefaultStudyQueryAppService implements StudyQueryAppService {
 
     private final StudyRepository studyRepository;
+
     @Override
     public List<GetStudiesStudyDto> getStudies(User user) {
         return null;

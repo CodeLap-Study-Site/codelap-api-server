@@ -1,5 +1,6 @@
 package com.codelap.api.controller;
 
+import com.codelap.api.security.user.CodeLapUserException;
 import com.codelap.common.support.CodeLapException;
 import com.codelap.common.support.UnhandledExceptionEvent;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -23,6 +25,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.net.BindException;
 import java.util.Locale;
 import java.util.NoSuchElementException;
+
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Log4j2
 @RestControllerAdvice
@@ -46,6 +50,14 @@ public class ApiAdvice {
         log.info(ex.getMessage(), ex);
 
         final String message = messageSource.getMessage(ex.getMessage(), null, Locale.getDefault());
+
+        return new ErrorResponse(new ErrorData(message));
+    }
+
+    @ResponseStatus(UNAUTHORIZED)
+    @ExceptionHandler(CodeLapUserException.class)
+    public ErrorResponse exception(CodeLapUserException ex) {
+        final String message = ex.getMessage();
 
         return new ErrorResponse(new ErrorData(message));
     }

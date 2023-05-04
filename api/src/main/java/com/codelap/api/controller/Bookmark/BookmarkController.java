@@ -1,13 +1,11 @@
 package com.codelap.api.controller.Bookmark;
 
-import com.codelap.api.controller.Bookmark.dto.BookmarkDeleteDto;
-import com.codelap.common.bookmark.domain.Bookmark;
 import com.codelap.common.bookmark.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import static com.codelap.api.controller.Bookmark.dto.BookmarkCreateDto.BookmarkCreateRequest;
-import static com.codelap.api.controller.Bookmark.dto.BookmarkDeleteDto.*;
+import static com.codelap.api.controller.Bookmark.dto.BookmarkDeleteDto.BookmarkDeleteRequest;
 
 @RestController
 @RequestMapping("/bookmark")

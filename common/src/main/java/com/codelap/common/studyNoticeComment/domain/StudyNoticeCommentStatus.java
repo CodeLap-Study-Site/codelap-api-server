@@ -1,7 +1,5 @@
 package com.codelap.common.studyNoticeComment.domain;
 
-import com.codelap.common.study.domain.StudyStatus;
-
 import java.util.Set;
 
 public enum StudyNoticeCommentStatus {
