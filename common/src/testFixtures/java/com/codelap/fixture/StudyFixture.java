@@ -4,11 +4,13 @@ import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyNeedCareer;
 import com.codelap.common.study.domain.StudyPeriod;
 import com.codelap.common.study.domain.StudyTechStack;
+import com.codelap.common.support.TechStack;
 import com.codelap.common.user.domain.User;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.support.TechStack.Java;
@@ -37,6 +39,16 @@ public class StudyFixture {
                 "name", "info", 4, NORMAL,
                 createStudyPeriod(), createStudyNeedCareer(),
                 leader, createStudyTechStacks()
+        );
+    }
+
+    public static Study createStudy(User leader, TechStack... techStacks) {
+        return Study.create(
+                "name", "info", 4, NORMAL,
+                createStudyPeriod(), createStudyNeedCareer(),
+                leader, Arrays.stream(techStacks)
+                        .map(StudyTechStack::new)
+                        .collect(Collectors.toList())
         );
     }
 

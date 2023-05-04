@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -22,6 +23,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static com.codelap.fixture.UserFixture.createUser;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 
 @Transactional
 @AutoConfigureMockMvc
@@ -68,9 +71,19 @@ public abstract class ApiTest {
         return user;
     }
 
+    protected void login(User user) {
+        login(user.getId());
+    }
+
     private void login(Long id) {
         DefaultCodeLapUser codeLapUser = (DefaultCodeLapUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         codeLapUser.setId(id);
+    }
+
+    protected RestDocumentationResultHandler restDocsSet(String url) {
+        return document(url,
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()));
     }
 }
