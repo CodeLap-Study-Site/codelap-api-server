@@ -9,7 +9,6 @@ public class StudyConfirmationCreateDto {
 
     public record StudyConfirmationCreateRequest(
             Long studyId,
-            Long userId,
             String title,
             String content,
             List<StudyConfirmationCreateRequestFileDto> files
