@@ -4,8 +4,8 @@ import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.*;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.studyView.service.StudyViewService;
+import com.codelap.common.support.TechStack;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -22,9 +22,10 @@ import java.util.stream.IntStream;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.OPENED;
-import static com.codelap.common.study.domain.TechStack.*;
 import static com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import static com.codelap.common.study.dto.GetStudiesCardDto.GetTechStackInfo;
+import static com.codelap.common.support.TechStack.*;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -58,9 +59,8 @@ class DefaultStudyQueryAppServiceTest {
 
     @Test
     void 유저가_참여한_스터디_조회_성공() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
-        member = userRepository.save(User.create("member", 10, career, "abcd", "email"));
+        leader = userRepository.save(createActivateUser());
+        member = userRepository.save(createActivateUser());
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 

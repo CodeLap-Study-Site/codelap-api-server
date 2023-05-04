@@ -1,13 +1,11 @@
 package com.codelap.api.controller.user;
 
-import com.codelap.api.controller.user.dto.UserCreateDto.UserCreateRequest;
 import com.codelap.api.controller.user.dto.UserUpdateDto.UserUpdateRequest;
+import com.codelap.api.security.user.DefaultCodeLapUser;
 import com.codelap.common.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import static com.codelap.api.controller.user.dto.UserChangePasswordDto.UserChangePasswordRequest;
-import static com.codelap.api.controller.user.dto.UserDeleteDto.UserDeleteRequest;
 
 @RestController
 @RequestMapping("/user")
@@ -16,31 +14,27 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
-    public void create(
-            @RequestBody UserCreateRequest req
+    @PostMapping("/activate")
+    public void activate(
+            @RequestBody UserUpdateRequest req,
+            @AuthenticationPrincipal DefaultCodeLapUser user
     ) {
-        userService.create(req.name(), req.age(), req.career().toCareer(), req.password(), req.email());
+        userService.activate(user.getId(), req.name(), req.career().toCareer(), req.techStacks());
     }
 
     @PostMapping("/update")
     public void update(
-            @RequestBody UserUpdateRequest req
+            @RequestBody UserUpdateRequest req,
+            @AuthenticationPrincipal DefaultCodeLapUser user
     ) {
-        userService.update(req.userId(), req.name(), req.age(), req.career().toCareer());
+        userService.update(user.getId(), req.name(), req.career().toCareer(), req.techStacks());
     }
 
-    @PostMapping("/change-password")
-    public void changePassword(
-            @RequestBody UserChangePasswordRequest req
-    ) {
-        userService.changePassword(req.userId(), req.password(), req.newPassword());
-    }
 
     @DeleteMapping
     public void delete(
-            @RequestBody UserDeleteRequest req
+            @AuthenticationPrincipal DefaultCodeLapUser user
     ) {
-        userService.delete(req.userId());
+        userService.delete(user.getId());
     }
 }

@@ -1,7 +1,7 @@
 package com.codelap.common.study.dto;
 
 import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.TechStack;
+import com.codelap.common.support.TechStack;
 import lombok.Data;
 
 import java.util.List;

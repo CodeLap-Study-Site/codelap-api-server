@@ -5,7 +5,6 @@ import com.codelap.common.studyConfirmation.domain.StudyConfirmation;
 import com.codelap.common.studyConfirmation.domain.StudyConfirmationFile;
 import com.codelap.common.studyConfirmation.domain.StudyConfirmationRepository;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,10 +17,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -48,9 +48,8 @@ class StudyConfirmationDomainServiceTest {
 
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = userRepository.save(User.create("name", 10, career, "abcd", "setup"));
-        member = userRepository.save(User.create("user", 10, career, "abcd", "email"));
+        leader = userRepository.save(createActivateUser("leader"));
+        member = userRepository.save(createActivateUser("member"));
 
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
@@ -73,8 +72,7 @@ class StudyConfirmationDomainServiceTest {
 
     @Test
     void 스터디_인증_생성_실패__해당_유저가_아님() {
-        UserCareer career = UserCareer.create("직무", 1);
-        User fakeUser = userRepository.save(User.create("fakeUser", 10, career, "abcd", "fakeUser"));
+        User fakeUser = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() ->
                 studyConfirmationService.create(study.getId(), fakeUser.getId(), "title", "content", List.of(file))
@@ -144,8 +142,7 @@ class StudyConfirmationDomainServiceTest {
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
-        UserCareer career = UserCareer.create("직무", 1);
-        User fakeUser = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "fakeUser"));
+        User fakeUser = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() ->
                 studyConfirmationService.reConfirm(studyConfirmation.getId(), fakeUser.getId(), "title", "content", List.of(file))
@@ -169,8 +166,7 @@ class StudyConfirmationDomainServiceTest {
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
-        UserCareer career = UserCareer.create("직무", 1);
-        User fakeUser = userRepository.save(User.create("fakeLeader", 10, career, "abcd", "fakeUser"));
+        User fakeUser = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() ->
                 studyConfirmationService.delete(studyConfirmation.getId(), fakeUser.getId())

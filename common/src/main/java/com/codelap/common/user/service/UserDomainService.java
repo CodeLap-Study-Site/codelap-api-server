@@ -3,10 +3,12 @@ package com.codelap.common.user.service;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
+import com.codelap.common.user.domain.UserTechStack;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,26 +30,18 @@ public class UserDomainService implements UserService {
         }
     }
 
-
     @Override
-    public User create(String name, int age, UserCareer career, String password, String email) {
-        User user = User.create(name, age, career, password, email);
+    public void activate(Long userId, String name, UserCareer career, List<UserTechStack> techStacks) {
+        User user = userRepository.findById(userId).orElseThrow();
 
-        return userRepository.save(user);
+        user.activate(name, career, techStacks);
     }
 
     @Override
-    public void update(Long userId, String name, int age, UserCareer career) {
+    public void update(Long userId, String name, UserCareer career, List<UserTechStack> techStacks) {
         User user = userRepository.findById(userId).orElseThrow();
 
-        user.update(name, age, career);
-    }
-
-    @Override
-    public void changePassword(Long userId, String password, String newPassword) {
-        User user = userRepository.findById(userId).orElseThrow();
-
-        user.changePassword(password, newPassword);
+        user.update(name, career, techStacks);
     }
 
     @Override

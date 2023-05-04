@@ -16,11 +16,11 @@ import static com.codelap.common.study.domain.Study.create;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
-import static com.codelap.common.study.domain.TechStack.*;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatCodeLapException;
 import static com.codelap.common.support.ErrorCode.*;
+import static com.codelap.common.support.TechStack.*;
 import static com.codelap.fixture.StudyFixture.createStudy;
-import static com.codelap.fixture.UserFixture.createUser;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
@@ -32,7 +32,7 @@ class StudyTest {
 
     @BeforeEach
     void setUp() {
-        leader = createUser("leader");
+        leader = createActivateUser("leader");
         study = createStudy(leader);
     }
 
@@ -218,7 +218,7 @@ class StudyTest {
 
     @Test
     void 스터디_참여_성공() {
-        User user = createUser("member");
+        User user = createActivateUser("member");
 
         study.addMember(user);
 
@@ -232,10 +232,10 @@ class StudyTest {
 
         Study study = createStudy(maxMembersSize);
 
-        User user1 = createUser("member1");
-        User user2 = createUser("member2");
-        User user3 = createUser("member3");
-        User user4 = createUser("member4");
+        User user1 = createActivateUser("member1");
+        User user2 = createActivateUser("member2");
+        User user3 = createActivateUser("member3");
+        User user4 = createActivateUser("member4");
 
         study.addMember(user1);
         study.addMember(user2);
@@ -246,7 +246,7 @@ class StudyTest {
 
     @Test
     void 스터디_참여_실패__참여자_중복() {
-        User user = createUser("member");
+        User user = createActivateUser("member");
 
         study.addMember(user);
 
@@ -257,7 +257,7 @@ class StudyTest {
     void 스터디_참여_실패__삭제됨_상태() {
         study.setStatus(DELETED);
 
-        User user = createUser("member");
+        User user = createActivateUser("member");
 
         assertThatIllegalStateException().isThrownBy(() -> study.addMember(user));
     }
@@ -265,7 +265,7 @@ class StudyTest {
 
     @Test
     void 스터디_리더_변경_성공() {
-        User user = createUser("member");
+        User user = createActivateUser("member");
 
         study.addMember(user);
 
@@ -276,7 +276,7 @@ class StudyTest {
 
     @Test
     void 스터디_리더_변경_실패__소속되지_않은_회원() {
-        User user = createUser("member");
+        User user = createActivateUser("member");
 
         assertThatCodeLapException(NOT_EXISTED_MEMBER).isThrownBy(() -> study.changeLeader(user));
     }
@@ -288,7 +288,7 @@ class StudyTest {
 
     @Test
     void 스터디_리더_변경_실패__삭제됨_상태() {
-        User user = createUser("member");
+        User user = createActivateUser("member");
 
         study.addMember(user);
 
@@ -341,7 +341,7 @@ class StudyTest {
 
     @Test
     void 스터디_멤버_추방_성공() {
-        User member = createUser("member");
+        User member = createActivateUser("member");
 
         study.addMember(member);
 
@@ -352,7 +352,7 @@ class StudyTest {
 
     @Test
     void 스터디_멤버_추방_실패__강퇴할_대상이_멤버가_아님() {
-        User fakeMember = createUser("fakeMember");
+        User fakeMember = createActivateUser("fakeMember");
 
         assertThatCodeLapException(NOT_EXISTED_MEMBER).isThrownBy(() -> study.removeMember(fakeMember));
     }
@@ -364,7 +364,7 @@ class StudyTest {
 
     @Test
     void 스터디_멤버_추방_실패__스터디가_삭제된_상태() {
-        User member = createUser("member");
+        User member = createActivateUser("member");
 
         study.addMember(member);
 
@@ -393,7 +393,7 @@ class StudyTest {
 
     @Test
     void 스터디_나가기_성공() {
-        User member = createUser("member");
+        User member = createActivateUser("member");
 
         study.addMember(member);
 
@@ -404,7 +404,7 @@ class StudyTest {
 
     @Test
     void 스터디_나가기_실패__회원이_리더() {
-        User member = createUser("member");
+        User member = createActivateUser("member");
 
         study.addMember(member);
 
@@ -420,7 +420,7 @@ class StudyTest {
 
     @Test
     void 스터디_삭제_실패__리더가_아닌_멤버가_있을때() {
-        User member = createUser("member");
+        User member = createActivateUser("member");
 
         study.addMember(member);
 

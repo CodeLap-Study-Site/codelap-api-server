@@ -2,10 +2,10 @@ package com.codelap.api.service.study;
 
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
-import com.codelap.common.study.domain.TechStack;
 import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import com.codelap.common.study.dto.GetStudiesCardDto.GetTechStackInfo;
+import com.codelap.common.support.TechStack;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;

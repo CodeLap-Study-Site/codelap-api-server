@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.codelap.common.bookmark.domain.Bookmark.create;
 import static com.codelap.fixture.StudyFixture.createStudy;
-import static com.codelap.fixture.UserFixture.createUser;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.*;
 
 class BookmarkTest {
@@ -19,13 +19,13 @@ class BookmarkTest {
 
     @BeforeEach
     void setUp() {
-        leader = createUser("leader");
+        leader = createActivateUser("leader");
         study = createStudy(leader);
     }
 
     @Test
     void 북마크_생성_성공() {
-        User user = createUser();
+        User user = createActivateUser();
 
         Bookmark bookmark = create(study, user);
 
@@ -39,7 +39,7 @@ class BookmarkTest {
 
     @Test
     void 북마크_생성_실패__유저가_삭제된_상태() {
-        User user = createUser();
+        User user = createActivateUser();
 
         user.setStatus(UserStatus.DELETED);
 
@@ -48,7 +48,7 @@ class BookmarkTest {
 
     @Test
     void 북마크_생성_실패__스터디가_삭제된_상태() {
-        User user = createUser();
+        User user = createActivateUser();
 
         study.setStatus(StudyStatus.DELETED);
 

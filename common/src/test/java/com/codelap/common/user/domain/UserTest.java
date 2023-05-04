@@ -3,13 +3,17 @@ package com.codelap.common.user.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
-import static com.codelap.common.user.domain.User.MIN_AGE;
-import static com.codelap.common.user.domain.UserStatus.CREATED;
-import static com.codelap.common.user.domain.UserStatus.DELETED;
+import java.util.List;
+
+import static com.codelap.common.support.TechStack.Go;
+import static com.codelap.common.user.domain.UserStatus.*;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static com.codelap.fixture.UserFixture.createUser;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
 class UserTest {
 
@@ -17,135 +21,100 @@ class UserTest {
 
     @BeforeEach
     void setUp() {
-        user = createUser("setUp");
+        user = createActivateUser();
     }
 
     @Test
     void 유저_생성_성공() {
-        UserCareer career = UserCareer.create("직무", 1);
+        User user = User.create(10L);
 
-        var user = User.create("name", 10, career, "abcd", "eamil");
-
-        assertThat(user.getName()).isEqualTo("name");
-        assertThat(user.getAge()).isEqualTo(10);
-        assertThat(user.getPassword()).isEqualTo("abcd");
-        assertThat(user.getCareer()).isSameAs(career);
-        assertThat(user.getStatus()).isSameAs(CREATED);
+        assertThat(user.getSocialId()).isEqualTo(10L);
+        assertThat(user.getStatus()).isEqualTo(CREATED);
         assertThat(user.getCreatedAt()).isNotNull();
     }
 
-    @ParameterizedTest
-    @NullAndEmptySource
-    void 유저_생성_실패__이름이_공백_혹은_널(String name) {
-        UserCareer career = UserCareer.create("직무", 1);
-
-        assertThatIllegalArgumentException().isThrownBy(() -> User.create(name, 10, career, "abcd", "email"));
-    }
-
     @Test
-    void 유저_생성_실패__나이가_최소값_보다_작음() {
-        UserCareer career = UserCareer.create("직무", 1);
+    void 유저_활성화_성공() {
+        User user = createUser();
 
-        assertThatIllegalArgumentException().isThrownBy(() -> User.create("name", MIN_AGE - 1, career, "abcd", "email"));
-    }
+        UserTechStack techStack = new UserTechStack(Go);
+        UserCareer career = UserCareer.create("직무", 2);
 
-    @Test
-    void 유저_생성_실패__직무가_널() {
-        assertThatIllegalArgumentException().isThrownBy(() -> User.create("name", 10, null, "abcd", "email"));
+        user.activate("name", career, List.of(techStack));
+
+        assertThat(user.getStatus()).isEqualTo(ACTIVATED);
+        assertThat(user.getName()).isEqualTo("name");
+        assertThat(user.getCareer()).isSameAs(career);
+        assertThat(user.getTechStacks()).containsExactly(techStack);
     }
 
     @ParameterizedTest
-    @NullAndEmptySource
-    void 유저_생성_실패__이메일이_공백_혹은_널(String email) {
-        UserCareer career = UserCareer.create("직무", 1);
+    @EnumSource(value = UserStatus.class, names = {"CREATED"}, mode = EXCLUDE)
+    void 유저_활성화_실패__생성됨_상태가_아님(UserStatus status) {
+        user.setStatus(status);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> User.create("name", 10, career, "abcd", email));
+        UserTechStack techStack = new UserTechStack(Go);
+        UserCareer career = UserCareer.create("직무", 2);
+
+        assertThatIllegalStateException().isThrownBy(() ->
+                user.activate("name", career, List.of(techStack))
+        );
     }
 
     @Test
     void 유저_수정_성공() {
+        user.setStatus(ACTIVATED);
+
+        UserTechStack userTechStack = new UserTechStack(Go);
         UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);
 
-        user.update("updateName", 11, updateCareer);
+        user.update("updateName", updateCareer, List.of(userTechStack));
 
         assertThat(user.getName()).isEqualTo("updateName");
-        assertThat(user.getAge()).isEqualTo(11);
         assertThat(user.getCareer()).isSameAs(updateCareer);
+        assertThat(user.getTechStacks()).containsExactly(userTechStack);
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     void 유저_수정_실패__이름이_널이거나_공백(String updateName) {
+        UserTechStack userTechStack = new UserTechStack(Go);
         UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);
 
         assertThatIllegalArgumentException().isThrownBy(() ->
-                user.update(updateName, 11, updateCareer)
-        );
-    }
-
-    @Test
-    void 유저_수정_실패__나이가_최소값_미만() {
-        UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);
-
-        assertThatIllegalArgumentException().isThrownBy(() ->
-                user.update("updatedName", MIN_AGE - 1, updateCareer)
+                user.update(updateName, updateCareer, List.of(userTechStack))
         );
     }
 
     @Test
     void 유저_수정_실패__직무가_널() {
+        UserTechStack userTechStack = new UserTechStack(Go);
+
         assertThatIllegalArgumentException().isThrownBy(() ->
-                user.update("updatedName", 11, null)
+                user.update("updateName", null, List.of(userTechStack))
         );
     }
 
     @Test
-    void 유저_수정_실패__생성됨_상태가_아님() {
-        user.setStatus(DELETED);
+    void 유저_수정_실패__기술_스택이_널() {
+        UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);
 
+        assertThatIllegalArgumentException().isThrownBy(() ->
+                user.update("updateName", updateCareer, null)
+        );
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserStatus.class, names = {"ACTIVATED"}, mode = EXCLUDE)
+    void 유저_수정_실패__활성화_상태가_아님(UserStatus status) {
+        user.setStatus(status);
+
+        UserTechStack userTechStack = new UserTechStack(Go);
         UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);
 
         assertThatIllegalStateException().isThrownBy(() ->
-                user.update("updatedName", 11, updateCareer)
+                user.update("updatedName", updateCareer, List.of(userTechStack))
         );
-    }
-
-    @Test
-    void 유저_비밀번호_변경_성공() {
-        user.changePassword(user.getPassword(), "newPassword");
-
-        assertThat(user.getPassword()).isEqualTo("newPassword");
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    void 유저_비밀번호_변경_실패__입력받은_기존_비밀번호가_널이거나_공백(String changePassword) {
-        assertThatIllegalArgumentException().isThrownBy(() -> user.changePassword(changePassword, "newPassword"));
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    void 유저_비밀번호_변경_실패__입력받은_새로운_비밀번호가_널이거나_공백(String changePassword) {
-        assertThatIllegalArgumentException().isThrownBy(() -> user.changePassword(user.getPassword(), changePassword));
-    }
-
-    @Test
-    void 유저_비밀번호_변경_실패__생성됨_상태가_아님() {
-        user.setStatus(DELETED);
-
-        assertThatIllegalStateException().isThrownBy(() ->
-                user.changePassword(user.getPassword(), "changePassword")
-        );
-    }
-
-    @Test
-    void 유저_비밀번호_변경_실패__입력받은_비밀번호와_기존_비밀번호가_다름() {
-        assertThatIllegalArgumentException().isThrownBy(() -> user.changePassword("fakePassword", "newPassword"));
-    }
-
-    @Test
-    void 유저_비밀번호_변경_실패__입력받은_비밀번호와_새로운_비밀번호가_같음() {
-        assertThatIllegalArgumentException().isThrownBy(() -> user.changePassword(user.getPassword(), user.getPassword()));
     }
 
     @Test

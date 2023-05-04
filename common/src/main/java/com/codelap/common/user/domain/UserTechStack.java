@@ -1,4 +1,4 @@
-package com.codelap.common.study.domain;
+package com.codelap.common.user.domain;
 
 import com.codelap.common.support.TechStack;
 import jakarta.persistence.Embeddable;
@@ -12,11 +12,11 @@ import static jakarta.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
-@ToString
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
-public class StudyTechStack {
+@ToString
+public class UserTechStack {
 
     @Enumerated(STRING)
     private TechStack techStack;

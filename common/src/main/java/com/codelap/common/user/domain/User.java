@@ -7,11 +7,12 @@ import lombok.Setter;
 import org.apache.logging.log4j.util.Strings;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
-import static com.codelap.common.user.domain.UserStatus.CREATED;
-import static com.codelap.common.user.domain.UserStatus.DELETED;
+import static com.codelap.common.user.domain.UserStatus.*;
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PROTECTED;
@@ -19,45 +20,30 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@Table(uniqueConstraints = {
-        @UniqueConstraint(name = "uq_email", columnNames = "email"),
-})
 public class User {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    private String email;
-
-    private String password;
-
     private String name;
-
-    private int age;
 
     private Long socialId;
 
     @Embedded
     private UserCareer career = new UserCareer();
 
+    @ElementCollection
+    private List<UserTechStack> techStacks;
+
     @Setter
+    @Enumerated(STRING)
     private UserStatus status = CREATED;
 
     private final OffsetDateTime createdAt = OffsetDateTime.now();
 
-    public static int MIN_AGE = 0;
-
     public User(Long socialId) {
         this.socialId = socialId;
-    }
-
-    private User(String name, int age, UserCareer career, String password, String email) {
-        this.name = name;
-        this.age = age;
-        this.career = career;
-        this.password = password;
-        this.email = email;
     }
 
     public static User create(Long socialId) {
@@ -65,38 +51,24 @@ public class User {
         return new User(socialId);
     }
 
-    public static User create(String name, int age, UserCareer career, String password, String email) {
-        require(Strings.isNotBlank(name));
-        require(age > MIN_AGE);
-        require(nonNull(career));
-        require(Strings.isNotBlank(password));
-        require(Strings.isNotBlank(email));
+    public void activate(String name, UserCareer career, List<UserTechStack> techStacks) {
+        check(status == CREATED);
 
-        return new User(name, age, career, password, email);
+        this.status = ACTIVATED;
+
+        update(name, career, techStacks);
     }
 
-    public void update(String name, int age, UserCareer career) {
+    public void update(String name, UserCareer career, List<UserTechStack> techStacks) {
         require(Strings.isNotBlank(name));
-        require(age > MIN_AGE);
         require(nonNull(career));
+        require(nonNull(techStacks));
 
-        check(status == CREATED);
+        check(status == ACTIVATED);
 
         this.name = name;
-        this.age = age;
         this.career = career;
-    }
-
-    public void changePassword(String password, String newPassword) {
-        require(Strings.isNotBlank(password));
-        require(Strings.isNotBlank(newPassword));
-
-        check(status == CREATED);
-
-        require(this.password.equals(password));
-        require(!this.password.equals(newPassword));
-
-        this.password = newPassword;
+        this.techStacks = techStacks;
     }
 
     public void delete() {

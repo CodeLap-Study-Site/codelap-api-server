@@ -23,10 +23,10 @@ import static com.codelap.api.controller.studyNotice.dto.StudyNoticeDeleteDto.St
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeUpdateDto.StudyNoticeUpdateRequest;
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeUpdateDto.StudyNoticeUpdateRequestFileDto;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
-import static com.codelap.common.study.domain.TechStack.Java;
-import static com.codelap.common.study.domain.TechStack.Spring;
 import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.CREATED;
 import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.DELETED;
+import static com.codelap.common.support.TechStack.Java;
+import static com.codelap.common.support.TechStack.Spring;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -98,7 +98,7 @@ class StudyNoticeControllerTest extends ApiTest {
     void 스터디_공지_수정_성공() throws Exception {
         StudyNoticeUpdateRequestFileDto file = new StudyNoticeUpdateRequestFileDto("savedName", "originalName", 100L);
 
-        StudyNoticeUpdateRequest req = new StudyNoticeUpdateRequest(studyNotice.getId(),"title", "contents", List.of(file));
+        StudyNoticeUpdateRequest req = new StudyNoticeUpdateRequest(studyNotice.getId(), "title", "contents", List.of(file));
 
         mockMvc.perform(post("/study-notice/update")
                         .contentType(APPLICATION_JSON)
