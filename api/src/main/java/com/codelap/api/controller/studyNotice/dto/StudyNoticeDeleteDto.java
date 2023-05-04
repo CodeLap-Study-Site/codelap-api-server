@@ -4,6 +4,6 @@ public class StudyNoticeDeleteDto {
     public record StudyNoticeDeleteRequest(
             Long studyNoticeId,
             Long leaderId
-    ){
+    ) {
     }
 }

@@ -40,51 +40,58 @@ public class StudyController {
 
     @PostMapping("/update")
     public void update(
+            @AuthenticationPrincipal DefaultCodeLapUser leader,
             @RequestBody StudyUpdateRequest req
     ) {
-        studyService.update(req.studyId(), req.leaderId(), req.name(), req.info(), req.maxMembersSize(), req.difficulty(), req.period().toStudyPeriod(), req.career().toStudyNeedCareer(), req.techStackList());
+        studyService.update(req.studyId(), leader.getId(), req.name(), req.info(), req.maxMembersSize(), req.difficulty(), req.period().toStudyPeriod(), req.career().toStudyNeedCareer(), req.techStackList());
     }
 
     @PostMapping("/proceed")
     public void proceed(
+            @AuthenticationPrincipal DefaultCodeLapUser leader,
             @RequestBody StudyProceedRequest req
     ) {
-        studyService.proceed(req.studyId(), req.leaderId());
+        studyService.proceed(req.studyId(), leader.getId());
     }
 
     @PostMapping("/remove-member")
     public void removeMember(
+            @AuthenticationPrincipal DefaultCodeLapUser leader,
             @RequestBody StudyRemoveMemberRequest req
     ) {
-        studyService.removeMember(req.studyId(), req.memberId(), req.leaderId());
+        studyService.removeMember(req.studyId(), req.memberId(), leader.getId());
     }
 
     @PostMapping("/close")
     public void close(
+            @AuthenticationPrincipal DefaultCodeLapUser leader,
             @RequestBody StudyCloseRequest req
     ) {
-        studyService.close(req.studyId(), req.leaderId());
+        studyService.close(req.studyId(), leader.getId());
     }
 
     @PostMapping("/leave")
     public void leave(
+            @AuthenticationPrincipal DefaultCodeLapUser member,
             @RequestBody StudyLeaveRequest req
     ) {
-        studyService.leave(req.studyId(), req.memberId());
+        studyService.leave(req.studyId(), member.getId());
     }
 
     @DeleteMapping("/delete")
     public void delete(
+            @AuthenticationPrincipal DefaultCodeLapUser leader,
             @RequestBody StudyDeleteRequest req
     ) {
-        studyService.delete(req.studyId(), req.leaderId());
+        studyService.delete(req.studyId(), leader.getId());
     }
 
     @PostMapping("/open")
     public void open(
+            @AuthenticationPrincipal DefaultCodeLapUser leader,
             @RequestBody StudyOpenRequest req
     ) {
-        studyService.open(req.studyId(), req.leaderId(), req.period().toStudyPeriod());
+        studyService.open(req.studyId(), leader.getId(), req.period().toStudyPeriod());
     }
 
     @GetMapping("/my-study")
@@ -94,8 +101,6 @@ public class StudyController {
             @RequestParam List<TechStack> techStackList
     ) {
         List<GetStudiesCardDto.GetStudyInfo> studies = studyAppService.getAttendedStudiesByUser(userId, statusCond, techStackList);
-
-        System.out.println(GetMyStudiesResponse.create(studies));
 
         return GetMyStudiesResponse.create(studies);
     }

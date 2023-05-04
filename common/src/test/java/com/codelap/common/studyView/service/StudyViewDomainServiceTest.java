@@ -26,10 +26,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 class StudyViewDomainServiceTest {
-    
+
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
     private StudyRepository studyRepository;
 

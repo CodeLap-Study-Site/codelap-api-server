@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.*;
-import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.CREATED;
-import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.DELETED;
 import static com.codelap.common.support.Preconditions.check;
 import static com.codelap.common.support.Preconditions.require;
 import static jakarta.persistence.EnumType.STRING;
@@ -24,7 +22,7 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-    public class StudyNotice {
+public class StudyNotice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -67,7 +65,7 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
         return new StudyNotice(study, title, contents, files);
     }
 
-    public void update(String title, String contents, List<StudyNoticeFile> files){
+    public void update(String title, String contents, List<StudyNoticeFile> files) {
         require(isNotBlank(title));
         require(isNotBlank(contents));
 
@@ -76,7 +74,7 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
         this.files = files;
     }
 
-    public void delete(){
+    public void delete() {
         check(CAN_DELETE_STATUS.contains(status));
 
         this.status = DELETED;

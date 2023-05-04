@@ -55,6 +55,7 @@ class DefaultStudyQueryAppServiceTest {
     private List<StudyTechStack> techStackList;
     private Study study1;
     private Study study2;
+
     @Test
     void 유저가_참여한_스터디_조회_성공() {
         UserCareer career = UserCareer.create("직무", 1);
