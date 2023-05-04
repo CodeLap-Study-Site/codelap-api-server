@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -34,6 +33,7 @@ import static com.codelap.api.controller.study.dto.StudyOpenDto.StudyOpenRequest
 import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedRequest;
 import static com.codelap.api.controller.study.dto.StudyRemoveMemberDto.StudyRemoveMemberRequest;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
+import static com.codelap.api.support.HttpMethod.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.study.domain.StudyStatus.*;
 import static com.codelap.common.support.TechStack.*;
@@ -84,7 +84,7 @@ class StudyControllerTest extends ApiTest {
 
         StudyCreateRequest req = new StudyCreateRequest("팀", "정보", 4, HARD, periodDto, careerDto, List.of(studyTechStack));
 
-        setMockMvcPerform(MockMvcRequestBuilders.post("/study"), req, "study/create");
+        setMockMvcPerform(POST, req, "/study","study/create");
 
         Study foundStudy = studyRepository.findAll().get(1);
 
@@ -112,7 +112,7 @@ class StudyControllerTest extends ApiTest {
 
         StudyUpdateRequest req = new StudyUpdateRequest(study.getId(), "updateTeam", "updateInfo", 5, HARD, periodDto, careerDto, List.of(studyTechStack));
 
-        setMockMvcPerform(MockMvcRequestBuilders.post("/study/update"), req, "study/update");
+        setMockMvcPerform(POST, req, "/study/update");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -136,7 +136,7 @@ class StudyControllerTest extends ApiTest {
     void 스터디_진행_성공() throws Exception {
         StudyProceedRequest req = new StudyProceedRequest(study.getId());
 
-        setMockMvcPerform(MockMvcRequestBuilders.post("/study/proceed"), req, "study/proceed");
+        setMockMvcPerform(POST, req, "/study/proceed");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -152,7 +152,7 @@ class StudyControllerTest extends ApiTest {
 
         StudyRemoveMemberRequest req = new StudyRemoveMemberRequest(study.getId(), member.getId());
 
-        setMockMvcPerform(MockMvcRequestBuilders.post("/study/remove-member"), req, "study/remove-member");
+        setMockMvcPerform(POST, req, "/study/remove-member");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -164,7 +164,7 @@ class StudyControllerTest extends ApiTest {
     void 스터디_닫기_성공() throws Exception {
         StudyCloseRequest req = new StudyCloseRequest(study.getId());
 
-        setMockMvcPerform(MockMvcRequestBuilders.post("/study/close"), req, "study/close");
+        setMockMvcPerform(POST, req, "/study/close");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -179,7 +179,7 @@ class StudyControllerTest extends ApiTest {
 
         StudyLeaveRequest req = new StudyLeaveRequest(study.getId(), member.getId());
 
-        setMockMvcPerform(MockMvcRequestBuilders.post("/study/leave"), req, "study/leave");
+        setMockMvcPerform(POST, req, "/study/leave");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -191,7 +191,7 @@ class StudyControllerTest extends ApiTest {
     void 스터디_삭제_성공() throws Exception {
         StudyDeleteRequest req = new StudyDeleteRequest(study.getId());
 
-        setMockMvcPerform(MockMvcRequestBuilders.delete("/study/delete"), req, "study/delete");
+        setMockMvcPerform(DELETE, req, "/study/delete");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -206,7 +206,7 @@ class StudyControllerTest extends ApiTest {
         StudyOpenRequestStudyPeriodDto periodDto = new StudyOpenRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyOpenRequest req = new StudyOpenRequest(study.getId(), leader.getId(), periodDto);
 
-        setMockMvcPerform(MockMvcRequestBuilders.post("/study/open"), req, "study/open");
+        setMockMvcPerform(POST, req, "/study/open");
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -226,7 +226,7 @@ class StudyControllerTest extends ApiTest {
         params.add("techStackList", "Spring");
         params.add("techStackList", "AWS");
 
-        setMockMvcPerform(MockMvcRequestBuilders.get("/study/my-study"), params, 유저가_참여한_스터디_조회_검증(params), "study/my-study");
+        setMockMvcPerform(GET, params, 유저가_참여한_스터디_조회_검증(params), "/study/my-study");
     }
 
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {

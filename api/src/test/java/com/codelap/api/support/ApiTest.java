@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
@@ -91,6 +92,35 @@ public abstract class ApiTest {
         return document(url,
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()));
+    }
+
+    protected ResultActions setMockMvcPerform(HttpMethod httpMethod, Object req, String url) throws Exception {
+        String identifier = url.substring(1);
+
+        switch (httpMethod) {
+            case POST -> setMockMvcPerform(MockMvcRequestBuilders.post(url), req, identifier);
+
+            case DELETE -> setMockMvcPerform(MockMvcRequestBuilders.delete(url), req, identifier);
+        }
+        return null;
+    }
+
+    protected ResultActions setMockMvcPerform(HttpMethod httpMethod, Object req, String url, String identifier) throws Exception {
+        switch (httpMethod) {
+            case POST -> setMockMvcPerform(MockMvcRequestBuilders.post(url), req, identifier);
+
+            case DELETE -> setMockMvcPerform(MockMvcRequestBuilders.delete(url), req, identifier);
+        }
+        return null;
+    }
+
+    protected ResultActions setMockMvcPerform(HttpMethod httpMethod, MultiValueMap<String, String> params, ResultMatcher[] matchers, String url) throws Exception {
+        String identifier = url.substring(1);
+
+        if (httpMethod == HttpMethod.GET) {
+            setMockMvcPerform(MockMvcRequestBuilders.get(url), params, matchers, identifier);
+        }
+        return null;
     }
 
     protected ResultActions setMockMvcPerform(MockHttpServletRequestBuilder method, Object req, String identifier) throws Exception {
