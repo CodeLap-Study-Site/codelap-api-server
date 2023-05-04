@@ -37,8 +37,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         User user = userService.loadUser(socialId);
 
-        String accessToken = jwtComponent.issue(user.getId(), user.getEmail(), ACCESS);
-        String refreshToken = jwtComponent.issue(user.getId(), user.getEmail(), REFRESH);
+        String accessToken = jwtComponent.issue(user.getId(), ACCESS);
+        String refreshToken = jwtComponent.issue(user.getId(), REFRESH);
 
         String targetUrl = getTargetUrl(accessToken, refreshToken);
 

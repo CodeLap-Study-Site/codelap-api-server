@@ -22,7 +22,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 public class JwtComponent {
     private final JwtProperties jwtProperties;
 
-    public String issue(Long id, String audience, JwtType type) {
+    public String issue(Long id, JwtType type) {
         val now = new Date();
         val expiration = new Date(now.getTime() + jwtProperties.getTokenExpireTime(type));
 
@@ -31,7 +31,6 @@ public class JwtComponent {
                 .setIssuer("CodeLap")
                 .setIssuedAt(now)
                 .setId(id.toString())
-                .setAudience(audience)
                 .setExpiration(expiration)
                 .signWith(HS256, jwtProperties.getEncodedSecretKey())
                 .compact();
@@ -44,14 +43,6 @@ public class JwtComponent {
             return Long.valueOf(ex.getClaims().getId());
         } catch (Exception ex) {
             throw new CodeLapUserException("Invalid Signature", UNAUTHORIZED);
-        }
-    }
-
-    public String getAudience(String token) {
-        try {
-            return Jwts.parser().setSigningKey(jwtProperties.getEncodedSecretKey()).parseClaimsJws(token).getBody().getAudience();
-        } catch (ExpiredJwtException ex) {
-            return ex.getClaims().getAudience();
         }
     }
 

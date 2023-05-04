@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import static com.codelap.api.security.component.JwtType.ACCESS;
 import static com.codelap.api.security.component.JwtType.REFRESH;
 import static java.util.Objects.nonNull;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
 @RequiredArgsConstructor
@@ -48,8 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.clearContext();
 
-            response.setStatus(UNAUTHORIZED.value());
-            response.setContentType("application/json");
+            response.setStatus(ex.getStatus().value());
+            response.setContentType(APPLICATION_JSON_VALUE);
             response.getWriter().write("{\"error\": \"UNAUTHORIZED\", \"message\": \"" + ex.getMessage() + "\"}");
 
             return;
@@ -67,10 +67,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             jwtComponent.validate(refreshToken, REFRESH);
 
             val id = jwtComponent.getId(accessToken);
-            val audience = jwtComponent.getAudience(accessToken);
 
-            accessToken = jwtComponent.issue(id, audience, ACCESS);
-            refreshToken = jwtComponent.issue(id, audience, REFRESH);
+            accessToken = jwtComponent.issue(id, ACCESS);
+            refreshToken = jwtComponent.issue(id, REFRESH);
 
             response.addHeader("Authorization", "Bearer " + accessToken);
             response.addHeader("X-Refresh-Token", "Bearer " + refreshToken);
