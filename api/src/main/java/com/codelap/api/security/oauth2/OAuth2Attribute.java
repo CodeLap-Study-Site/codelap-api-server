@@ -1,6 +1,5 @@
 package com.codelap.api.security.oauth2;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -8,9 +7,11 @@ import lombok.ToString;
 import java.util.HashMap;
 import java.util.Map;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Getter
 @ToString
-@Builder(access = AccessLevel.PRIVATE)
+@Builder(access = PRIVATE)
 public class OAuth2Attribute {
     private Map<String, Object> attributes;
     private String attributeKey;
