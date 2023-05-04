@@ -2,6 +2,7 @@ package com.codelap.api.controller.user;
 
 import com.codelap.api.controller.user.dto.UserUpdateDto.UserUpdateRequest;
 import com.codelap.api.security.user.DefaultCodeLapUser;
+import com.codelap.api.service.user.UserAppService;
 import com.codelap.common.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserAppService userAppService;
 
     @PostMapping("/activate")
     public void activate(
@@ -36,5 +38,12 @@ public class UserController {
             @AuthenticationPrincipal DefaultCodeLapUser user
     ) {
         userService.delete(user.getId());
+    }
+
+    @GetMapping("/is-activated")
+    public boolean isActivated(
+            @AuthenticationPrincipal DefaultCodeLapUser user
+    ) {
+        return userAppService.isActivated(user.getId());
     }
 }

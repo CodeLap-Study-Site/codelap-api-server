@@ -56,6 +56,11 @@ X-Refresh-Token: Bearer newRefreshToken
 [[UserActivate]]
 == 유저 활성화 API
 
+=== Tip
+```
+최초 정보 입력 시 사용할 API
+```
+
 === Request
 include::{snippets}/user/activate/curl-request.adoc[]
 
@@ -98,6 +103,26 @@ include::{snippets}/user/delete/http-response.adoc[]
 === ResponseBody
 include::{snippets}/user/delete/response-body.adoc[]
 
+[[UserIsActivated]]
+== 유저 활성화 상태 체크 API
+
+=== Tip
+```
+페이지 접근 시 항상 해당 API 로 활성화 유무를 체크해야 함
+만약 비활성화인 경우 최초 정보를 입력할 수 있는 페이지로 이동시켜야 함
+```
+
+=== Request
+include::{snippets}/user/is-activated/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/user/is-activated/request-body.adoc[]
+
+=== Response
+include::{snippets}/user/is-activated/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/user/is-activated/response-body.adoc[]
 
 [[StudyCreate]]
 == 스터디 생성 API
