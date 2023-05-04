@@ -2,7 +2,9 @@ package com.codelap.api.controller.study;
 
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.bookmark.service.BookmarkService;
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyRepository;
+import com.codelap.common.study.domain.StudyTechStack;
 import com.codelap.common.study.service.StudyService;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.studyView.service.StudyViewService;
@@ -17,7 +19,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,9 +34,10 @@ import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedR
 import static com.codelap.api.controller.study.dto.StudyRemoveMemberDto.StudyRemoveMemberRequest;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.*;
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
-import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.*;
 import static com.codelap.common.support.TechStack.*;
+import static com.codelap.fixture.StudyFixture.createStudy;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static com.codelap.fixture.UserFixture.createUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -68,29 +70,23 @@ class StudyControllerTest extends ApiTest {
     private User leader;
     private User member;
     private Study study;
-    private List<StudyTechStack> techStackList;
-    private Study study1;
-    private Study study2;
-    private MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
 
     @BeforeEach
     void setUp() {
         leader = prepareLoggedInUser();
-
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
-
-        study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList));
+        member = userRepository.save(createActivateUser("member"));
+        study = studyRepository.save(createStudy(leader));
     }
 
     @Test
     @WithUserDetails
     void 스터디_생성_성공() throws Exception {
+        StudyTechStack studyTechStack = new StudyTechStack(Java);
         StudyCreateRequestStudyPeriodDto periodDto = new StudyCreateRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyCreateRequestStudyNeedCareerDto careerDto = new StudyCreateRequestStudyNeedCareerDto("직무", 10);
 
-        StudyCreateRequest req = new StudyCreateRequest("팀", "정보", 4, HARD, periodDto, careerDto, techStackList);
+        StudyCreateRequest req = new StudyCreateRequest("팀", "정보", 4, HARD, periodDto, careerDto, List.of(studyTechStack));
 
         mockMvc.perform(post("/study")
                         .contentType(APPLICATION_JSON)
@@ -122,10 +118,11 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_수정_성공() throws Exception {
+        StudyTechStack studyTechStack = new StudyTechStack(Java);
         StudyUpdateRequestStudyPeriodDto periodDto = new StudyUpdateRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyUpdateRequestStudyNeedCareerDto careerDto = new StudyUpdateRequestStudyNeedCareerDto("updateOccupation", 5);
 
-        StudyUpdateRequest req = new StudyUpdateRequest(study.getId(), "updateTeam", "updateInfo", 5, HARD, periodDto, careerDto, techStackList);
+        StudyUpdateRequest req = new StudyUpdateRequest(study.getId(), "updateTeam", "updateInfo", 5, HARD, periodDto, careerDto, List.of(studyTechStack));
 
         mockMvc.perform(post("/study/update")
                         .contentType(APPLICATION_JSON)
@@ -274,10 +271,7 @@ class StudyControllerTest extends ApiTest {
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpectAll(
                         status().isOk()
-                ).andDo(document("study/open",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+                ).andDo(restDocsSet("/study/open"));
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -289,10 +283,9 @@ class StudyControllerTest extends ApiTest {
     void 유저가_참여한_스터디_조회_성공() throws Exception {
         User leader = prepareLoggedInActiveUser();
 
-        member = userRepository.save(createUser());
-
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("userId", member.getId().toString());
         params.add("statusCond", "open");
         params.add("techStackList", "Spring");
@@ -301,7 +294,7 @@ class StudyControllerTest extends ApiTest {
         mockMvc.perform(get("/study/my-study")
                         .params(params))
                 .andExpect(status().isOk())
-                .andExpectAll(유저가_참여한_스터디_조회_검증())
+                .andExpectAll(유저가_참여한_스터디_조회_검증(params))
                 .andDo(document("study/my-study",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -309,33 +302,28 @@ class StudyControllerTest extends ApiTest {
     }
 
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-
-        study1 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java))));
-
+        Study study1 = studyRepository.save(createStudy(leader, Java));
         study1.addMember(member);
 
         studyCommentService.create(study1.getId(), member.getId(), "message");
         studyViewService.create(study1.getId(), "1.1.1.1");
         bookmarkService.create(study1.getId(), member.getId());
 
-        study2 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(JavaScript), new StudyTechStack(React))));
-
+        Study study2 = studyRepository.save(createStudy(leader, React));
         study2.addMember(member);
 
         studyCommentService.create(study2.getId(), member.getId(), "message");
         studyViewService.create(study2.getId(), "1.1.1.2");
 
-        Study study3 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(AWS))));
+        Study study3 = studyRepository.save(createStudy(leader, AWS));
         study3.addMember(member);
 
         studyService.close(study3.getId(), leader.getId());
 
-        Study study4 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(ReactNative))));
+        studyRepository.save(createStudy(leader, ReactNative));
     }
 
-    private ResultMatcher[] 유저가_참여한_스터디_조회_검증() {
+    private ResultMatcher[] 유저가_참여한_스터디_조회_검증(MultiValueMap<String, String> params) {
         List<Study> studiesContainsMember = studyRepository.findAll()
                 .stream()
                 .filter(it -> it.getStatus() != DELETED && it.getStatus() != CLOSED && it.containsMember(member))
