@@ -5,6 +5,8 @@ import com.codelap.common.studyComment.domain.StudyComment;
 import com.codelap.common.studyComment.domain.StudyCommentRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
+import com.codelap.fixture.StudyCommentFixture;
+import com.codelap.fixture.StudyFixture;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,8 @@ import static com.codelap.common.studyComment.domain.StudyCommentStatus.DELETED;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static com.codelap.common.support.TechStack.Java;
 import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.StudyCommentFixture.*;
+import static com.codelap.fixture.StudyFixture.*;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,19 +45,13 @@ class StudyCommentDomainServiceTest {
 
     private User leader;
     private Study study;
-    private List<StudyTechStack> techStackList;
     private StudyComment studyComment;
 
     @BeforeEach
     void setUp() {
         leader = userRepository.save(createActivateUser());
 
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
-
-        study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
-        study = studyRepository.save(study);
+        study = studyRepository.save(createStudy(leader));
     }
 
     @Test
@@ -74,15 +72,11 @@ class StudyCommentDomainServiceTest {
 
     @Test
     void 스터디_댓글_수정_성공() {
-        studyComment = studyCommentRepository.save(StudyComment.create(study, leader, "message"));
-
-        studyCommentService.create(study.getId(), leader.getId(), "message");
+        studyComment = studyCommentRepository.save(createStudyComment(study, leader));
 
         studyCommentService.update(studyComment.getId(), leader.getId(), "updatedComment");
 
-        StudyComment foundstudyComment = studyCommentRepository.findAll().get(0);
-
-        assertThat(foundstudyComment.getComment()).isEqualTo("updatedComment");
+        assertThat(studyComment.getComment()).isEqualTo("updatedComment");
     }
 
     @Test
