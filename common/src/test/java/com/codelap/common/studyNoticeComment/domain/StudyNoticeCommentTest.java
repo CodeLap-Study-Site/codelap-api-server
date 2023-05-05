@@ -36,7 +36,7 @@ class StudyNoticeCommentTest {
 
     @Test
     void 스터디_공지_댓글_생성_성공() {
-        StudyNoticeComment studyNoticeComment = StudyNoticeComment.create(studyNotice, leader, "content");
+        StudyNoticeComment studyNoticeComment = createStudyNoticeComment(studyNotice, leader);
 
         assertThat(studyNoticeComment.getContent()).isEqualTo("content");
         assertThat(studyNoticeComment.getUser()).isSameAs(leader);
