@@ -84,7 +84,7 @@ class StudyControllerTest extends ApiTest {
 
         StudyCreateRequest req = new StudyCreateRequest("팀", "정보", 4, HARD, periodDto, careerDto, List.of(studyTechStack));
 
-        setMockMvcPerform(POST, req, "/study","study/create");
+        setMockMvcPerform(POST, req, "/study", "study/create");
 
         Study foundStudy = studyRepository.findAll().get(1);
 

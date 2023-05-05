@@ -88,42 +88,36 @@ public abstract class ApiTest {
         codeLapUser.setId(id);
     }
 
-    protected RestDocumentationResultHandler restDocsSet(String url) {
+    protected void setMockMvcPerform(HttpMethod httpMethod, Object req, String... urlInfo) throws Exception {
+        String url = urlInfo[0];
+        String identifier = urlInfo.length == 1 ? urlInfo[0].substring(1) : urlInfo[1];
+
+        switch (httpMethod) {
+            case POST -> setMockMvcPerform(MockMvcRequestBuilders.post(url), req, identifier);
+
+            case DELETE -> setMockMvcPerform(MockMvcRequestBuilders.delete(url), req, identifier);
+
+            default -> throw new IllegalArgumentException("Unsupported HTTP method: " + httpMethod);
+        }
+    }
+
+    protected void setMockMvcPerform(HttpMethod httpMethod, MultiValueMap<String, String> params, ResultMatcher[] matchers, String url) throws Exception {
+        String identifier = url.substring(1);
+
+        switch (httpMethod) {
+            case GET -> setMockMvcPerform(MockMvcRequestBuilders.get(url), params, matchers, identifier);
+
+            default -> throw new IllegalArgumentException("Unsupported HTTP method: " + httpMethod);
+        }
+    }
+
+    private RestDocumentationResultHandler restDocsSet(String url) {
         return document(url,
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()));
     }
 
-    protected ResultActions setMockMvcPerform(HttpMethod httpMethod, Object req, String url) throws Exception {
-        String identifier = url.substring(1);
-
-        switch (httpMethod) {
-            case POST -> setMockMvcPerform(MockMvcRequestBuilders.post(url), req, identifier);
-
-            case DELETE -> setMockMvcPerform(MockMvcRequestBuilders.delete(url), req, identifier);
-        }
-        return null;
-    }
-
-    protected ResultActions setMockMvcPerform(HttpMethod httpMethod, Object req, String url, String identifier) throws Exception {
-        switch (httpMethod) {
-            case POST -> setMockMvcPerform(MockMvcRequestBuilders.post(url), req, identifier);
-
-            case DELETE -> setMockMvcPerform(MockMvcRequestBuilders.delete(url), req, identifier);
-        }
-        return null;
-    }
-
-    protected ResultActions setMockMvcPerform(HttpMethod httpMethod, MultiValueMap<String, String> params, ResultMatcher[] matchers, String url) throws Exception {
-        String identifier = url.substring(1);
-
-        if (httpMethod == HttpMethod.GET) {
-            setMockMvcPerform(MockMvcRequestBuilders.get(url), params, matchers, identifier);
-        }
-        return null;
-    }
-
-    protected ResultActions setMockMvcPerform(MockHttpServletRequestBuilder method, Object req, String identifier) throws Exception {
+    private ResultActions setMockMvcPerform(MockHttpServletRequestBuilder method, Object req, String identifier) throws Exception {
         return this.mockMvc.perform(method
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
@@ -131,7 +125,7 @@ public abstract class ApiTest {
                 .andDo(restDocsSet(identifier));
     }
 
-    protected ResultActions setMockMvcPerform(MockHttpServletRequestBuilder method, MultiValueMap<String, String> params, ResultMatcher[] matchers, String identifier) throws Exception {
+    private ResultActions setMockMvcPerform(MockHttpServletRequestBuilder method, MultiValueMap<String, String> params, ResultMatcher[] matchers, String identifier) throws Exception {
         return this.mockMvc.perform(method
                         .params(params))
                 .andExpect(status().isOk())
