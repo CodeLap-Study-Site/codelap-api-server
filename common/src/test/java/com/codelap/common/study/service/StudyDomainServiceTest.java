@@ -4,6 +4,7 @@ import com.codelap.common.study.domain.*;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
+import com.codelap.fixture.StudyFixture;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.codelap.common.study.domain.StudyDifficulty.HARD;
@@ -23,7 +23,6 @@ import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorVal
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatCodeLapException;
 import static com.codelap.common.support.ErrorCode.ANOTHER_EXISTED_MEMBER;
 import static com.codelap.common.support.TechStack.Java;
-import static com.codelap.common.support.TechStack.Spring;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
@@ -43,18 +42,12 @@ class StudyDomainServiceTest {
 
     private User leader;
     private Study study;
-    private List<StudyTechStack> techStackList;
 
     @BeforeEach
     void setUp() {
         leader = userRepository.save(createActivateUser());
 
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
-
-        study = Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
-        study = studyRepository.save(study);
+        study = studyRepository.save(StudyFixture.createStudy(leader, Java));
     }
 
     @Test
@@ -62,7 +55,7 @@ class StudyDomainServiceTest {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
 
-        studyService.create(leader.getId(), "팀", "설명", 4, NORMAL, period, needCareer, techStackList);
+        studyService.create(leader.getId(), "팀", "설명", 4, NORMAL, period, needCareer, List.of(new StudyTechStack(Java)));
 
         Study foundStudy = studyRepository.findAll().get(0);
 
@@ -74,7 +67,7 @@ class StudyDomainServiceTest {
         StudyPeriod updatePeriod = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer updateNeedCareer = StudyNeedCareer.create("직무", 1);
 
-        studyService.update(study.getId(), leader.getId(), "updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer, techStackList);
+        studyService.update(study.getId(), leader.getId(), "updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer, List.of(new StudyTechStack(Java)));
 
         Study foundStudy = studyRepository.findById(study.getId()).orElseThrow();
 
@@ -91,11 +84,10 @@ class StudyDomainServiceTest {
         StudyPeriod updatePeriod = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer updateNeedCareer = StudyNeedCareer.create("직무", 1);
 
-        UserCareer career = UserCareer.create("직무", 1);
         User fakeLeader = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() ->
-                studyService.update(study.getId(), fakeLeader.getId(), "updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer, techStackList)
+                studyService.update(study.getId(), fakeLeader.getId(), "updateName", "updateInfo", 5, HARD, updatePeriod, updateNeedCareer, List.of(new StudyTechStack(Java)))
         );
     }
 
@@ -149,7 +141,6 @@ class StudyDomainServiceTest {
 
     @Test
     void 스터디_멤버_추방_실패__사용자가_스터디의_주인이_아님() {
-        UserCareer career = UserCareer.create("직무", 1);
         User member = userRepository.save(createActivateUser("member"));
 
         studyService.addMember(study.getId(), member.getId(), leader.getId());
@@ -203,7 +194,6 @@ class StudyDomainServiceTest {
 
     @Test
     void 스터디_삭제_실패__리더가_아닌_멤버가_있을때() {
-        UserCareer career = UserCareer.create("직무", 1);
         User member = userRepository.save(createActivateUser("member"));
 
         studyService.addMember(study.getId(), member.getId(), leader.getId());
