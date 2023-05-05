@@ -60,7 +60,7 @@ class StudyCommentDomainServiceTest {
     void 스터디_댓글_생성_성공() {
         studyCommentService.create(study.getId(), leader.getId(), "message");
 
-        StudyComment studyComment = studyCommentRepository.findAll().get(0);
+        studyComment = studyCommentRepository.findAll().get(0);
 
         assertThat(studyComment.getId()).isNotNull();
     }
@@ -87,7 +87,7 @@ class StudyCommentDomainServiceTest {
 
     @Test
     void 스터디_댓글_수정_실패__작성자가_아님() {
-        studyComment = studyCommentRepository.save(StudyComment.create(study, leader, "message"));
+        studyComment = studyCommentRepository.save(createStudyComment(study, leader));
 
         studyCommentService.create(study.getId(), leader.getId(), "message");
 
@@ -98,7 +98,7 @@ class StudyCommentDomainServiceTest {
 
     @Test
     void 스터디_댓글_삭제_성공() {
-        studyComment = studyCommentRepository.save(StudyComment.create(study, leader, "message"));
+        studyComment = studyCommentRepository.save(createStudyComment(study, leader));
 
         studyCommentService.create(study.getId(), leader.getId(), "message");
 
@@ -111,7 +111,7 @@ class StudyCommentDomainServiceTest {
 
     @Test
     void 스터디_댓글_삭제_실패__작성한_유저가_아님() {
-        studyComment = studyCommentRepository.save(StudyComment.create(study, leader, "message"));
+        studyComment = studyCommentRepository.save(createStudyComment(study, leader));
 
         studyCommentService.create(study.getId(), leader.getId(), "message");
 
