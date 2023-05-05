@@ -32,9 +32,9 @@ class StudyCommentTest {
 
     @Test
     void 스터디_댓글_생성_성공() {
-        StudyComment studyComment = StudyComment.create(study, leader, "댓글");
+        StudyComment studyComment = createStudyComment(study, leader);
 
-        assertThat(studyComment.getComment()).isEqualTo("댓글");
+        assertThat(studyComment.getComment()).isEqualTo("comment");
         assertThat(studyComment.getUser()).isSameAs(leader);
         assertThat(studyComment.getStatus()).isEqualTo(CREATED);
         assertThat(studyComment.getCreateAt()).isNotNull();
