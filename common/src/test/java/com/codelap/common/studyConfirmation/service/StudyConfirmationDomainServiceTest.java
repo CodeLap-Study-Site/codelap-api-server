@@ -6,6 +6,8 @@ import com.codelap.common.studyConfirmation.domain.StudyConfirmationFile;
 import com.codelap.common.studyConfirmation.domain.StudyConfirmationRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
+import com.codelap.fixture.StudyConfirmationFixture;
+import com.codelap.fixture.StudyFixture;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,9 @@ import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatu
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static com.codelap.common.support.TechStack.Java;
 import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.StudyConfirmationFixture.*;
+import static com.codelap.fixture.StudyConfirmationFixture.createStudyConfirmation;
+import static com.codelap.fixture.StudyFixture.*;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,25 +49,21 @@ class StudyConfirmationDomainServiceTest {
     private Study study;
     private User member;
     private User leader;
-    private StudyConfirmationFile file;
 
     @BeforeEach
     void setUp() {
         leader = userRepository.save(createActivateUser("leader"));
         member = userRepository.save(createActivateUser("member"));
 
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
+        study = studyRepository.save(createStudy(leader));
 
-        study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList));
         study.addMember(member);
-
-        file = StudyConfirmationFile.create("saved", "original", 10L);
     }
 
     @Test
     void 스터디_인증_생성_성공() {
+        StudyConfirmationFile file = StudyConfirmationFile.create("saved", "original", 10L);
+
         studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
@@ -74,14 +75,16 @@ class StudyConfirmationDomainServiceTest {
     void 스터디_인증_생성_실패__해당_유저가_아님() {
         User fakeUser = userRepository.save(createActivateUser("fakeUser"));
 
+        List<StudyConfirmationFile> files = createStudyConfirmationFiles();
+
         assertThatActorValidateCodeLapException().isThrownBy(() ->
-                studyConfirmationService.create(study.getId(), fakeUser.getId(), "title", "content", List.of(file))
+                studyConfirmationService.create(study.getId(), fakeUser.getId(), "title", "content", files)
         );
     }
 
     @Test
     void 스터디_인증_확인_성공() {
-        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+        studyConfirmationRepository.save(createStudyConfirmation(study, member));
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
@@ -92,7 +95,7 @@ class StudyConfirmationDomainServiceTest {
 
     @Test
     void 스터디_인증_확인_실패__리더가_아님() {
-        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+        studyConfirmationRepository.save(createStudyConfirmation(study, member));
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
@@ -103,7 +106,7 @@ class StudyConfirmationDomainServiceTest {
 
     @Test
     void 스터디_인증_거절_성공() {
-        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+        studyConfirmationRepository.save(createStudyConfirmation(study, member));
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
@@ -114,7 +117,7 @@ class StudyConfirmationDomainServiceTest {
 
     @Test
     void 스터디_인증_거절_실패__리더가_아님() {
-        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+        studyConfirmationRepository.save(createStudyConfirmation(study, member));
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
@@ -125,33 +128,37 @@ class StudyConfirmationDomainServiceTest {
 
     @Test
     void 스터디_인증_재인증_성공() {
-        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+        studyConfirmationRepository.save(createStudyConfirmation(study, member));
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
         studyConfirmation.setStatus(REJECTED);
 
-        studyConfirmationService.reConfirm(studyConfirmation.getId(), member.getId(), "title", "content", List.of(file));
+        List<StudyConfirmationFile> files = createStudyConfirmationFiles();
+
+        studyConfirmationService.reConfirm(studyConfirmation.getId(), member.getId(), "title", "content", files);
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(CREATED);
     }
 
     @Test
     void 스터디_인증_재인증_실패__사용자가_인증의_주인이_아님() {
-        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+        studyConfirmationRepository.save(createStudyConfirmation(study, member));
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
         User fakeUser = userRepository.save(createActivateUser("fakeUser"));
 
+        List<StudyConfirmationFile> files = createStudyConfirmationFiles();
+
         assertThatActorValidateCodeLapException().isThrownBy(() ->
-                studyConfirmationService.reConfirm(studyConfirmation.getId(), fakeUser.getId(), "title", "content", List.of(file))
+                studyConfirmationService.reConfirm(studyConfirmation.getId(), fakeUser.getId(), "title", "content", files)
         );
     }
 
     @Test
     void 스터디_인증_취소_성공() {
-        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+        studyConfirmationRepository.save(createStudyConfirmation(study, member));
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
@@ -162,7 +169,7 @@ class StudyConfirmationDomainServiceTest {
 
     @Test
     void 스터디_인증_취소_실패__사용자가_인증의_주인이_아님() {
-        studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
+        studyConfirmationRepository.save(createStudyConfirmation(study, member));
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
