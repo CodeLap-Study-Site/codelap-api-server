@@ -38,7 +38,7 @@ class StudyNoticeTest {
 
         assertThat(studyNotice.getTitle()).isEqualTo("title");
         assertThat(studyNotice.getContents()).isEqualTo("content");
-        assertThat(studyNotice.getFiles()).isEqualTo(studyNotice.getFiles());
+        assertThat(studyNotice.getFiles()).isNotNull();
     }
 
     @ParameterizedTest
