@@ -83,8 +83,6 @@ class StudyCommentDomainServiceTest {
     void 스터디_댓글_수정_실패__작성자가_아님() {
         studyComment = studyCommentRepository.save(createStudyComment(study, leader));
 
-        studyCommentService.create(study.getId(), leader.getId(), "message");
-
         User fakeMember = userRepository.save(createActivateUser("fakeMember"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyCommentService.update(studyComment.getId(), fakeMember.getId(), "updatedComment"));
@@ -93,8 +91,6 @@ class StudyCommentDomainServiceTest {
     @Test
     void 스터디_댓글_삭제_성공() {
         studyComment = studyCommentRepository.save(createStudyComment(study, leader));
-
-        studyCommentService.create(study.getId(), leader.getId(), "message");
 
         studyCommentService.delete(studyComment.getId(), leader.getId());
 
@@ -106,8 +102,6 @@ class StudyCommentDomainServiceTest {
     @Test
     void 스터디_댓글_삭제_실패__작성한_유저가_아님() {
         studyComment = studyCommentRepository.save(createStudyComment(study, leader));
-
-        studyCommentService.create(study.getId(), leader.getId(), "message");
 
         User fakeMember = userRepository.save(createActivateUser("fakeMember"));
 
