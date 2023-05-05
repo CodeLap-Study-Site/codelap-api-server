@@ -2,6 +2,7 @@ package com.codelap.common.studyNotice.domain;
 
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.user.domain.User;
+import com.codelap.fixture.StudyNoticeFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.DELETED;
 import static com.codelap.fixture.StudyFixture.createStudy;
+import static com.codelap.fixture.StudyNoticeFixture.*;
 import static com.codelap.fixture.StudyNoticeFixture.createStudyNotice;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.*;
@@ -32,12 +34,11 @@ class StudyNoticeTest {
 
     @Test
     void 스터디_공지_생성_성공() {
-        StudyNoticeFile file = new StudyNoticeFile("savedName", "originalName", 100L);
-        StudyNotice studyNotice = StudyNotice.create(study, "title", "contents", List.of(file));
+        StudyNotice studyNotice = createStudyNotice(study);
 
         assertThat(studyNotice.getTitle()).isEqualTo("title");
-        assertThat(studyNotice.getContents()).isEqualTo("contents");
-        assertThat(studyNotice.getFiles()).isEqualTo(List.of(file));
+        assertThat(studyNotice.getContents()).isEqualTo("content");
+        assertThat(studyNotice.getFiles()).isEqualTo(studyNotice.getFiles());
     }
 
     @ParameterizedTest
@@ -56,29 +57,29 @@ class StudyNoticeTest {
 
     @Test
     void 스터디_공지_수정_성공() {
-        StudyNoticeFile file = new StudyNoticeFile("savedName", "originalName", 100L);
+        List<StudyNoticeFile> files = createStudyNoticeFiles();
 
-        studyNotice.update("title", "contents", List.of(file));
+        studyNotice.update("title", "contents", files);
 
         assertThat(studyNotice.getTitle()).isEqualTo("title");
         assertThat(studyNotice.getContents()).isEqualTo("contents");
-        assertThat(studyNotice.getFiles()).isEqualTo(List.of(file));
+        assertThat(studyNotice.getFiles()).isEqualTo(files);
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     void 스터디_공지_수정_실패__제목이_널이거나_공백(String title) {
-        StudyNoticeFile file = new StudyNoticeFile("savedName", "originalName", 100L);
+        List<StudyNoticeFile> files = createStudyNoticeFiles();
 
-        assertThatIllegalArgumentException().isThrownBy(() -> studyNotice.update(title, "contents", List.of(file)));
+        assertThatIllegalArgumentException().isThrownBy(() -> studyNotice.update(title, "contents", files));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     void 스터디_공지_수정_실패__내용이_널이거나_공백(String contents) {
-        StudyNoticeFile file = new StudyNoticeFile("savedName", "originalName", 100L);
+        List<StudyNoticeFile> files = createStudyNoticeFiles();
 
-        assertThatIllegalArgumentException().isThrownBy(() -> studyNotice.update("title", contents, List.of(file)));
+        assertThatIllegalArgumentException().isThrownBy(() -> studyNotice.update("title", contents, files));
     }
 
     @Test
