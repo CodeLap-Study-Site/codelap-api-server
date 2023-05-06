@@ -2,6 +2,7 @@ package com.codelap.common.studyView.domain;
 
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.user.domain.User;
+import com.codelap.fixture.StudyViewFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import static com.codelap.fixture.StudyFixture.createStudy;
+import static com.codelap.fixture.StudyViewFixture.*;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
@@ -25,10 +27,10 @@ class StudyViewTest {
 
     @Test
     void 스터디_조회수_생성_성공() {
-        StudyView studyView = StudyView.create(study, "1.1.1.1");
+        StudyView studyView = createStudyView(study);
 
         Assertions.assertThat(studyView.getStudy()).isNotNull();
-        Assertions.assertThat(studyView.getIpAddress()).isEqualTo("1.1.1.1");
+        Assertions.assertThat(studyView.getIpAddress()).isEqualTo("ipAddress");
     }
 
     @Test
