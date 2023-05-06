@@ -1,9 +1,6 @@
 package com.codelap.common.studyNoticeComment.service;
 
-import com.codelap.common.study.domain.Study;
-import com.codelap.common.study.domain.StudyNeedCareer;
-import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.StudyTechStack;
+import com.codelap.common.study.domain.*;
 import com.codelap.common.studyNotice.domain.StudyNotice;
 import com.codelap.common.studyNotice.domain.StudyNoticeFile;
 import com.codelap.common.studyNotice.domain.StudyNoticeRepository;
@@ -11,6 +8,8 @@ import com.codelap.common.studyNoticeComment.domain.StudyNoticeComment;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
+import com.codelap.fixture.StudyNoticeCommentFixture;
+import com.codelap.fixture.StudyNoticeFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,6 +28,8 @@ import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentSta
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static com.codelap.common.support.TechStack.Java;
 import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.StudyFixture.createStudy;
+import static com.codelap.fixture.StudyNoticeCommentFixture.*;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -36,7 +37,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 @Transactional
 @SpringBootTest
 public class StudyNoticeCommentDomainServiceTest {
-
 
     @Autowired
     private StudyNoticeCommentService studyNoticeCommentService;
@@ -50,6 +50,9 @@ public class StudyNoticeCommentDomainServiceTest {
     @Autowired
     private StudyNoticeCommentRepository studyNoticeCommentRepository;
 
+    @Autowired
+    private StudyRepository studyRepository;
+
     private StudyNotice studyNotice;
     private Study study;
     private User leader;
@@ -60,17 +63,11 @@ public class StudyNoticeCommentDomainServiceTest {
         leader = userRepository.save(createActivateUser("leader"));
         member = userRepository.save(createActivateUser("member"));
 
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
-
-        study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
+        study = studyRepository.save(createStudy(leader));
 
         study.addMember(member);
 
-        StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 100L);
-
-        studyNotice = studyNoticeRepository.save(StudyNotice.create(study, "title", "contents", List.of(file)));
+        studyNotice = studyNoticeRepository.save(StudyNoticeFixture.createStudyNotice(study));
     }
 
     @Test
@@ -90,7 +87,7 @@ public class StudyNoticeCommentDomainServiceTest {
 
     @Test
     void 스터디_공지_댓글_삭제_성공() {
-        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice.getId(), member.getId(), "content");
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentRepository.save(createStudyNoticeComment(studyNotice, member));
 
         studyNoticeCommentService.delete(studyNoticeComment.getId(), member.getId());
 
@@ -101,7 +98,7 @@ public class StudyNoticeCommentDomainServiceTest {
 
     @Test
     void 스터디_공지_댓글_삭제_실패__작성한_유저가_아님() {
-        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice.getId(), member.getId(), "content");
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentRepository.save(createStudyNoticeComment(studyNotice, member));
 
         User fakeUser = userRepository.save(createActivateUser("fakeUser"));
 
@@ -110,7 +107,7 @@ public class StudyNoticeCommentDomainServiceTest {
 
     @Test
     void 스터디_공지_댓글_수정_성공() {
-        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice.getId(), member.getId(), "content");
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentRepository.save(createStudyNoticeComment(studyNotice, member));
 
         studyNoticeCommentService.update(studyNoticeComment.getId(), member.getId(), "content");
 
@@ -119,7 +116,7 @@ public class StudyNoticeCommentDomainServiceTest {
 
     @Test
     void 스터디_공지_댓글_수정_실패__작성한_유저가_아님() {
-        StudyNoticeComment studyNoticeComment = studyNoticeCommentService.create(studyNotice.getId(), member.getId(), "content");
+        StudyNoticeComment studyNoticeComment = studyNoticeCommentRepository.save(createStudyNoticeComment(studyNotice, member));
 
         User fakeUser = userRepository.save(createActivateUser("fakeUser"));
 
