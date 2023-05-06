@@ -2,6 +2,7 @@ package com.codelap.common.studyRequest.domain;
 
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.user.domain.User;
+import com.codelap.fixture.StudyRequestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,11 +33,11 @@ class StudyRequestTest {
 
     @Test
     void 스터디_참가_신청_성공() {
-        StudyRequest studyRequest = StudyRequest.create(user, study, "참여신청");
+        StudyRequest studyRequest = createStudyRequest(study, user);
 
         assertThat(studyRequest.getUser()).isEqualTo(user);
         assertThat(studyRequest.getStudy()).isEqualTo(study);
-        assertThat(studyRequest.getMessage()).isEqualTo("참여신청");
+        assertThat(studyRequest.getMessage()).isEqualTo("message");
         assertThat(studyRequest.getStatus()).isEqualTo(REQUESTED);
         assertThat(studyRequest.getCreatedAt()).isNotNull();
     }

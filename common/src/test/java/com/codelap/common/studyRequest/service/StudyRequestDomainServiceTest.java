@@ -5,6 +5,8 @@ import com.codelap.common.studyRequest.domain.StudyRequest;
 import com.codelap.common.studyRequest.domain.StudyRequestRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
+import com.codelap.fixture.StudyFixture;
+import com.codelap.fixture.StudyRequestFixture;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,8 @@ import static com.codelap.common.studyRequest.domain.StudyRequestStatus.*;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
 import static com.codelap.common.support.TechStack.Java;
 import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.StudyFixture.*;
+import static com.codelap.fixture.StudyRequestFixture.*;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,14 +53,9 @@ class StudyRequestDomainServiceTest {
         leader = userRepository.save(createActivateUser("leader"));
         user = userRepository.save(createActivateUser("user"));
 
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
+        study = studyRepository.save(createStudy(leader));
 
-        study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList));
-
-        studyRequest = StudyRequest.create(user, study, "message");
-        studyRequest = studyRequestRepository.save(studyRequest);
+        studyRequest= studyRequestRepository.save(createStudyRequest(study, user));
     }
 
     @Test
