@@ -27,10 +27,10 @@ class StudyViewTest {
 
     @Test
     void 스터디_조회수_생성_성공() {
-        StudyView studyView = createStudyView(study);
+        StudyView studyView = StudyView.create(study, "1.1.1.1");
 
         Assertions.assertThat(studyView.getStudy()).isNotNull();
-        Assertions.assertThat(studyView.getIpAddress()).isEqualTo("ipAddress");
+        Assertions.assertThat(studyView.getIpAddress()).isEqualTo("1.1.1.1");
     }
 
     @Test
