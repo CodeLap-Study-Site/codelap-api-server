@@ -1,29 +1,21 @@
 package com.codelap.common.studyRequest.service;
 
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.studyRequest.domain.StudyRequest;
 import com.codelap.common.studyRequest.domain.StudyRequestRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
-import com.codelap.fixture.StudyFixture;
-import com.codelap.fixture.StudyRequestFixture;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.studyRequest.domain.StudyRequestStatus.*;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
-import static com.codelap.common.support.TechStack.Java;
-import static com.codelap.common.support.TechStack.Spring;
-import static com.codelap.fixture.StudyFixture.*;
-import static com.codelap.fixture.StudyRequestFixture.*;
+import static com.codelap.fixture.StudyFixture.createStudy;
+import static com.codelap.fixture.StudyRequestFixture.createStudyRequest;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,7 +47,7 @@ class StudyRequestDomainServiceTest {
 
         study = studyRepository.save(createStudy(leader));
 
-        studyRequest= studyRequestRepository.save(createStudyRequest(study, user));
+        studyRequest = studyRequestRepository.save(createStudyRequest(study, user));
     }
 
     @Test

@@ -1,10 +1,10 @@
 package com.codelap.api.controller.studyComment;
 
 import com.codelap.api.support.ApiTest;
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.studyComment.domain.StudyComment;
 import com.codelap.common.studyComment.domain.StudyCommentRepository;
-import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,17 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.List;
-
 import static com.codelap.api.controller.studyComment.dto.StudyCommentCreateDto.StudyCommentCreateRequest;
 import static com.codelap.api.controller.studyComment.dto.StudyCommentDeleteDto.StudyCommentDeleteRequest;
 import static com.codelap.api.controller.studyComment.dto.StudyCommentUpdateDto.StudyCommentUpdateRequest;
-import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.studyComment.domain.StudyCommentStatus.DELETED;
-import static com.codelap.common.support.TechStack.Java;
-import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.StudyCommentFixture.createStudyComment;
+import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -42,36 +37,27 @@ public class StudyCommentControllerTest extends ApiTest {
     @Autowired
     private StudyCommentRepository studyCommentRepository;
 
-    @Autowired
-    private StudyCommentService studyCommentService;
-
     private User leader;
-
     private User member;
-
     private Study study;
-
-    private List<StudyTechStack> techStackList;
-
     private StudyComment studyComment;
 
     @BeforeEach
     void setUp() {
-        member = prepareLoggedInUser();
         leader = userRepository.save(createActivateUser());
+        member = userRepository.save(createActivateUser());
 
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
-
-        study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader, techStackList));
-
+        study = studyRepository.save(createStudy(leader));
         study.addMember(member);
+
+        studyComment = studyCommentRepository.save(createStudyComment(study, member));
     }
 
     @Test
     @WithUserDetails
     void 스터디_댓글_생성_성공() throws Exception {
+        login(member);
+
         StudyCommentCreateRequest req = new StudyCommentCreateRequest(study.getId(), "createMessage");
 
         mockMvc.perform(post("/study-comment")
@@ -84,7 +70,7 @@ public class StudyCommentControllerTest extends ApiTest {
                         preprocessResponse(prettyPrint())
                 ));
 
-        StudyComment foundStudyComment = studyCommentRepository.findAll().get(0);
+        StudyComment foundStudyComment = studyCommentRepository.findAll().get(1);
 
         assertThat(foundStudyComment.getComment()).isEqualTo(req.message());
     }
@@ -92,7 +78,7 @@ public class StudyCommentControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_댓글_수정_성공() throws Exception {
-        studyComment = studyCommentRepository.save(StudyComment.create(study, member, "message"));
+        login(member);
 
         StudyCommentUpdateRequest req = new StudyCommentUpdateRequest(studyComment.getId(), "updatedMessage");
 
@@ -114,7 +100,7 @@ public class StudyCommentControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_댓글_삭제_성공() throws Exception {
-        studyComment = studyCommentRepository.save(StudyComment.create(study, member, "message"));
+        login(member);
 
         StudyCommentDeleteRequest req = new StudyCommentDeleteRequest(studyComment.getId());
 

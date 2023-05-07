@@ -1,14 +1,13 @@
 package com.codelap.common.studyNoticeComment.service;
 
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.studyNotice.domain.StudyNotice;
-import com.codelap.common.studyNotice.domain.StudyNoticeFile;
 import com.codelap.common.studyNotice.domain.StudyNoticeRepository;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeComment;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
-import com.codelap.fixture.StudyNoticeCommentFixture;
 import com.codelap.fixture.StudyNoticeFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,18 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.codelap.common.study.domain.Study.create;
-import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.DELETED;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
-import static com.codelap.common.support.TechStack.Java;
-import static com.codelap.common.support.TechStack.Spring;
 import static com.codelap.fixture.StudyFixture.createStudy;
-import static com.codelap.fixture.StudyNoticeCommentFixture.*;
+import static com.codelap.fixture.StudyNoticeCommentFixture.createStudyNoticeComment;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

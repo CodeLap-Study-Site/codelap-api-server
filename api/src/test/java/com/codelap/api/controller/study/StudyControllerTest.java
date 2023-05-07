@@ -39,7 +39,6 @@ import static com.codelap.common.study.domain.StudyStatus.*;
 import static com.codelap.common.support.TechStack.*;
 import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.UserFixture.createActivateUser;
-import static com.codelap.fixture.UserFixture.createUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -70,7 +69,7 @@ class StudyControllerTest extends ApiTest {
 
     @BeforeEach
     void setUp() {
-        leader = prepareLoggedInUser();
+        leader = userRepository.save(createActivateUser("leader"));
         member = userRepository.save(createActivateUser("member"));
         study = studyRepository.save(createStudy(leader));
     }
@@ -78,6 +77,8 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_생성_성공() throws Exception {
+        login(leader);
+
         StudyTechStack studyTechStack = new StudyTechStack(Java);
         StudyCreateRequestStudyPeriodDto periodDto = new StudyCreateRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyCreateRequestStudyNeedCareerDto careerDto = new StudyCreateRequestStudyNeedCareerDto("직무", 10);
@@ -106,6 +107,8 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_수정_성공() throws Exception {
+        login(leader);
+
         StudyTechStack studyTechStack = new StudyTechStack(Java);
         StudyUpdateRequestStudyPeriodDto periodDto = new StudyUpdateRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyUpdateRequestStudyNeedCareerDto careerDto = new StudyUpdateRequestStudyNeedCareerDto("updateOccupation", 5);
@@ -134,6 +137,8 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_진행_성공() throws Exception {
+        login(leader);
+
         StudyProceedRequest req = new StudyProceedRequest(study.getId());
 
         setMockMvcPerform(POST, req, "/study/proceed");
@@ -146,9 +151,7 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_멤버_추방_성공() throws Exception {
-        member = userRepository.save(createUser());
-
-        study.addMember(member);
+        login(leader);
 
         StudyRemoveMemberRequest req = new StudyRemoveMemberRequest(study.getId(), member.getId());
 
@@ -162,6 +165,8 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_닫기_성공() throws Exception {
+        login(leader);
+
         StudyCloseRequest req = new StudyCloseRequest(study.getId());
 
         setMockMvcPerform(POST, req, "/study/close");
@@ -174,8 +179,7 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_나가기_성공() throws Exception {
-        member = prepareLoggedInUser();
-        study.addMember(member);
+        login(member);
 
         StudyLeaveRequest req = new StudyLeaveRequest(study.getId(), member.getId());
 
@@ -189,6 +193,8 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_삭제_성공() throws Exception {
+        login(leader);
+
         StudyDeleteRequest req = new StudyDeleteRequest(study.getId());
 
         setMockMvcPerform(DELETE, req, "/study/delete");
@@ -201,6 +207,8 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_오픈_성공() throws Exception {
+        login(leader);
+
         study.proceed();
 
         StudyOpenRequestStudyPeriodDto periodDto = new StudyOpenRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
