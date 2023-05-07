@@ -1,20 +1,17 @@
 package com.codelap.api.controller.studyNotice;
 
 import com.codelap.api.support.ApiTest;
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.studyNotice.domain.StudyNotice;
-import com.codelap.common.studyNotice.domain.StudyNoticeFile;
 import com.codelap.common.studyNotice.domain.StudyNoticeRepository;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeCreateDto.StudyNoticeCreateRequest;
@@ -22,11 +19,11 @@ import static com.codelap.api.controller.studyNotice.dto.StudyNoticeCreateDto.St
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeDeleteDto.StudyNoticeDeleteRequest;
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeUpdateDto.StudyNoticeUpdateRequest;
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeUpdateDto.StudyNoticeUpdateRequestFileDto;
-import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.CREATED;
 import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.DELETED;
-import static com.codelap.common.support.TechStack.Java;
-import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.StudyFixture.createStudy;
+import static com.codelap.fixture.StudyNoticeFixture.createStudyNotice;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -48,28 +45,20 @@ class StudyNoticeControllerTest extends ApiTest {
 
     private User leader;
     private Study study;
-    private List<StudyTechStack> techStackList;
-
     private StudyNotice studyNotice;
 
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
-        leader = prepareLoggedInUser();
-
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
-
-        study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader, techStackList));
-
-        StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 100L);
-        studyNotice = studyNoticeRepository.save(StudyNotice.create(study, "title", "contents", List.of(file)));
+        leader = userRepository.save(createActivateUser());
+        study = studyRepository.save(createStudy(leader));
+        studyNotice = studyNoticeRepository.save(createStudyNotice(study));
     }
 
     @Test
     @WithUserDetails
     void 스터디_공지_생성_성공() throws Exception {
+        login(leader);
+
         StudyNoticeCreateRequestFileDto file = new StudyNoticeCreateRequestFileDto("savedName", "originalName", 100L);
         StudyNoticeCreateRequest req = new StudyNoticeCreateRequest(study.getId(), "title", "contents", List.of(file));
 
@@ -83,7 +72,7 @@ class StudyNoticeControllerTest extends ApiTest {
                         preprocessResponse(prettyPrint())
                 ));
 
-        StudyNotice studyNotice = studyNoticeRepository.findAll().get(0);
+        StudyNotice studyNotice = studyNoticeRepository.findAll().get(1);
 
         assertThat(studyNotice.getId()).isNotNull();
         assertThat(studyNotice.getStudy()).isSameAs(study);
@@ -96,8 +85,9 @@ class StudyNoticeControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_공지_수정_성공() throws Exception {
-        StudyNoticeUpdateRequestFileDto file = new StudyNoticeUpdateRequestFileDto("savedName", "originalName", 100L);
+        login(leader);
 
+        StudyNoticeUpdateRequestFileDto file = new StudyNoticeUpdateRequestFileDto("savedName", "originalName", 100L);
         StudyNoticeUpdateRequest req = new StudyNoticeUpdateRequest(studyNotice.getId(), "title", "contents", List.of(file));
 
         mockMvc.perform(post("/study-notice/update")
@@ -121,6 +111,8 @@ class StudyNoticeControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_공지_삭제_성공() throws Exception {
+        login(leader);
+
         StudyNoticeDeleteRequest req = new StudyNoticeDeleteRequest(studyNotice.getId());
 
         mockMvc.perform(delete("/study-notice")

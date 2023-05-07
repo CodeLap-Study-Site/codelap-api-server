@@ -2,7 +2,6 @@ package com.codelap.common.studyRequest.domain;
 
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.user.domain.User;
-import com.codelap.fixture.StudyRequestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

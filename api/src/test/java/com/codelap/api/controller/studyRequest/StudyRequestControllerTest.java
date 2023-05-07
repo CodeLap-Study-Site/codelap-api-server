@@ -44,7 +44,6 @@ class StudyRequestControllerTest extends ApiTest {
         leader = userRepository.save(createActivateUser());
         user = userRepository.save(createActivateUser());
         study = studyRepository.save(createStudy(leader));
-
         studyRequest = studyRequestRepository.save(createStudyRequest(study, user));
     }
 
@@ -103,7 +102,7 @@ class StudyRequestControllerTest extends ApiTest {
 
         StudyRequestCancelRequest req = new StudyRequestCancelRequest(studyRequest.getId());
 
-        setMockMvcPerform(POST ,req, "/study-request/cancel");
+        setMockMvcPerform(POST, req, "/study-request/cancel");
 
         StudyRequest foundStudyRequest = studyRequestRepository.findById(studyRequest.getId()).orElseThrow();
 

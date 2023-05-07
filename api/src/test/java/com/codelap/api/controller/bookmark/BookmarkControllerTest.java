@@ -41,7 +41,6 @@ public class BookmarkControllerTest extends ApiTest {
     void setUp() {
         leader = userRepository.save(createActivateUser());
         member = userRepository.save(createActivateUser());
-
         study = studyRepository.save(StudyFixture.createStudy(leader));
     }
 

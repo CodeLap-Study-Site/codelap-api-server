@@ -1,9 +1,9 @@
 package com.codelap.api.controller.studyNoticeComment;
 
 import com.codelap.api.support.ApiTest;
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.studyNotice.domain.StudyNotice;
-import com.codelap.common.studyNotice.domain.StudyNoticeFile;
 import com.codelap.common.studyNotice.domain.StudyNoticeRepository;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeComment;
 import com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentRepository;
@@ -14,18 +14,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.List;
-
 import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentCreateDto.StudyNoticeCommentCreateRequest;
 import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentDeleteDto.StudyNoticeCommentDeleteRequest;
 import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentUpdateDto.StudyNoticeCommentUpdateReqeust;
-import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.CREATED;
 import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.DELETED;
-import static com.codelap.common.support.TechStack.Java;
-import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.StudyFixture.createStudy;
+import static com.codelap.fixture.StudyNoticeCommentFixture.createStudyNoticeComment;
+import static com.codelap.fixture.StudyNoticeFixture.createStudyNotice;
+import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -53,31 +50,24 @@ class StudyNoticeCommentControllerTest extends ApiTest {
     private User member;
     private Study study;
     private StudyNotice studyNotice;
-    private List<StudyTechStack> techStackList;
 
     @BeforeEach
     void setUp() {
-        leader = prepareLoggedInUser();
-        member = prepareLoggedInUser();
+        leader = userRepository.save(createActivateUser());
+        member = userRepository.save(createActivateUser());
 
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
-
-        study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader, techStackList));
-
+        study = studyRepository.save(createStudy(leader));
         study.addMember(member);
 
-        StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 100L);
-
-        studyNotice = studyNoticeRepository.save(StudyNotice.create(study, "title", "contents", List.of(file)));
-
-        studyNoticeComment = studyNoticeCommentRepository.save(StudyNoticeComment.create(studyNotice, member, "content"));
+        studyNotice = studyNoticeRepository.save(createStudyNotice(study));
+        studyNoticeComment = studyNoticeCommentRepository.save(createStudyNoticeComment(studyNotice, member));
     }
 
     @Test
     @WithUserDetails
     void 스터디_공지_댓글_생성_성공() throws Exception {
+        login(member);
+
         StudyNoticeCommentCreateRequest req = new StudyNoticeCommentCreateRequest(studyNotice.getId(), "content");
 
         mockMvc.perform(post("/study-notice-comment")
@@ -101,6 +91,8 @@ class StudyNoticeCommentControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_공지_댓글_삭제_성공() throws Exception {
+        login(member);
+
         StudyNoticeCommentDeleteRequest req = new StudyNoticeCommentDeleteRequest(studyNoticeComment.getId());
 
         mockMvc.perform(delete("/study-notice-comment")
@@ -120,7 +112,9 @@ class StudyNoticeCommentControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 스터디_공지_댓글_수정_성공() throws Exception {
-        StudyNoticeCommentUpdateReqeust req = new StudyNoticeCommentUpdateReqeust(studyNoticeComment.getId(), "contentt");
+        login(member);
+
+        StudyNoticeCommentUpdateReqeust req = new StudyNoticeCommentUpdateReqeust(studyNoticeComment.getId(), "content");
 
         mockMvc.perform(post("/study-notice-comment/update")
                         .contentType(APPLICATION_JSON)
@@ -133,7 +127,7 @@ class StudyNoticeCommentControllerTest extends ApiTest {
                 ));
 
         StudyNoticeComment foundStudyNoticeComment = studyNoticeCommentRepository.findById(studyNoticeComment.getId()).orElseThrow();
-        assertThat(foundStudyNoticeComment.getContent()).isEqualTo("contentt");
+        assertThat(foundStudyNoticeComment.getContent()).isEqualTo("content");
     }
 }
 

@@ -2,7 +2,6 @@ package com.codelap.common.study.service;
 
 import com.codelap.common.study.domain.*;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import com.codelap.fixture.StudyFixture;
 import jakarta.transaction.Transactional;
@@ -163,7 +162,6 @@ class StudyDomainServiceTest {
 
     @Test
     void 스터디_닫기_실패__리더가_아님() {
-        UserCareer career = UserCareer.create("직무", 1);
         User fakeLeader = userRepository.save(createActivateUser("fakeUser"));
 
         assertThatActorValidateCodeLapException().isThrownBy(() -> studyService.close(study.getId(), fakeLeader.getId()));
@@ -171,7 +169,6 @@ class StudyDomainServiceTest {
 
     @Test
     void 스터디_나가기_성공() {
-        UserCareer career = UserCareer.create("직무", 1);
         User member = userRepository.save(createActivateUser("member"));
 
         studyService.addMember(study.getId(), member.getId(), leader.getId());

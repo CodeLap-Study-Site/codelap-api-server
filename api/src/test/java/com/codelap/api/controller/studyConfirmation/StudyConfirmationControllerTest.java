@@ -1,19 +1,17 @@
 package com.codelap.api.controller.studyConfirmation;
 
 import com.codelap.api.support.ApiTest;
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.studyConfirmation.domain.StudyConfirmation;
 import com.codelap.common.studyConfirmation.domain.StudyConfirmationRepository;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserCareer;
 import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationConfirmDto.StudyConfirmationConfirmRequest;
@@ -23,11 +21,9 @@ import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmation
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationReConfirmDto.StudyConfirmationReConfirmRequestFileDto;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.StudyConfirmationRejectRequest;
 import static com.codelap.api.support.HttpMethod.POST;
-import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
-import static com.codelap.common.support.TechStack.Java;
-import static com.codelap.common.support.TechStack.Spring;
 import static com.codelap.fixture.StudyConfirmationFixture.createStudyConfirmation;
+import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,21 +41,12 @@ class StudyConfirmationControllerTest extends ApiTest {
     private User leader;
     private User member;
     private Study study;
-    private List<StudyTechStack> techStackList;
-
 
     @BeforeEach
     void setUp() {
-        UserCareer career = UserCareer.create("직무", 1);
         leader = userRepository.save(createActivateUser());
-
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-        techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
-
-        study = studyRepository.save(Study.create("팀", "정보", 4, HARD, period, needCareer, leader, techStackList));
-
         member = userRepository.save(createActivateUser());
+        study = studyRepository.save(createStudy(leader));
 
         study.addMember(member);
     }
@@ -70,7 +57,7 @@ class StudyConfirmationControllerTest extends ApiTest {
         login(member);
 
         StudyConfirmationCreateRequestFileDto file = new StudyConfirmationCreateRequestFileDto("savedName", "originalName", 100L);
-        StudyConfirmationCreateRequest req = new StudyConfirmationCreateRequest(study.getId(),"title", "contents", List.of(file));
+        StudyConfirmationCreateRequest req = new StudyConfirmationCreateRequest(study.getId(), "title", "contents", List.of(file));
 
         setMockMvcPerform(POST, req, "/study-confirmation", "study-confirmation/create");
 

@@ -4,10 +4,8 @@ import com.codelap.api.controller.user.dto.UserActivateDto.UserActivateRequest;
 import com.codelap.api.controller.user.dto.UserActivateDto.UserActivateRequestUserCareerDto;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.user.domain.User;
-import com.codelap.common.user.domain.UserRepository;
 import com.codelap.common.user.domain.UserTechStack;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.util.List;
@@ -27,10 +25,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 class UserControllerTest extends ApiTest {
-
-    @Autowired
-    UserRepository userRepository;
-
 
     @Test
     @WithUserDetails
