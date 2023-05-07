@@ -2,7 +2,8 @@ package com.codelap.common.bookmark.service;
 
 import com.codelap.common.bookmark.domain.Bookmark;
 import com.codelap.common.bookmark.domain.BookmarkRepository;
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
@@ -11,13 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
-
-import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.support.CodeLapExceptionTest.assertThatActorValidateCodeLapException;
-import static com.codelap.common.support.TechStack.Java;
-import static com.codelap.common.support.TechStack.Spring;
+import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,10 +45,7 @@ public class BookmarkDomainServiceTest {
         leader = userRepository.save(createActivateUser());
         member = userRepository.save(createActivateUser());
 
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-
-        study = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring))));
+        study = studyRepository.save(createStudy(leader));
     }
 
     @Test
