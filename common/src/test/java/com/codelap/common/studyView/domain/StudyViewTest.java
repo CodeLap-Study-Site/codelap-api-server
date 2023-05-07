@@ -2,6 +2,7 @@ package com.codelap.common.studyView.domain;
 
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.user.domain.User;
+import com.codelap.fixture.StudyViewFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import static com.codelap.fixture.StudyFixture.createStudy;
+import static com.codelap.fixture.StudyViewFixture.*;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
