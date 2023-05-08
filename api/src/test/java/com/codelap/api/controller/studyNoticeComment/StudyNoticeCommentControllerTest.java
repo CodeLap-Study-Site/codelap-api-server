@@ -17,6 +17,8 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentCreateDto.StudyNoticeCommentCreateRequest;
 import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentDeleteDto.StudyNoticeCommentDeleteRequest;
 import static com.codelap.api.controller.StudyNoticeComment.dto.StudyNoticeCommentUpdateDto.StudyNoticeCommentUpdateReqeust;
+import static com.codelap.api.support.HttpMethod.DELETE;
+import static com.codelap.api.support.HttpMethod.POST;
 import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.CREATED;
 import static com.codelap.common.studyNoticeComment.domain.StudyNoticeCommentStatus.DELETED;
 import static com.codelap.fixture.StudyFixture.createStudy;
@@ -24,12 +26,6 @@ import static com.codelap.fixture.StudyNoticeCommentFixture.createStudyNoticeCom
 import static com.codelap.fixture.StudyNoticeFixture.createStudyNotice;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StudyNoticeCommentControllerTest extends ApiTest {
 
@@ -70,15 +66,7 @@ class StudyNoticeCommentControllerTest extends ApiTest {
 
         StudyNoticeCommentCreateRequest req = new StudyNoticeCommentCreateRequest(studyNotice.getId(), "content");
 
-        mockMvc.perform(post("/study-notice-comment")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study-notice-comment/create",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/study-notice-comment");
 
         StudyNoticeComment foundStudyNoticeComment = studyNoticeCommentRepository.findById(studyNoticeComment.getId()).orElseThrow();
 
@@ -95,15 +83,7 @@ class StudyNoticeCommentControllerTest extends ApiTest {
 
         StudyNoticeCommentDeleteRequest req = new StudyNoticeCommentDeleteRequest(studyNoticeComment.getId());
 
-        mockMvc.perform(delete("/study-notice-comment")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study-notice-comment/delete",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(DELETE, req, "/study-notice-comment");
 
         StudyNoticeComment foundStudyNoticeComment = studyNoticeCommentRepository.findById(studyNoticeComment.getId()).orElseThrow();
         assertThat(foundStudyNoticeComment.getStatus()).isEqualTo(DELETED);
@@ -116,15 +96,7 @@ class StudyNoticeCommentControllerTest extends ApiTest {
 
         StudyNoticeCommentUpdateReqeust req = new StudyNoticeCommentUpdateReqeust(studyNoticeComment.getId(), "content");
 
-        mockMvc.perform(post("/study-notice-comment/update")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study-notice-comment/update",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/study-notice-comment/update");
 
         StudyNoticeComment foundStudyNoticeComment = studyNoticeCommentRepository.findById(studyNoticeComment.getId()).orElseThrow();
         assertThat(foundStudyNoticeComment.getContent()).isEqualTo("content");

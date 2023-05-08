@@ -93,9 +93,24 @@ public abstract class ApiTest {
         String identifier = urlInfo.length == 1 ? urlInfo[0].substring(1) : urlInfo[1];
 
         switch (httpMethod) {
+            case GET -> setMockMvcPerform(MockMvcRequestBuilders.get(url), (ResultMatcher) req, identifier);
+
             case POST -> setMockMvcPerform(MockMvcRequestBuilders.post(url), req, identifier);
 
             case DELETE -> setMockMvcPerform(MockMvcRequestBuilders.delete(url), req, identifier);
+
+            default -> throw new IllegalArgumentException("Unsupported HTTP method: " + httpMethod);
+        }
+    }
+
+    protected void setMockMvcPerform(HttpMethod httpMethod, String... urlInfo) throws Exception {
+        String url = urlInfo[0];
+        String identifier = urlInfo.length == 1 ? urlInfo[0].substring(1) : urlInfo[1];
+
+        switch (httpMethod) {
+            case POST -> setMockMvcPerform(MockMvcRequestBuilders.post(url), identifier);
+
+            case DELETE -> setMockMvcPerform(MockMvcRequestBuilders.delete(url), identifier);
 
             default -> throw new IllegalArgumentException("Unsupported HTTP method: " + httpMethod);
         }
@@ -125,11 +140,24 @@ public abstract class ApiTest {
                 .andDo(restDocsSet(identifier));
     }
 
+    private ResultActions setMockMvcPerform(MockHttpServletRequestBuilder method, String identifier) throws Exception {
+        return this.mockMvc.perform(method)
+                .andExpectAll(status().isOk())
+                .andDo(restDocsSet(identifier));
+    }
+
     private ResultActions setMockMvcPerform(MockHttpServletRequestBuilder method, MultiValueMap<String, String> params, ResultMatcher[] matchers, String identifier) throws Exception {
         return this.mockMvc.perform(method
                         .params(params))
                 .andExpect(status().isOk())
                 .andExpectAll(matchers)
+                .andDo(restDocsSet(identifier));
+    }
+
+    private ResultActions setMockMvcPerform(MockHttpServletRequestBuilder method, ResultMatcher matcher, String identifier) throws Exception {
+        return this.mockMvc.perform(method)
+                .andExpect(status().isOk())
+                .andExpectAll(matcher)
                 .andDo(restDocsSet(identifier));
     }
 }

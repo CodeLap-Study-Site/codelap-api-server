@@ -12,16 +12,12 @@ import java.util.List;
 
 import static com.codelap.api.controller.user.dto.UserUpdateDto.UserUpdateRequest;
 import static com.codelap.api.controller.user.dto.UserUpdateDto.UserUpdateRequestUserCareerDto;
+import static com.codelap.api.support.HttpMethod.*;
 import static com.codelap.common.support.TechStack.Java;
 import static com.codelap.common.user.domain.UserStatus.ACTIVATED;
 import static com.codelap.common.user.domain.UserStatus.DELETED;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 class UserControllerTest extends ApiTest {
@@ -36,15 +32,7 @@ class UserControllerTest extends ApiTest {
 
         UserActivateRequest req = new UserActivateRequest("name", dto, List.of(techStack));
 
-        mockMvc.perform(post("/user/activate")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("user/activate",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/user/activate");
 
         assertThat(user.getStatus()).isEqualTo(ACTIVATED);
         assertThat(user.getName()).isEqualTo("name");
@@ -64,15 +52,7 @@ class UserControllerTest extends ApiTest {
 
         UserUpdateRequest req = new UserUpdateRequest("updatedName", dto, List.of(techStack));
 
-        mockMvc.perform(post("/user/update")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("user/update",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/user/update");
 
         assertThat(user.getName()).isEqualTo("updatedName");
         assertThat(user.getCareer().getOccupation()).isEqualTo(dto.occupation());
@@ -86,13 +66,7 @@ class UserControllerTest extends ApiTest {
     void 유저_삭제_성공() throws Exception {
         User user = prepareLoggedInActiveUser();
 
-        mockMvc.perform(delete("/user"))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("user/delete",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(DELETE, "/user", "user/delete");
 
         assertThat(user.getStatus()).isEqualTo(DELETED);
     }
@@ -102,13 +76,6 @@ class UserControllerTest extends ApiTest {
     void 유저_활성화_상태_체크() throws Exception {
         prepareLoggedInActiveUser();
 
-        mockMvc.perform(get("/user/is-activated"))
-                .andExpectAll(
-                        jsonPath("$").value(true),
-                        status().isOk()
-                ).andDo(document("user/is-activated",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(GET, jsonPath("$").value(true), "/user/is-activated");
     }
 }

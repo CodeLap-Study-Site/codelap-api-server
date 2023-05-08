@@ -1,7 +1,8 @@
 package com.codelap.api.service.study;
 
 import com.codelap.common.bookmark.service.BookmarkService;
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.study.dto.GetStudiesCardDto;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.studyView.service.StudyViewService;
@@ -13,14 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.OPENED;
 import static com.codelap.common.support.TechStack.*;
+import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 
 @Transactional
@@ -47,9 +46,6 @@ class DefaultStudyAppServiceTest {
 
     private User leader;
     private User member;
-    private List<StudyTechStack> techStackList;
-    private Study study1;
-    private Study study2;
 
     @Test
     void 유저가_참여한_스터디_조회_성공() {
@@ -72,12 +68,7 @@ class DefaultStudyAppServiceTest {
     }
 
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-
-        techStackList = Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java));
-
-        study1 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java))));
+        Study study1 = studyRepository.save(createStudy(leader, Spring, Java));
 
         study1.addMember(member);
 
@@ -85,7 +76,7 @@ class DefaultStudyAppServiceTest {
         studyViewService.create(study1.getId(), "1.1.1.1");
         bookmarkService.create(study1.getId(), member.getId());
 
-        study2 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(JavaScript), new StudyTechStack(React))));
+        Study study2 = studyRepository.save(createStudy(leader, JavaScript, React));
 
         study2.addMember(member);
 

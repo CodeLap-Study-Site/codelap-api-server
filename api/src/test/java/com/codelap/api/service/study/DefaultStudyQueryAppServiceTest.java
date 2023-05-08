@@ -1,10 +1,10 @@
 package com.codelap.api.service.study;
 
 import com.codelap.common.bookmark.service.BookmarkService;
-import com.codelap.common.study.domain.*;
+import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.studyView.service.StudyViewService;
-import com.codelap.common.support.TechStack;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
 import jakarta.transaction.Transactional;
@@ -12,19 +12,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.codelap.common.study.domain.StudyDifficulty.NORMAL;
 import static com.codelap.common.study.domain.StudyStatus.OPENED;
 import static com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import static com.codelap.common.study.dto.GetStudiesCardDto.GetTechStackInfo;
 import static com.codelap.common.support.TechStack.*;
+import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,11 +48,7 @@ class DefaultStudyQueryAppServiceTest {
     BookmarkService bookmarkService;
 
     private User leader;
-
     private User member;
-    private List<StudyTechStack> techStackList;
-    private Study study1;
-    private Study study2;
 
     @Test
     void 유저가_참여한_스터디_조회_성공() {
@@ -64,10 +57,7 @@ class DefaultStudyQueryAppServiceTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        List<TechStack> studyTechStack = new ArrayList<>();
-        studyTechStack.add(React);
-
-        List<GetStudyInfo> allStudies = studyQueryDslAppService.getAttendedStudiesByUser(member, "open", studyTechStack);
+        List<GetStudyInfo> allStudies = studyQueryDslAppService.getAttendedStudiesByUser(member, "open", List.of(React));
 
         Map<Long, List<GetTechStackInfo>> techStacksMap = studyQueryDslAppService.getTechStacks(스터디_아이디_리스트_가져오기(allStudies))
                 .stream()
@@ -104,12 +94,7 @@ class DefaultStudyQueryAppServiceTest {
     }
 
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
-        StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
-        StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
-
-        techStackList = Arrays.asList(new StudyTechStack(Spring), new StudyTechStack(Java));
-
-        study1 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(React), new StudyTechStack(Java))));
+        Study study1 = studyRepository.save(createStudy(leader, Spring, Java));
 
         study1.addMember(member);
 
@@ -117,7 +102,7 @@ class DefaultStudyQueryAppServiceTest {
         studyViewService.create(study1.getId(), "1.1.1.1");
         bookmarkService.create(study1.getId(), member.getId());
 
-        study2 = studyRepository.save(Study.create("팀", "설명", 4, NORMAL, period, needCareer, leader, Arrays.asList(new StudyTechStack(JavaScript), new StudyTechStack(React))));
+        Study study2 = studyRepository.save(createStudy(leader, JavaScript, React));
 
         study2.addMember(member);
     }

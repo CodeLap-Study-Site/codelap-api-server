@@ -19,18 +19,14 @@ import static com.codelap.api.controller.studyNotice.dto.StudyNoticeCreateDto.St
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeDeleteDto.StudyNoticeDeleteRequest;
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeUpdateDto.StudyNoticeUpdateRequest;
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeUpdateDto.StudyNoticeUpdateRequestFileDto;
+import static com.codelap.api.support.HttpMethod.DELETE;
+import static com.codelap.api.support.HttpMethod.POST;
 import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.CREATED;
 import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.DELETED;
 import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.StudyNoticeFixture.createStudyNotice;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StudyNoticeControllerTest extends ApiTest {
 
@@ -62,15 +58,7 @@ class StudyNoticeControllerTest extends ApiTest {
         StudyNoticeCreateRequestFileDto file = new StudyNoticeCreateRequestFileDto("savedName", "originalName", 100L);
         StudyNoticeCreateRequest req = new StudyNoticeCreateRequest(study.getId(), "title", "contents", List.of(file));
 
-        mockMvc.perform(post("/study-notice")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study-notice/create",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/study-notice");
 
         StudyNotice studyNotice = studyNoticeRepository.findAll().get(1);
 
@@ -90,15 +78,7 @@ class StudyNoticeControllerTest extends ApiTest {
         StudyNoticeUpdateRequestFileDto file = new StudyNoticeUpdateRequestFileDto("savedName", "originalName", 100L);
         StudyNoticeUpdateRequest req = new StudyNoticeUpdateRequest(studyNotice.getId(), "title", "contents", List.of(file));
 
-        mockMvc.perform(post("/study-notice/update")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study-notice/update",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/study-notice/update");
 
         StudyNotice foundStudyNotice = studyNoticeRepository.findAll().get(0);
 
@@ -115,15 +95,7 @@ class StudyNoticeControllerTest extends ApiTest {
 
         StudyNoticeDeleteRequest req = new StudyNoticeDeleteRequest(studyNotice.getId());
 
-        mockMvc.perform(delete("/study-notice")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study-notice/delete",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(DELETE, req, "/study-notice");
 
         StudyNotice studyNotice = studyNoticeRepository.findAll().get(0);
 
