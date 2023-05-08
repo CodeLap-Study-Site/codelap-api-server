@@ -7,8 +7,6 @@ env:
   DEPLOYMENT_GROUP_NAME: codelap
   REST_DOCS_BUCKET_NAME: codelapdocs
   REST_DOCS: ./api/build/docs/asciidoc/index.html
-  DB_DATABASE: codelaptest
-  DB_USER: root
   DB_PASSWORD: root
 
 name: Merge
@@ -37,8 +35,7 @@ jobs:
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{env.DB_DATABASE }};' -u${{env.DB_USER }} -p${{ env.DB_PASSWORD }}
-          mysql -e 'SHOW DATABASES;' -uroot -proot
+          mysql -e 'CREATE DATABASE codelaptest;' -uroot -proot
 
       - name: "application.yml Set"
         uses: microsoft/variable-substitution@v1
@@ -67,7 +64,7 @@ jobs:
         shell: bash
 
       - name: Build with Gradle
-        run: ./gradlew clean :api:buildNeeded --stacktrace
+        run: ./gradlew clean :api:buildNeeded --info --stacktrace --fail-fast
         shell: bash
 
       - name: Make zip file
