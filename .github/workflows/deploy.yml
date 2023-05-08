@@ -1,14 +1,15 @@
 env:
-  API_TEST_RESOURCE_PATH: ./api/src/test/resources/application.yml
-  COMMON_TEST_RESOURCE_PATH: ./common/src/test/resources/application.yml
-  INTEGRATION_PATH: ./integration/src/main/resources/integration.yml
   RESOURCE_PATH: ./api/src/main/resources/application.yml
+  INTEGRATION_PATH: ./integration/src/main/resources/integration.yml
   PROJECT_NAME: codelap_project
   BUCKET_NAME: codelap
   CODE_DEPLOY_APP_NAME: codelap
   DEPLOYMENT_GROUP_NAME: codelap
   REST_DOCS_BUCKET_NAME: codelapdocs
   REST_DOCS: ./api/build/docs/asciidoc/index.html
+  DB_DATABASE: codelaptest
+  DB_USER: root
+  DB_PASSWORD: root
 
 name: Merge
 
@@ -33,6 +34,12 @@ jobs:
         with:
           java-version: 17
 
+      - name: Set up MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE ${{env.DB_DATABASE }};' -u${{env.DB_USER }} -p${{ env.DB_PASSWORD }}
+          mysql -e 'SHOW DATABASES;' -uroot -proot
+
       - name: "application.yml Set"
         uses: microsoft/variable-substitution@v1
         with:
@@ -54,24 +61,6 @@ jobs:
           discord.webhook-url: ${{ secrets.DISCORD_URL }}
           discord.username: Log
           discord.avatar-url: ${{ secrets.DISCORD_AVATAR }}
-
-      - name: "API Test application.yml Set"
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: ${{ env.API_TEST_RESOURCE_PATH }}
-        env:
-          spring.datasource.url: ${{ secrets.RDB_TEST_URL }}
-          spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
-          spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
-
-      - name: "COMMON Test application.yml Set"
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: ${{ env.COMMON_TEST_RESOURCE_PATH }}
-        env:
-          spring.datasource.url: ${{ secrets.RDB_TEST_URL }}
-          spring.datasource.username: ${{ secrets.RDB_USER_NAME }}
-          spring.datasource.password: ${{ secrets.RDB_PASSWORD }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
