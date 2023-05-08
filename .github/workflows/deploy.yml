@@ -21,7 +21,7 @@ permissions:
   contents: read
 
 jobs:
-  Test:
+  Deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -64,7 +64,7 @@ jobs:
         shell: bash
 
       - name: Build with Gradle
-        run: ./gradlew clean :api:buildNeeded --info --stacktrace --fail-fast
+        run: ./gradlew clean :api:buildNeeded --stacktrace
         shell: bash
 
       - name: Make zip file
