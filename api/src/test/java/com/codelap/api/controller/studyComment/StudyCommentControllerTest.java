@@ -15,17 +15,13 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import static com.codelap.api.controller.studyComment.dto.StudyCommentCreateDto.StudyCommentCreateRequest;
 import static com.codelap.api.controller.studyComment.dto.StudyCommentDeleteDto.StudyCommentDeleteRequest;
 import static com.codelap.api.controller.studyComment.dto.StudyCommentUpdateDto.StudyCommentUpdateRequest;
+import static com.codelap.api.support.HttpMethod.DELETE;
+import static com.codelap.api.support.HttpMethod.POST;
 import static com.codelap.common.studyComment.domain.StudyCommentStatus.DELETED;
 import static com.codelap.fixture.StudyCommentFixture.createStudyComment;
 import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class StudyCommentControllerTest extends ApiTest {
     @Autowired
@@ -60,15 +56,7 @@ public class StudyCommentControllerTest extends ApiTest {
 
         StudyCommentCreateRequest req = new StudyCommentCreateRequest(study.getId(), "createMessage");
 
-        mockMvc.perform(post("/study-comment")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study-comment/create",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/study-comment");
 
         StudyComment foundStudyComment = studyCommentRepository.findAll().get(1);
 
@@ -82,15 +70,7 @@ public class StudyCommentControllerTest extends ApiTest {
 
         StudyCommentUpdateRequest req = new StudyCommentUpdateRequest(studyComment.getId(), "updatedMessage");
 
-        mockMvc.perform(post("/study-comment/update")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study-comment/update",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(POST, req, "/study-comment/update");
 
         StudyComment foundStudyComment = studyCommentRepository.findById(studyComment.getId()).orElseThrow();
 
@@ -104,15 +84,7 @@ public class StudyCommentControllerTest extends ApiTest {
 
         StudyCommentDeleteRequest req = new StudyCommentDeleteRequest(studyComment.getId());
 
-        mockMvc.perform(delete("/study-comment")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpectAll(
-                        status().isOk()
-                ).andDo(document("study-comment/delete",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
+        setMockMvcPerform(DELETE, req, "/study-comment");
 
         StudyComment foundStudyComment = studyCommentRepository.findById(studyComment.getId()).orElseThrow();
 
