@@ -56,18 +56,6 @@ class UserDomainServiceTest extends BaseServiceTest {
     }
 
     @Test
-    void 유저_수정() {
-        UserTechStack updateTechStack = new UserTechStack(Java);
-        UserCareer updatedCareer = UserCareer.create("업데이트된_직무", 11);
-
-        userService.update(user.getId(), "updatedName", updatedCareer, List.of(updateTechStack));
-
-        assertThat(user.getName()).isEqualTo("updatedName");
-        assertThat(user.getCareer()).isSameAs(updatedCareer);
-        assertThat(user.getTechStacks()).containsExactly(updateTechStack);
-    }
-
-    @Test
     void 유저_삭제() {
         userService.delete(user.getId());
 

@@ -6,8 +6,11 @@ import com.codelap.api.support.ApiTest;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserTechStack;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static com.codelap.api.controller.user.dto.UserUpdateDto.UserUpdateRequest;
@@ -50,15 +53,21 @@ class UserControllerTest extends ApiTest {
         UserTechStack techStack = new UserTechStack(Java);
         UserUpdateRequestUserCareerDto dto = new UserUpdateRequestUserCareerDto("직무", 10);
 
-        UserUpdateRequest req = new UserUpdateRequest("updatedName", dto, List.of(techStack));
+        MockMultipartFile multipartFile = new MockMultipartFile("multipartFile", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
 
-        setMockMvcPerform(POST, req, "/user/update");
+        String json = objectMapper.writeValueAsString(new UserUpdateRequest("updatedName", dto, List.of(techStack)));
+        MockMultipartFile req = new MockMultipartFile("req", "req", "application/json", json.getBytes(StandardCharsets.UTF_8));
+
+        setMultipartFileMockMvcPerform(POST, getMultipartFiles(multipartFile, req), "/user/update");
 
         assertThat(user.getName()).isEqualTo("updatedName");
         assertThat(user.getCareer().getOccupation()).isEqualTo(dto.occupation());
         assertThat(user.getCareer().getYear()).isEqualTo(dto.year());
         assertThat(user.getTechStacks().stream().map(UserTechStack::getTechStack))
                 .containsExactly(techStack.getTechStack());
+        assertThat(user.getFiles().get(0).getOriginalName()).isEqualTo(multipartFile.getOriginalFilename());
+        assertThat(user.getFiles().get(0).getSavedName()).isNotNull();
+        assertThat(user.getFiles().get(0).getSize()).isNotNull();
     }
 
     @Test

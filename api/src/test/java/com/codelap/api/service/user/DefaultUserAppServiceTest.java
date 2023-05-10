@@ -6,6 +6,8 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,5 +37,20 @@ public class DefaultUserAppServiceTest {
         boolean result = userAppService.isActivated(user.getId());
 
         assertThat(result).isTrue();
+    }
+
+    @Test
+    void 유저_업데이트() throws Exception {
+        User user = userRepository.save(createActivateUser("member"));
+
+        MockMultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
+
+        userAppService.update(user.getId(), user.getName(), user.getCareer(), user.getTechStacks(), file);
+
+        userRepository.flush();
+
+        user = userRepository.findBySocialId(user.getSocialId()).orElseThrow();
+
+        assertThat(user.getFiles()).isNotNull();
     }
 }
