@@ -2,21 +2,14 @@ discord:
   webhook-url: ${DISCORD_URL:1234}
   username: ${DISCORD_USERNAME:1234}
   avatar-url: ${DISCORD_AVATAR:1234}
-cloud:
-  aws:
-    credentials:
-      access-key: ${CLOUD_AWS_CREDENTIALS_ACCESS_KEY:1234}
-      secret-key: ${CLOUD_AWS_CREDENTIALS_SECRET_KEY:1234}
-    s3:
-      bucket: codelap-image
-    region:
-      static: ap-northeast-2
-    stack:
-      auto: false
+aws:
+  access-key: ${CLOUD_AWS_CREDENTIALS_ACCESS_KEY:1234}
+  secret-key: ${CLOUD_AWS_CREDENTIALS_SECRET_KEY:1234}
+  bucket: codelap-image
+  region: ap-northeast-2
+  stack-auto: false
 spring:
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-file:
-  dir: /Users/82106/Desktop/codeLapLocalImage/

@@ -2,7 +2,7 @@ package com.codelap.integration.s3;
 
 import com.codelap.common.support.FileStandard;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,13 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static java.lang.System.getProperty;
+
 @RequiredArgsConstructor
 @Profile({"local", "default"})
 @Component
+@Slf4j
 public class LocalUploader implements FileUpload {
 
-    @Value("${file.dir}")
-    private String fileDir;
+    private String fileDir = getProperty("user.dir");
 
     public String getFullPath(String fileName) {
         return fileDir + fileName;
@@ -45,7 +47,17 @@ public class LocalUploader implements FileUpload {
         String storeFileName = createStoreFileName(originalFileName);
         multipartFile.transferTo(new File(getFullPath(storeFileName)));
 
+        removeFile(getFullPath(storeFileName));
+
         return file.create(storeFileName, originalFileName, multipartFile.getSize());
+    }
+
+    public void removeFile(String fileName) {
+        boolean delete = new File(fileName).delete();
+        if(!delete) {
+            throw new IllegalArgumentException("파일이 삭제되지 않았습니다.");
+        }
+        log.info("파일이 삭제되었습니다.");
     }
 
     private String createStoreFileName(String originalFileName) {
