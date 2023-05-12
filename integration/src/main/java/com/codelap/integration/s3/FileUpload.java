@@ -9,5 +9,5 @@ import java.util.List;
 public interface FileUpload {
     FileStandard upload(MultipartFile multipartFile, String dirName, FileStandard file) throws IOException;
 
-    List<FileStandard> uploads(List<MultipartFile> multipartFile, String dirName, FileStandard file) throws IOException;
+    List<FileStandard> uploads(List<MultipartFile> multipartFiles, String dirName, FileStandard file) throws IOException;
 }

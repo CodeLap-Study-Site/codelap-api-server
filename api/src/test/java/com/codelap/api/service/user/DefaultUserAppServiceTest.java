@@ -1,20 +1,17 @@
 package com.codelap.api.service.user;
 
+import com.codelap.api.service.s3upload.AwsS3UploadTest;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Transactional
-public class DefaultUserAppServiceTest {
+public class DefaultUserAppServiceTest extends AwsS3UploadTest {
 
     @Autowired
     UserRepository userRepository;

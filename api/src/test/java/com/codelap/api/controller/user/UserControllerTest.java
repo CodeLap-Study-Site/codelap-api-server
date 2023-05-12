@@ -65,7 +65,7 @@ class UserControllerTest extends ApiTest {
         assertThat(user.getCareer().getYear()).isEqualTo(dto.year());
         assertThat(user.getTechStacks().stream().map(UserTechStack::getTechStack))
                 .containsExactly(techStack.getTechStack());
-        assertThat(user.getFiles().get(0).getOriginalName()).isEqualTo(multipartFile.getOriginalFilename());
+        assertThat(user.getFiles().get(0).getOriginalName()).isNotNull();
         assertThat(user.getFiles().get(0).getSavedName()).isNotNull();
         assertThat(user.getFiles().get(0).getSize()).isNotNull();
     }

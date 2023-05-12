@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 public class AwsS3MockConfig {
 
     @Autowired
-    S3Properties s3Properties;
+    public S3Properties s3Properties;
 
     @Bean
     public S3Mock s3Mock() {

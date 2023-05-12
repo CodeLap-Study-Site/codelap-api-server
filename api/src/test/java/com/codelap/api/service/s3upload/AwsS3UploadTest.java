@@ -22,10 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AwsS3UploadTest {
 
     @Autowired
-    private S3Mock s3Mock;
+    protected S3Mock s3Mock;
 
     @Autowired
-    private FileUpload FileUpload;
+    protected FileUpload FileUpload;
 
     @AfterEach
     public void tearDown() {
@@ -33,7 +33,7 @@ public class AwsS3UploadTest {
     }
 
     @Test
-    void 파일_업로드() throws IOException {
+    void S3_파일_업로드() throws IOException {
         String path = "test.png";
         String contentType = "image/png";
         String dirName = "test";
