@@ -40,6 +40,9 @@ public class User {
     @Enumerated(STRING)
     private UserStatus status = CREATED;
 
+    @ElementCollection
+    private List<UserFile> files;
+
     private final OffsetDateTime createdAt = OffsetDateTime.now();
 
     public boolean isActivated() {
@@ -51,7 +54,6 @@ public class User {
     }
 
     public static User create(Long socialId) {
-
         return new User(socialId);
     }
 
@@ -73,6 +75,19 @@ public class User {
         this.name = name;
         this.career = career;
         this.techStacks = techStacks;
+    }
+
+    public void update(String name, UserCareer career, List<UserTechStack> techStacks, List<UserFile> files) {
+        require(Strings.isNotBlank(name));
+        require(nonNull(career));
+        require(nonNull(techStacks));
+
+        check(status == ACTIVATED);
+
+        this.name = name;
+        this.career = career;
+        this.techStacks = techStacks;
+        this.files = files;
     }
 
     public void delete() {

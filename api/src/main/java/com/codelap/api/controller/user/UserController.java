@@ -7,6 +7,9 @@ import com.codelap.common.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/user")
@@ -26,10 +29,11 @@ public class UserController {
 
     @PostMapping("/update")
     public void update(
-            @RequestBody UserUpdateRequest req,
+            @RequestPart(value = "req") UserUpdateRequest req,
+            @RequestPart(value = "multipartFile") MultipartFile multipartFile,
             @AuthenticationPrincipal DefaultCodeLapUser user
-    ) {
-        userService.update(user.getId(), req.name(), req.career().toCareer(), req.techStacks());
+    ) throws IOException {
+        userAppService.update(user.getId(), req.name(), req.career().toCareer(), req.techStacks(), multipartFile);
     }
 
 

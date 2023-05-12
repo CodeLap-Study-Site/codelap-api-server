@@ -58,6 +58,8 @@ jobs:
           discord.webhook-url: ${{ secrets.DISCORD_URL }}
           discord.username: Log
           discord.avatar-url: ${{ secrets.DISCORD_AVATAR }}
+          cloud.aws.credentials.access-key : ${{ secrets.CLOUD_AWS_CREDENTIALS_ACCESS_KEY }}
+          cloud.aws.credentials.secret-key : ${{ secrets.CLOUD_AWS_CREDENTIALS_SECRET_KEY }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew

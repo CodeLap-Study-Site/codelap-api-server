@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
@@ -18,12 +19,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static com.codelap.fixture.UserFixture.createUser;
@@ -103,6 +108,17 @@ public abstract class ApiTest {
         }
     }
 
+    protected void setMultipartFileMockMvcPerform(HttpMethod httpMethod, List<MockMultipartFile> multipartFiles, String... urlInfo) throws Exception {
+        String url = urlInfo[0];
+        String identifier = urlInfo.length == 1 ? urlInfo[0].substring(1) : urlInfo[1];
+
+        switch (httpMethod) {
+            case POST -> setMultipartFileMockMvcPerform(MockMvcRequestBuilders.multipart(url), multipartFiles, identifier);
+
+            default -> throw new IllegalArgumentException("Unsupported HTTP method: " + httpMethod);
+        }
+    }
+
     protected void setMockMvcPerform(HttpMethod httpMethod, String... urlInfo) throws Exception {
         String url = urlInfo[0];
         String identifier = urlInfo.length == 1 ? urlInfo[0].substring(1) : urlInfo[1];
@@ -159,5 +175,23 @@ public abstract class ApiTest {
                 .andExpect(status().isOk())
                 .andExpectAll(matcher)
                 .andDo(restDocsSet(identifier));
+    }
+
+    private ResultActions setMultipartFileMockMvcPerform(MockMultipartHttpServletRequestBuilder method, List<MockMultipartFile> multipartFile, String identifier) throws Exception {
+        for (MockMultipartFile mockMultipartFile : multipartFile) {
+            method.file(mockMultipartFile);
+        }
+        return this.mockMvc.perform(method)
+                .andExpect(status().isOk())
+                .andDo(restDocsSet(identifier));
+    }
+
+    protected List<MockMultipartFile> getMultipartFiles(MockMultipartFile... multipartFiles) {
+        List<MockMultipartFile> files = new ArrayList<>();
+        for (MockMultipartFile multipartFile : multipartFiles) {
+            files.add(multipartFile);
+        }
+
+        return files;
     }
 }
