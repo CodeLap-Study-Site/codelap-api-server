@@ -50,7 +50,7 @@ public class AwsS3Uploader implements FileUpload{
 
         removeNewFile(uploadFile);
 
-        return file.create(fileName, uploadImageUrl, uploadFile.getTotalSpace());
+        return file.update(fileName, uploadImageUrl, uploadFile.getTotalSpace());
     }
 
     private String putS3(File uploadFile, String fileName) {

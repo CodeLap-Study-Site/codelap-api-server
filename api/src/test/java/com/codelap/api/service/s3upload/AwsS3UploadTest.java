@@ -14,6 +14,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
 
+import static com.codelap.common.user.domain.UserFile.create;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(AwsS3MockConfig.class)
@@ -40,7 +41,7 @@ public class AwsS3UploadTest {
 
         MockMultipartFile file = new MockMultipartFile("test", path, contentType, "test".getBytes());
 
-        UserFile urlPath = (UserFile) FileUpload.upload(file, dirName, new UserFile());
+        UserFile urlPath = (UserFile) FileUpload.upload(file, dirName, create());
 
         assertThat(urlPath.getOriginalName()).isNotNull();
         assertThat(urlPath.getSavedName()).isNotNull();

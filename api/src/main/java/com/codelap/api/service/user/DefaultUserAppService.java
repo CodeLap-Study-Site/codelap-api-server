@@ -10,6 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+import static com.codelap.common.user.domain.UserFile.create;
+import static com.codelap.common.user.domain.UserFile.dirName;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -36,7 +39,7 @@ public class DefaultUserAppService implements UserAppService {
         User user = userRepository.findById(userId).orElseThrow();
 
         if (!image.isEmpty()) {
-            UserFile file = (UserFile) fileUpload.upload(image, "user", new UserFile());
+            UserFile file = (UserFile) fileUpload.upload(image, dirName, create());
             user.update(name, career, techStacks, List.of(file));
         } else {
             user.update(name, career, techStacks);

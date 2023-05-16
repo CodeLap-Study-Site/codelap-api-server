@@ -82,8 +82,8 @@ class UserTest {
         UserTechStack userTechStack = new UserTechStack(Go);
         UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);
 
-        UserFile file = new UserFile();
-        file = file.create("savedName", "originalName", 100L);
+        UserFile file = (UserFile) UserFile.create();
+        file = file.update("savedName", "originalName", 100L);
 
         user.update("updateName", updateCareer, List.of(userTechStack), List.of(file));
 
