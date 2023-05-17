@@ -1,6 +1,8 @@
 package com.codelap.api.service.user;
 
-import com.codelap.common.user.domain.*;
+import com.codelap.common.user.domain.User;
+import com.codelap.common.user.domain.UserFile;
+import com.codelap.common.user.domain.UserRepository;
 import com.codelap.integration.s3.FileUpload;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-
-import static com.codelap.common.user.domain.UserFile.create;
-import static com.codelap.common.user.domain.UserFile.dirName;
 
 @Service
 @Transactional
@@ -35,14 +34,8 @@ public class DefaultUserAppService implements UserAppService {
     }
 
     @Override
-    public void update(Long userId, String name, UserCareer career, List<UserTechStack> techStacks, MultipartFile image) throws IOException {
+    public void imageUpload(Long userId, MultipartFile multipartFile) throws IOException {
         User user = userRepository.findById(userId).orElseThrow();
-
-        if (!image.isEmpty()) {
-            UserFile file = (UserFile) fileUpload.upload(image, dirName, create());
-            user.update(name, career, techStacks, List.of(file));
-        } else {
-            user.update(name, career, techStacks);
-        }
+        user.changeImage(List.of((UserFile) fileUpload.upload(multipartFile, "user", new UserFile())));
     }
 }

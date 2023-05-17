@@ -73,6 +73,21 @@ include::{snippets}/user/activate/http-response.adoc[]
 === ResponseBody
 include::{snippets}/user/activate/response-body.adoc[]
 
+[[UserImageUpload]]
+== 유저 이미지 업로드 API
+
+=== Request
+include::{snippets}/user/image-upload/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/user/image-upload/request-body.adoc[]
+
+=== Response
+include::{snippets}/user/image-upload/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/user/image-upload/response-body.adoc[]
+
 [[UserUpdate]]
 == 유저 수정 API
 
