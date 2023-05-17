@@ -58,11 +58,12 @@ class UserDomainServiceTest extends BaseServiceTest {
     @Test
     void 유저_수정() {
         UserTechStack techStack = new UserTechStack(Java);
-        UserCareer career = UserCareer.create("직무", 11);
+        UserCareer updatedCareer = UserCareer.create("updateCareer", 11);
 
-        userService.update(user.getId(), "name", career, List.of(techStack));
+        userService.update(user.getId(), "updatedName", updatedCareer, List.of(techStack));
 
-        assertThat(user.getStatus()).isEqualTo(DELETED);
+        assertThat(user.getName()).isEqualTo("updatedName");
+        assertThat(user.getCareer()).isEqualTo(updatedCareer);
     }
 
     @Test
