@@ -75,24 +75,6 @@ class UserTest {
         assertThat(user.getTechStacks()).containsExactly(userTechStack);
     }
 
-    @Test
-    void 유저_수정_성공2() {
-        user.setStatus(ACTIVATED);
-
-        UserTechStack userTechStack = new UserTechStack(Go);
-        UserCareer updateCareer = UserCareer.create("업데이트된 직무", 2);
-
-        UserFile file = new UserFile();
-        file = file.create("savedName", "originalName", 100L);
-
-        user.update("updateName", updateCareer, List.of(userTechStack), List.of(file));
-
-        assertThat(user.getName()).isEqualTo("updateName");
-        assertThat(user.getCareer()).isSameAs(updateCareer);
-        assertThat(user.getTechStacks()).containsExactly(userTechStack);
-        assertThat(user.getFiles()).contains(file);
-    }
-
     @ParameterizedTest
     @NullAndEmptySource
     void 유저_수정_실패__이름이_널이거나_공백(String updateName) {
@@ -133,6 +115,14 @@ class UserTest {
         assertThatIllegalStateException().isThrownBy(() ->
                 user.update("updatedName", updateCareer, List.of(userTechStack))
         );
+    }
+
+    @Test
+    void 유저_이미지_변경_성공() {
+        UserFile userFile = new UserFile("savedName", "originalName", 10L);
+        user.changeImage(List.of(userFile));
+
+        assertThat(user.getFiles()).isNotNull();
     }
 
     @Test

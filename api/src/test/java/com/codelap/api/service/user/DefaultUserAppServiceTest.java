@@ -37,16 +37,12 @@ public class DefaultUserAppServiceTest extends AwsS3UploadTest {
     }
 
     @Test
-    void 유저_업데이트() throws Exception {
+    void 유저_이미지_업데이트() throws Exception {
         User user = userRepository.save(createActivateUser("member"));
 
         MockMultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
 
-        userAppService.update(user.getId(), user.getName(), user.getCareer(), user.getTechStacks(), file);
-
-        userRepository.flush();
-
-        user = userRepository.findBySocialId(user.getSocialId()).orElseThrow();
+        userAppService.imageUpload(user.getId(), file);
 
         assertThat(user.getFiles()).isNotNull();
     }
