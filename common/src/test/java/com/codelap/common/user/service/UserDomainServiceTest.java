@@ -56,6 +56,16 @@ class UserDomainServiceTest extends BaseServiceTest {
     }
 
     @Test
+    void 유저_수정() {
+        UserTechStack techStack = new UserTechStack(Java);
+        UserCareer career = UserCareer.create("직무", 11);
+
+        userService.update(user.getId(), "name", career, List.of(techStack));
+
+        assertThat(user.getStatus()).isEqualTo(DELETED);
+    }
+
+    @Test
     void 유저_삭제() {
         userService.delete(user.getId());
 

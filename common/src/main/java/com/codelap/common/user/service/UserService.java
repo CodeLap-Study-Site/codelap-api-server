@@ -12,5 +12,7 @@ public interface UserService {
 
     void activate(Long userId, String name, UserCareer career, List<UserTechStack> techStacks);
 
+    void update(Long userId, String name, UserCareer career, List<UserTechStack> techStacks);
+
     void delete(Long userId);
 }

@@ -38,6 +38,13 @@ public class UserDomainService implements UserService {
     }
 
     @Override
+    public void update(Long userId, String name, UserCareer career, List<UserTechStack> techStacks) {
+        User user = userRepository.findById(userId).orElseThrow();
+
+        user.update(name, career, techStacks);
+    }
+
+    @Override
     public void delete(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
 
