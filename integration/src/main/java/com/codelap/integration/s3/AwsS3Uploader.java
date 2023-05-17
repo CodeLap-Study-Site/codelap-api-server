@@ -41,16 +41,16 @@ public class AwsS3Uploader implements FileUpload{
     public FileStandard upload(MultipartFile multipartFile, String dirName, FileStandard file) throws IOException {
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패"));
-        return upload(uploadFile, dirName, file);
+        return upload(uploadFile, multipartFile.getOriginalFilename(), dirName, file);
     }
 
-    private FileStandard upload(File uploadFile, String dirName, FileStandard file) {
+    private FileStandard upload(File uploadFile, String originalFile, String dirName, FileStandard file) {
         String fileName = dirName + "/" + UUID.randomUUID() + uploadFile.getName();
         String uploadImageUrl = putS3(uploadFile, fileName);
 
         removeNewFile(uploadFile);
 
-        return file.update(fileName, uploadImageUrl, uploadFile.getTotalSpace());
+        return file.update(uploadImageUrl, originalFile);
     }
 
     private String putS3(File uploadFile, String fileName) {

@@ -12,6 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+import static com.codelap.common.user.domain.UserFile.create;
+import static com.codelap.common.user.domain.UserFile.dirName;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -36,6 +39,6 @@ public class DefaultUserAppService implements UserAppService {
     @Override
     public void imageUpload(Long userId, MultipartFile multipartFile) throws IOException {
         User user = userRepository.findById(userId).orElseThrow();
-        user.changeImage(List.of((UserFile) fileUpload.upload(multipartFile, "user", new UserFile())));
+        user.changeImage(List.of((UserFile) fileUpload.upload(multipartFile, dirName, create())));
     }
 }
