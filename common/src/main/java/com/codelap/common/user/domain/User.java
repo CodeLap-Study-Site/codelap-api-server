@@ -77,16 +77,9 @@ public class User {
         this.techStacks = techStacks;
     }
 
-    public void update(String name, UserCareer career, List<UserTechStack> techStacks, List<UserFile> files) {
-        require(Strings.isNotBlank(name));
-        require(nonNull(career));
-        require(nonNull(techStacks));
+    public void changeImage(List<UserFile> files) {
+        require(nonNull(files));
 
-        check(status == ACTIVATED);
-
-        this.name = name;
-        this.career = career;
-        this.techStacks = techStacks;
         this.files = files;
     }
 
