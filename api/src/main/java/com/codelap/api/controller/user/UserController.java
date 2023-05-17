@@ -27,13 +27,20 @@ public class UserController {
         userService.activate(user.getId(), req.name(), req.career().toCareer(), req.techStacks());
     }
 
-    @PostMapping("/update")
-    public void update(
-            @RequestPart(value = "req") UserUpdateRequest req,
+    @PostMapping("/image-upload")
+    public void imageUpload(
             @RequestPart(value = "multipartFile") MultipartFile multipartFile,
             @AuthenticationPrincipal DefaultCodeLapUser user
     ) throws IOException {
-        userAppService.update(user.getId(), req.name(), req.career().toCareer(), req.techStacks(), multipartFile);
+        userAppService.imageUpload(user.getId(), multipartFile);
+    }
+
+    @PostMapping("/update")
+    public void update(
+            @RequestBody UserUpdateRequest req,
+            @AuthenticationPrincipal DefaultCodeLapUser user
+    ) throws IOException {
+        userService.update(user.getId(), req.name(), req.career().toCareer(), req.techStacks());
     }
 
 
