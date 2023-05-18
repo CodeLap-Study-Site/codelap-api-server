@@ -25,7 +25,7 @@ public class StudyConfirmationReConfirmDto {
             Long size
     ) {
         public StudyConfirmationFile toStudyConfirmationFile() {
-            return StudyConfirmationFile.create(savedName, originalName, size);
+            return (StudyConfirmationFile) StudyConfirmationFile.create();
         }
     }
 

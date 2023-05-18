@@ -44,7 +44,6 @@ public class AwsS3UploadTest {
         UserFile urlPath = (UserFile) FileUpload.upload(file, dirName, create());
 
         assertThat(urlPath.getOriginalName()).isNotNull();
-        assertThat(urlPath.getSavedName()).isNotNull();
-        assertThat(urlPath.getSize()).isNotNull();
+        assertThat(urlPath.getS3ImageURL()).isNotNull();
     }
 }

@@ -6,5 +6,5 @@ import static lombok.AccessLevel.PROTECTED;
 
 @AllArgsConstructor(access = PROTECTED)
 public abstract class FileStandard {
-    public abstract FileStandard update(String savedName, String originalName);
+    public abstract FileStandard update(String s3ImageURL, String originalName);
 }

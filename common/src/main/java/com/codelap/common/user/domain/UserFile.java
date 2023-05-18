@@ -13,16 +13,16 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserFile extends FileStandard {
-    private String s3ImageLink;
+    private String s3ImageURL;
     private String originalName;
     public static final String dirName = "user";
 
     @Override
-    public UserFile update(String s3ImageLink, String originalName) {
-        require(isNotBlank(s3ImageLink));
+    public UserFile update(String s3ImageURL, String originalName) {
+        require(isNotBlank(s3ImageURL));
         require(isNotBlank(originalName));
 
-        this.s3ImageLink = s3ImageLink;
+        this.s3ImageURL = s3ImageURL;
         this.originalName = originalName;
 
         return this;

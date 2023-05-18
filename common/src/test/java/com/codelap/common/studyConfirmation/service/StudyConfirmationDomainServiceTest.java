@@ -56,7 +56,9 @@ class StudyConfirmationDomainServiceTest {
 
     @Test
     void 스터디_인증_생성_성공() {
-        StudyConfirmationFile file = StudyConfirmationFile.create("saved", "original", 10L);
+        StudyConfirmationFile file = (StudyConfirmationFile) StudyConfirmationFile.create();
+
+        file.update("saved", "original");
 
         studyConfirmationService.create(study.getId(), member.getId(), "title", "content", List.of(file));
 

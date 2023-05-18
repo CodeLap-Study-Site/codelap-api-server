@@ -1,7 +1,7 @@
 package com.codelap.common.studyConfirmation.domain;
 
+import com.codelap.common.support.FileStandard;
 import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,20 +11,24 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
 @Getter
 @Embeddable
-@AllArgsConstructor(access = PROTECTED)
 @NoArgsConstructor(access = PROTECTED)
-public class StudyConfirmationFile {
-    private String savedName;
+public class StudyConfirmationFile extends FileStandard {
+    private String s3ImageURL;
     private String originalName;
-    private Long size;
+    public static final String dirName = "studyConfirmation";
 
-    private static final Long MIN_SIZE = 1L;
-
-    public static StudyConfirmationFile create(String savedName, String originalName, Long size) {
-        require(isNotBlank(savedName));
+    @Override
+    public StudyConfirmationFile update(String s3ImageURL, String originalName) {
+        require(isNotBlank(s3ImageURL));
         require(isNotBlank(originalName));
-        require(size > MIN_SIZE);
 
-        return new StudyConfirmationFile(savedName, originalName, size);
+        this.s3ImageURL = s3ImageURL;
+        this.originalName = originalName;
+
+        return this;
+    }
+
+    public static FileStandard create() {
+        return new StudyConfirmationFile();
     }
 }

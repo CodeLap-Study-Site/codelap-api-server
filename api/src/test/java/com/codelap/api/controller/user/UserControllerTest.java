@@ -53,7 +53,7 @@ class UserControllerTest extends ApiTest {
 
         setMultipartFileMockMvcPerform(POST, getMultipartFiles(multipartFile), "/user/image-upload");
 
-        assertThat(user.getFiles().get(0).getS3ImageLink()).isNotNull();
+        assertThat(user.getFiles().get(0).getS3ImageURL()).isNotNull();
         assertThat(user.getFiles().get(0).getOriginalName()).isNotNull();
     }
 
