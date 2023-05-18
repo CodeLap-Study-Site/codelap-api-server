@@ -8,32 +8,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class StudyNoticeFileTest {
-    private static final Long MIN_SIZE = 1L;
-
     @Test
     void 스터디_인증_파일_생성_성공() {
-        StudyNoticeFile studyNoticeFile = StudyNoticeFile.create("savedName", "originalName", 100L);
+        StudyNoticeFile studyNoticeFile = (StudyNoticeFile) StudyNoticeFile.create();
 
-        assertThat(studyNoticeFile.getSavedName()).isEqualTo("savedName");
+        studyNoticeFile.update("s3ImageURL", "originalName");
+
+        assertThat(studyNoticeFile.getS3ImageURL()).isEqualTo("s3ImageURL");
         assertThat(studyNoticeFile.getOriginalName()).isEqualTo("originalName");
-        assertThat(studyNoticeFile.getSize()).isEqualTo(100L);
     }
 
     @ParameterizedTest
     @NullAndEmptySource
-    void 스터디_인증_생성_실패__저장명이_공백_혹은_널(String savedName) {
-        assertThatIllegalArgumentException().isThrownBy(() -> StudyNoticeFile.create(savedName, "originalName", 100L));
+    void 스터디_인증_생성_실패__저장명이_공백_혹은_널(String s3ImageURL) {
+        StudyNoticeFile studyNoticeFile = (StudyNoticeFile) StudyNoticeFile.create();
+
+        assertThatIllegalArgumentException().isThrownBy(() -> studyNoticeFile.update(s3ImageURL, "originalName"));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     void 스터디_인증_생성_실패__원본명이_공백_혹은_널(String originalName) {
-        assertThatIllegalArgumentException().isThrownBy(() -> StudyNoticeFile.create("savedName", originalName, 100L));
-    }
+        StudyNoticeFile studyNoticeFile = (StudyNoticeFile) StudyNoticeFile.create();
 
-    @Test
-    void 스터디_인증_생성_실패__원본명이_공백_혹은_널() {
-        assertThatIllegalArgumentException().isThrownBy(() -> StudyNoticeFile.create("savedName", "originalName", MIN_SIZE - 1));
+        assertThatIllegalArgumentException().isThrownBy(() -> studyNoticeFile.update("s3ImageURL", originalName));
     }
-
 }

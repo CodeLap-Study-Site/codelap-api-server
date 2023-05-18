@@ -43,9 +43,9 @@ class StudyNoticeTest {
     @ParameterizedTest
     @NullAndEmptySource
     void 스터디_공지_생성_실패__제목이_널이거나_공백(String title) {
-        StudyNoticeFile file = new StudyNoticeFile("savedName", "originalName", 100L);
+        List<StudyNoticeFile> files = createStudyNoticeFiles();
 
-        assertThatIllegalArgumentException().isThrownBy(() -> StudyNotice.create(study, title, "contents", List.of(file)));
+        assertThatIllegalArgumentException().isThrownBy(() -> StudyNotice.create(study, title, "contents", files));
     }
 
     @ParameterizedTest
