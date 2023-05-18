@@ -18,7 +18,9 @@ public class StudyNoticeFixture {
     }
 
     public static List<StudyNoticeFile> createStudyNoticeFiles() {
-        StudyNoticeFile file = StudyNoticeFile.create("savedName", "originalName", 10L);
+        StudyNoticeFile file = (StudyNoticeFile) StudyNoticeFile.create();
+        file.update("s3ImageURL", "originalName");
+
         return List.of(file, file);
     }
 }

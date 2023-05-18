@@ -20,7 +20,10 @@ public class StudyConfirmationFixture {
     }
 
     public static List<StudyConfirmationFile> createStudyConfirmationFiles() {
-        StudyConfirmationFile studyConfirmationFile = StudyConfirmationFile.create("savedName", "originalName", 10L);
+
+        StudyConfirmationFile studyConfirmationFile = (StudyConfirmationFile) StudyConfirmationFile.create();
+
+        studyConfirmationFile.update("s3ImageURL", "originalName");
 
         return List.of(studyConfirmationFile, studyConfirmationFile);
     }

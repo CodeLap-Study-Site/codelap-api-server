@@ -55,7 +55,7 @@ class StudyNoticeControllerTest extends ApiTest {
     void 스터디_공지_생성_성공() throws Exception {
         login(leader);
 
-        StudyNoticeCreateRequestFileDto file = new StudyNoticeCreateRequestFileDto("savedName", "originalName", 100L);
+        StudyNoticeCreateRequestFileDto file = new StudyNoticeCreateRequestFileDto("s3ImageURL", "originalName");
         StudyNoticeCreateRequest req = new StudyNoticeCreateRequest(study.getId(), "title", "contents", List.of(file));
 
         setMockMvcPerform(POST, req, "/study-notice");
@@ -75,7 +75,7 @@ class StudyNoticeControllerTest extends ApiTest {
     void 스터디_공지_수정_성공() throws Exception {
         login(leader);
 
-        StudyNoticeUpdateRequestFileDto file = new StudyNoticeUpdateRequestFileDto("savedName", "originalName", 100L);
+        StudyNoticeUpdateRequestFileDto file = new StudyNoticeUpdateRequestFileDto("s3ImageURL", "originalName");
         StudyNoticeUpdateRequest req = new StudyNoticeUpdateRequest(studyNotice.getId(), "title", "contents", List.of(file));
 
         setMockMvcPerform(POST, req, "/study-notice/update");

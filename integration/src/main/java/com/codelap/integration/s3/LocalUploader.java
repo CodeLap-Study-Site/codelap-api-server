@@ -17,7 +17,7 @@ import java.util.List;
 public class LocalUploader implements FileUpload {
     @Override
     public FileStandard upload(MultipartFile multipartFile, String dirName, FileStandard file) throws IOException {
-        return file.create("savedName", "originalName", 1L);
+        return file.update("s3ImageURL", "originalName");
     }
 
     @Override

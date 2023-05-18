@@ -21,12 +21,12 @@ public class StudyNoticeCreateDto {
     }
 
     public record StudyNoticeCreateRequestFileDto(
-            String savedName,
-            String originalName,
-            Long size
+            String s3ImageURL,
+            String originalName
     ) {
         public StudyNoticeFile toStudyNoticeFile() {
-            return StudyNoticeFile.create(savedName, originalName, size);
+            StudyNoticeFile studyNoticeFile = (StudyNoticeFile) StudyNoticeFile.create();
+            return studyNoticeFile.update(s3ImageURL, originalName);
         }
     }
 }

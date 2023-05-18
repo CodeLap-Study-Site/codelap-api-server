@@ -119,7 +119,9 @@ class UserTest {
 
     @Test
     void 유저_이미지_변경_성공() {
-        UserFile userFile = new UserFile("savedName", "originalName", 10L);
+        UserFile userFile = (UserFile) UserFile.create();
+        userFile.update("s3ImageURL", "originalName");
+
         user.changeImage(List.of(userFile));
 
         assertThat(user.getFiles()).isNotNull();
