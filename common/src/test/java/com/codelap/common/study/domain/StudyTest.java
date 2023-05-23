@@ -434,4 +434,19 @@ class StudyTest {
 
         assertThatIllegalStateException().isThrownBy(() -> study.delete());
     }
+
+    @Test
+    void 스터디_이미지_변경_성공() {
+        StudyFile studyFile = (StudyFile) StudyFile.create();
+        studyFile.update("s3ImageURL", "originalName");
+
+        study.changeImage(List.of(studyFile));
+
+        assertThat(study.getFiles()).isNotNull();
+    }
+
+    @Test
+    void 스터디_이미지_변경_실패__파일이_널() {
+        assertThatIllegalArgumentException().isThrownBy(() -> study.changeImage(null));
+    }
 }
