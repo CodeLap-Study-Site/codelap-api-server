@@ -11,7 +11,9 @@ import com.codelap.common.support.TechStack;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.codelap.api.controller.study.dto.StudyCreateDto.StudyCreateRequest;
@@ -20,7 +22,6 @@ import static com.codelap.api.controller.study.dto.StudyOpenDto.StudyOpenRequest
 import static com.codelap.api.controller.study.dto.StudyProceedDto.StudyProceedRequest;
 import static com.codelap.api.controller.study.dto.StudyRemoveMemberDto.StudyRemoveMemberRequest;
 import static com.codelap.api.controller.study.dto.StudyUpdateDto.StudyUpdateRequest;
-import static com.codelap.common.study.domain.StudyDifficulty.HARD;
 
 @RestController
 @RequestMapping("/study")
@@ -34,14 +35,23 @@ public class StudyController {
     public void create(
             @AuthenticationPrincipal DefaultCodeLapUser user,
             @RequestBody StudyCreateRequest req
-    ) {
-        studyService.create(user.getId(), req.name(), req.info(), req.maxMembersSize(), HARD, req.period().toStudyPeriod(), req.career().toStudyNeedCareer(), req.techStackList());
+    ) throws IOException {
+        studyService.create(user.getId(), req.name(), req.info(), req.maxMembersSize(), req.difficulty(), req.period().toStudyPeriod(), req.career().toStudyNeedCareer(), req.techStackList());
+    }
+
+    @PostMapping("/image-upload")
+    public void imageUpload(
+            @RequestPart(value = "multipartFile") MultipartFile multipartFile,
+            @RequestParam Long studyId,
+            @AuthenticationPrincipal DefaultCodeLapUser leader
+    ) throws IOException {
+        studyAppService.imageUpload(leader.getId(), studyId, multipartFile);
     }
 
     @PostMapping("/update")
     public void update(
-            @AuthenticationPrincipal DefaultCodeLapUser leader,
-            @RequestBody StudyUpdateRequest req
+            @RequestBody StudyUpdateRequest req,
+            @AuthenticationPrincipal DefaultCodeLapUser leader
     ) {
         studyService.update(req.studyId(), leader.getId(), req.name(), req.info(), req.maxMembersSize(), req.difficulty(), req.period().toStudyPeriod(), req.career().toStudyNeedCareer(), req.techStackList());
     }

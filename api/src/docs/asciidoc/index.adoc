@@ -154,6 +154,21 @@ include::{snippets}/study/create/http-response.adoc[]
 === ResponseBody
 include::{snippets}/study/create/response-body.adoc[]
 
+[[StudyImageUpload]]
+== 스터디 이미지 업로드 API
+
+=== Request
+include::{snippets}/study/image-upload/curl-request.adoc[]
+
+=== RequestBody
+include::{snippets}/study/image-upload/request-body.adoc[]
+
+=== Response
+include::{snippets}/study/image-upload/http-response.adoc[]
+
+=== ResponseBody
+include::{snippets}/study/image-upload/response-body.adoc[]
+
 [[StudyUpdate]]
 == 스터디 수정 API
 

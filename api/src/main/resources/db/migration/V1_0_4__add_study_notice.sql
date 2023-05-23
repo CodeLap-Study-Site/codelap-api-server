@@ -15,9 +15,8 @@ alter table study_notice
 create table study_notice_files
 (
     study_notice_id bigint not null,
-    original_name   varchar(255),
-    saved_name      varchar(255),
-    size            bigint
+    s3imageurl      varchar(255),
+    original_name   varchar(255)
 );
 
 alter table study_notice_files

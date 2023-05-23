@@ -12,6 +12,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -21,6 +23,7 @@ import static com.codelap.common.study.domain.StudyStatus.OPENED;
 import static com.codelap.common.support.TechStack.*;
 import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.UserFixture.createActivateUser;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest
@@ -65,6 +68,18 @@ class DefaultStudyAppServiceTest {
                 .collect(Collectors.toList());
 
         Assertions.assertThat(studies.size()).isEqualTo(allStudies.size());
+    }
+
+    @Test
+    void 스터디_이미지_업데이트() throws Exception {
+        leader = userRepository.save(createActivateUser("member"));
+        Study study = studyRepository.save(createStudy(leader));
+
+        MockMultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
+
+        studyAppService.imageUpload(leader.getId(), study.getId(), file);
+
+        assertThat(study.getFiles()).isNotNull();
     }
 
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {

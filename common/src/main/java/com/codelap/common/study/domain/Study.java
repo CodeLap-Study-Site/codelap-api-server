@@ -64,6 +64,9 @@ public class Study {
     @OneToMany(mappedBy = "study")
     private final List<Bookmark> bookmarks = new ArrayList<>();
 
+    @ElementCollection
+    private List<StudyFile> files = new ArrayList<>();
+
     @Setter
     @Enumerated(STRING)
     private StudyStatus status = OPENED;
@@ -211,5 +214,11 @@ public class Study {
         check(CAN_DELETE_STATUSES.contains(status));
 
         this.status = DELETED;
+    }
+
+    public void changeImage(List<StudyFile> files) {
+        require(nonNull(files));
+
+        this.files = files;
     }
 }
