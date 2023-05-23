@@ -1,9 +1,8 @@
 create table user_files
 (
     user_id       bigint not null,
-    original_name varchar(255),
-    saved_name    varchar(255),
-    size          bigint
+    s3imageurl    varchar(255),
+    original_name varchar(255)
 );
 
 alter table user_files

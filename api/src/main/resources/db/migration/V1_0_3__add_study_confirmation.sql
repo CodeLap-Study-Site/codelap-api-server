@@ -21,9 +21,8 @@ alter table study_confirmation
 create table study_confirmation_files
 (
     study_confirmation_id bigint not null,
-    original_name         varchar(255),
-    saved_name            varchar(255),
-    size                  bigint
+    s3imageurl            varchar(255),
+    original_name         varchar(255)
 );
 
 alter table study_confirmation_files
