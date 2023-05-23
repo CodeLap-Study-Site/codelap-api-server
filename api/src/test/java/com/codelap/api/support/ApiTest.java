@@ -119,6 +119,17 @@ public abstract class ApiTest {
         }
     }
 
+    protected void setMultipartFileMockMvcPerform(HttpMethod httpMethod, List<MockMultipartFile> multipartFiles, MultiValueMap<String, String> idMap, String... urlInfo) throws Exception {
+        String url = urlInfo[0];
+        String identifier = urlInfo.length == 1 ? urlInfo[0].substring(1) : urlInfo[1];
+
+        switch (httpMethod) {
+            case POST -> setMultipartFileMockMvcPerform((MockMultipartHttpServletRequestBuilder) MockMvcRequestBuilders.multipart(url).params(idMap),multipartFiles, identifier);
+
+            default -> throw new IllegalArgumentException("Unsupported HTTP method: " + httpMethod);
+        }
+    }
+
     protected void setMockMvcPerform(HttpMethod httpMethod, String... urlInfo) throws Exception {
         String url = urlInfo[0];
         String identifier = urlInfo.length == 1 ? urlInfo[0].substring(1) : urlInfo[1];

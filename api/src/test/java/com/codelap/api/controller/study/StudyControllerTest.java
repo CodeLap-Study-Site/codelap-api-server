@@ -13,6 +13,8 @@ import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.util.LinkedMultiValueMap;
@@ -235,6 +237,22 @@ class StudyControllerTest extends ApiTest {
         params.add("techStackList", "AWS");
 
         setMockMvcPerform(GET, params, 유저가_참여한_스터디_조회_검증(params), "/study/my-study");
+    }
+
+    @Test
+    @WithUserDetails
+    void 스터디_이미지_수정_성공() throws Exception {
+        login(leader);
+
+        MockMultipartFile multipartFile = new MockMultipartFile("multipartFile", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
+
+        MultiValueMap<String, String> idMap = new LinkedMultiValueMap<>();
+        idMap.add("studyId", study.getId().toString());
+
+        setMultipartFileMockMvcPerform(POST, getMultipartFiles(multipartFile), idMap, "/study/image-upload");
+
+        assertThat(study.getFiles().get(0).getS3ImageURL()).isNotNull();
+        assertThat(study.getFiles().get(0).getOriginalName()).isNotNull();
     }
 
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
