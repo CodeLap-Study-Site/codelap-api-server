@@ -226,8 +226,6 @@ class StudyControllerTest extends ApiTest {
     @Test
     @WithUserDetails
     void 유저가_참여한_스터디_조회_성공() throws Exception {
-        User leader = prepareLoggedInActiveUser();
-
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -256,7 +254,7 @@ class StudyControllerTest extends ApiTest {
     }
 
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
-        Study study1 = studyRepository.save(createStudy(leader, Java));
+        Study study1 = studyRepository.save(createStudy(leader, Spring, Java));
         study1.addMember(member);
 
         studyCommentService.create(study1.getId(), member.getId(), "message");
@@ -305,7 +303,7 @@ class StudyControllerTest extends ApiTest {
                             jsonPath("$.studies.[" + index + "].viewCount").value(indexStudy.getViews().size()),
                             jsonPath("$.studies.[" + index + "].bookmarkCount").value(indexStudy.getBookmarks().size()),
                             jsonPath("$.studies.[" + index + "].maxMemberSize").value(indexStudy.getMaxMembersSize()),
-                            jsonPath("$.studies.[" + index + "].techStackList[*].techStack").value(techStackList)
+                            jsonPath("$.studies.[" + index + "].techStackList[*]").value(techStackList)
                     ));
                 })
                 .flatMap(entry -> entry.getValue().stream())
