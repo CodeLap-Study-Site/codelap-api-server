@@ -58,7 +58,7 @@ class StudyNoticeControllerTest extends ApiTest {
         StudyNoticeCreateRequestFileDto file = new StudyNoticeCreateRequestFileDto("s3ImageURL", "originalName");
         StudyNoticeCreateRequest req = new StudyNoticeCreateRequest(study.getId(), "title", "contents", List.of(file));
 
-        setMockMvcPerform(POST, req, "/study-notice");
+        setMockMvcPerform(POST, req, "/study-notice", "study-notice/create");
 
         StudyNotice studyNotice = studyNoticeRepository.findAll().get(1);
 
@@ -95,7 +95,7 @@ class StudyNoticeControllerTest extends ApiTest {
 
         StudyNoticeDeleteRequest req = new StudyNoticeDeleteRequest(studyNotice.getId());
 
-        setMockMvcPerform(DELETE, req, "/study-notice");
+        setMockMvcPerform(DELETE, req, "/study-notice", "study-notice/delete");
 
         StudyNotice studyNotice = studyNoticeRepository.findAll().get(0);
 
