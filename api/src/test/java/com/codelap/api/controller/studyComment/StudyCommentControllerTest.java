@@ -56,7 +56,7 @@ public class StudyCommentControllerTest extends ApiTest {
 
         StudyCommentCreateRequest req = new StudyCommentCreateRequest(study.getId(), "createMessage");
 
-        setMockMvcPerform(POST, req, "/study-comment");
+        setMockMvcPerform(POST, req, "/study-comment", "study-comment/create");
 
         StudyComment foundStudyComment = studyCommentRepository.findAll().get(1);
 
@@ -84,7 +84,7 @@ public class StudyCommentControllerTest extends ApiTest {
 
         StudyCommentDeleteRequest req = new StudyCommentDeleteRequest(studyComment.getId());
 
-        setMockMvcPerform(DELETE, req, "/study-comment");
+        setMockMvcPerform(DELETE, req, "/study-comment", "study-comment/delete");
 
         StudyComment foundStudyComment = studyCommentRepository.findById(studyComment.getId()).orElseThrow();
 
