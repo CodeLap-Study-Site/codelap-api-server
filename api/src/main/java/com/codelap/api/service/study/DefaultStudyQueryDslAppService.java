@@ -1,11 +1,10 @@
 package com.codelap.api.service.study;
 
-import com.codelap.api.service.study.dto.GetStudiesDto;
+import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
 import com.codelap.api.service.study.support.DynamicCond;
 import com.codelap.common.bookmark.domain.QBookmark;
 import com.codelap.common.study.domain.QStudy;
 import com.codelap.common.study.domain.QStudyTechStack;
-import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.studyComment.domain.QStudyComment;
 import com.codelap.common.studyView.domain.QStudyView;
@@ -32,10 +31,8 @@ public class DefaultStudyQueryDslAppService extends DynamicCond implements Study
 
     private final JPAQueryFactory queryFactory;
 
-    private final StudyRepository studyRepository;
-
     @Override
-    public List<GetStudiesDto.GetStudiesStudyDto> getStudies(User user) {
+    public List<GetStudiesStudyDto> getStudies(User user) {
         return null;
     }
 
@@ -78,7 +75,17 @@ public class DefaultStudyQueryDslAppService extends DynamicCond implements Study
 
     @Override
     public List<GetTechStackInfo> getTechStacks(List<Long> studyIds) {
-        return studyRepository.getTechStacks(studyIds);
+        return queryFactory
+                .select(
+                        constructor(
+                                GetTechStackInfo.class,
+                                QStudy.study.id,
+                                QStudyTechStack.studyTechStack.techStack
+                        )
+                )
+                .from(QStudy.study)
+                .innerJoin(QStudy.study.techStackList, QStudyTechStack.studyTechStack)
+                .fetch();
     }
 
     @Override
