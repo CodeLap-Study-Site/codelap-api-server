@@ -143,11 +143,11 @@ public abstract class ApiTest {
         }
     }
 
-    protected void setMockMvcPerform(HttpMethod httpMethod, MultiValueMap<String, String> params, ResultMatcher[] matchers, String url) throws Exception {
+    protected void setMockMvcPerform(HttpMethod httpMethod, Object req, ResultMatcher[] matchers, String url) throws Exception {
         String identifier = url.substring(1);
 
         switch (httpMethod) {
-            case GET -> setMockMvcPerform(MockMvcRequestBuilders.get(url), params, matchers, identifier);
+            case GET -> setMockMvcPerform(MockMvcRequestBuilders.get(url), req, matchers, identifier);
 
             default -> throw new IllegalArgumentException("Unsupported HTTP method: " + httpMethod);
         }
@@ -173,9 +173,10 @@ public abstract class ApiTest {
                 .andDo(restDocsSet(identifier));
     }
 
-    private ResultActions setMockMvcPerform(MockHttpServletRequestBuilder method, MultiValueMap<String, String> params, ResultMatcher[] matchers, String identifier) throws Exception {
+    private ResultActions setMockMvcPerform(MockHttpServletRequestBuilder method, Object req, ResultMatcher[] matchers, String identifier) throws Exception {
         return this.mockMvc.perform(method
-                        .params(params))
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
                 .andExpectAll(matchers)
                 .andDo(restDocsSet(identifier));

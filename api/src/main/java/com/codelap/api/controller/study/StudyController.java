@@ -5,17 +5,15 @@ import com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import com.codelap.api.controller.study.dto.StudyLeaveDto.StudyLeaveRequest;
 import com.codelap.api.security.user.DefaultCodeLapUser;
 import com.codelap.api.service.study.StudyAppService;
-import com.codelap.common.study.dto.GetStudiesCardDto;
 import com.codelap.common.study.service.StudyService;
-import com.codelap.common.support.TechStack;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
+import static com.codelap.api.controller.study.cond.GetStudyCardsCond.GetStudyCardsRequest;
 import static com.codelap.api.controller.study.dto.StudyCreateDto.StudyCreateRequest;
 import static com.codelap.api.controller.study.dto.StudyDeleteDto.StudyDeleteRequest;
 import static com.codelap.api.controller.study.dto.StudyOpenDto.StudyOpenRequest;
@@ -106,12 +104,8 @@ public class StudyController {
 
     @GetMapping("/my-study")
     public GetMyStudiesResponse findStudyListByUserId(
-            Long userId,
-            String statusCond,
-            @RequestParam List<TechStack> techStackList
+            @RequestBody GetStudyCardsRequest req
     ) {
-        List<GetStudiesCardDto.GetStudyInfo> studies = studyAppService.getAttendedStudiesByUser(userId, statusCond, techStackList);
-
-        return GetMyStudiesResponse.create(studies);
+        return GetMyStudiesResponse.create(studyAppService.getAttendedStudiesByUser(req.userId(), req.statusCond(), req.techStackList()));
     }
 }

@@ -1,5 +1,6 @@
 package com.codelap.api.controller.study;
 
+import com.codelap.api.controller.study.cond.GetStudyCardsCond.GetStudyCardsRequest;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.Study;
@@ -228,13 +229,9 @@ class StudyControllerTest extends ApiTest {
     void 유저가_참여한_스터디_조회_성공() throws Exception {
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("userId", member.getId().toString());
-        params.add("statusCond", "open");
-        params.add("techStackList", "Spring");
-        params.add("techStackList", "AWS");
+        GetStudyCardsRequest req = new GetStudyCardsRequest(member.getId(), "", null);
 
-        setMockMvcPerform(GET, params, 유저가_참여한_스터디_조회_검증(params), "/study/my-study");
+        setMockMvcPerform(GET, req, 유저가_참여한_스터디_조회_검증(req), "/study/my-study");
     }
 
     @Test
@@ -275,25 +272,12 @@ class StudyControllerTest extends ApiTest {
         studyRepository.save(createStudy(leader, ReactNative));
     }
 
-    private ResultMatcher[] 유저가_참여한_스터디_조회_검증(MultiValueMap<String, String> params) {
-        List<Study> studiesContainsMember = studyRepository.findAll()
-                .stream()
-                .filter(it -> it.getStatus() != DELETED && it.getStatus() != CLOSED && it.containsMember(member))
-                .filter(study -> study.getTechStackList()
-                        .stream()
-                        .anyMatch(techStack -> params.get("techStackList").stream()
-                                .anyMatch(stack -> stack.equals(techStack.getTechStack().toString()))))
-                .collect(Collectors.toList());
+    private ResultMatcher[] 유저가_참여한_스터디_조회_검증(GetStudyCardsRequest req) {
+        List<Study> studiesContainsMember = getStudiesByFilter(req);
 
         return IntStream.range(0, studiesContainsMember.size())
                 .mapToObj(index -> {
                     Study indexStudy = studiesContainsMember.get(index);
-
-                    List<String> techStackList = indexStudy.getTechStackList()
-                            .stream()
-                            .map(StudyTechStack::getTechStack)
-                            .map(Enum::name)
-                            .collect(Collectors.toList());
 
                     return Map.entry(index, List.of(
                             jsonPath("$.studies.[" + index + "].studyName").value(indexStudy.getName()),
@@ -303,10 +287,36 @@ class StudyControllerTest extends ApiTest {
                             jsonPath("$.studies.[" + index + "].viewCount").value(indexStudy.getViews().size()),
                             jsonPath("$.studies.[" + index + "].bookmarkCount").value(indexStudy.getBookmarks().size()),
                             jsonPath("$.studies.[" + index + "].maxMemberSize").value(indexStudy.getMaxMembersSize()),
-                            jsonPath("$.studies.[" + index + "].techStackList[*]").value(techStackList)
+                            jsonPath("$.studies.[" + index + "].techStackList[*]").value(stringTechStackList(indexStudy))
                     ));
                 })
                 .flatMap(entry -> entry.getValue().stream())
                 .toArray(ResultMatcher[]::new);
+    }
+
+    private List<String> stringTechStackList(Study indexStudy) {
+        List<String> techStackList = indexStudy.getTechStackList()
+                .stream()
+                .map(StudyTechStack::getTechStack)
+                .map(Enum::name)
+                .collect(Collectors.toList());
+        return techStackList;
+    }
+
+    private List<Study> getStudiesByFilter(GetStudyCardsRequest req) {
+        List<Study> studiesContainsMember = studyRepository.findAll()
+                .stream()
+                .filter(it -> it.getStatus() != DELETED && it.containsMember(member))
+                .filter(study -> {
+                    if (req.techStackList() != null) {
+                        study.getTechStackList()
+                                .stream()
+                                .anyMatch(techStack -> req.techStackList().stream()
+                                        .anyMatch(stack -> stack.equals(techStack.getTechStack().toString())));
+                    }
+                    return false;
+                })
+                .collect(Collectors.toList());
+        return studiesContainsMember;
     }
 }
