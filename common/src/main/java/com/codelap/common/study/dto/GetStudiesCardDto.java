@@ -2,8 +2,8 @@ package com.codelap.common.study.dto;
 
 import com.codelap.common.study.domain.StudyPeriod;
 import com.codelap.common.support.TechStack;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class GetStudiesCardDto {
     }
 
     @Data
-    @RequiredArgsConstructor
+    @AllArgsConstructor
     public static class GetTechStackInfo {
         private Long studyId;
         private TechStack techStack;
