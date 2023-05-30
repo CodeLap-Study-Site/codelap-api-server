@@ -43,7 +43,6 @@ public class DefaultBookmarkQueryDslAppService extends DynamicCond implements  B
                         constructor(
                                 GetBookmarkInfo.class,
                                 QStudy.study.id,
-                                QStudy.study.id,
                                 QStudy.study.name,
                                 QStudy.study.period,
                                 QStudy.study.leader.name,
