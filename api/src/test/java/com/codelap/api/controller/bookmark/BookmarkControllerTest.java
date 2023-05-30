@@ -15,12 +15,15 @@ import org.springframework.security.test.context.support.WithUserDetails;
 
 import static com.codelap.api.controller.Bookmark.dto.BookmarkCreateDto.BookmarkCreateRequest;
 import static com.codelap.api.controller.Bookmark.dto.BookmarkDeleteDto.BookmarkDeleteRequest;
-import static com.codelap.api.support.HttpMethod.DELETE;
-import static com.codelap.api.support.HttpMethod.POST;
+import static com.codelap.api.support.RestDocumentationUtils.*;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class BookmarkControllerTest extends ApiTest {
+
+    private static final String DOCS_TAG = "Bookmark";
 
     @Autowired
     private StudyRepository studyRepository;
@@ -49,9 +52,21 @@ public class BookmarkControllerTest extends ApiTest {
     void 북마크_생성_성공() throws Exception {
         login(member);
 
-        BookmarkCreateRequest req = new BookmarkCreateRequest(study.getId());
-
-        setMockMvcPerform(POST, req, "/bookmark", "bookmark/create");
+        mockMvc.perform(
+                postMethodRequestBuilder(
+                        "/bookmark",
+                        APPLICATION_JSON,
+                        new BookmarkCreateRequest(study.getId()),
+                        token
+                )
+        ).andDo(
+                getRestDocumentationResult(
+                        "bookmark/create",
+                        DOCS_TAG,
+                        "북마크 생성",
+                        null, null
+                )
+        ).andExpect(status().isOk());
 
         Bookmark foundBookmark = bookmarkRepository.findAll().get(0);
 
@@ -65,9 +80,21 @@ public class BookmarkControllerTest extends ApiTest {
 
         Bookmark bookmark = bookmarkRepository.save(Bookmark.create(study, member));
 
-        BookmarkDeleteRequest req = new BookmarkDeleteRequest(bookmark.getId());
-
-        setMockMvcPerform(DELETE, req, "/bookmark", "bookmark/delete");
+        mockMvc.perform(
+                deleteMethodRequestBuilder(
+                        "/bookmark",
+                        APPLICATION_JSON,
+                        new BookmarkDeleteRequest(bookmark.getId()),
+                        token
+                )
+        ).andDo(
+                getRestDocumentationResult(
+                        "bookmark/delete",
+                        DOCS_TAG,
+                        "북마크 삭제",
+                        null, null
+                )
+        ).andExpect(status().isOk());
 
         assertThat(bookmarkRepository.findById(bookmark.getId())).isEmpty();
         assertThat(study.containsBookmark(bookmark)).isFalse();

@@ -6,7 +6,10 @@ env:
   CODE_DEPLOY_APP_NAME: codelap
   DEPLOYMENT_GROUP_NAME: codelap
   REST_DOCS_BUCKET_NAME: codelapdocs
+  SWEAGER_BUCKET_NAME: codelap-swagger
   REST_DOCS: ./api/build/docs/asciidoc/index.html
+  SWAGGER_DOCS_HTML: ./api/build/swagger-ui-convert/index.html
+  SWAGGER_DOCS_JS: ./api/build/swagger-ui-convert/swagger-spec.js
   DB_PASSWORD: root
 
 name: Merge
@@ -69,6 +72,10 @@ jobs:
         run: ./gradlew clean :api:buildNeeded --stacktrace
         shell: bash
 
+      - name: Generate Swagger UI
+        run: ./gradlew api:openapi3 -x test api:generateSwaggerUIConvert
+        shell: bash
+
       - name: Make zip file
         run: zip -r ./$GITHUB_SHA.zip .
         shell: bash
@@ -85,6 +92,13 @@ jobs:
 
       - name: RestDocs Upload to S3
         run: aws s3 cp --region ap-northeast-2 $REST_DOCS s3://$REST_DOCS_BUCKET_NAME/index.html
+
+      - name: Swagger Html Upload to S3
+        run: aws s3 cp --region ap-northeast-2 $SWAGER_DOCS_HTML s3://$SWEAGER_BUCKET_NAME/
+
+      - name: Swagger Js Upload to S3
+        run: aws s3 cp --region ap-northeast-2 $SWAGER_DOCS_JS s3://$SWEAGER_BUCKET_NAME/
+
 
       - name: Code Deploy
         run: aws deploy create-deployment --application-name $CODE_DEPLOY_APP_NAME --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name $DEPLOYMENT_GROUP_NAME --s3-location bucket=$BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip

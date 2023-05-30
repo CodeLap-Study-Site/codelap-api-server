@@ -3,6 +3,8 @@ plugins {
     id 'org.springframework.boot' version '3.0.4'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'com.epages.restdocs-api-spec' version "0.18.2"
+    id 'org.hidetake.swagger.generator' version "2.18.2"
 }
 
 subprojects {
@@ -79,6 +81,8 @@ project(":common") {
 project(":api") {
 
     apply plugin: 'org.asciidoctor.jvm.convert'
+    apply plugin: 'org.hidetake.swagger.generator'
+    apply plugin: 'com.epages.restdocs-api-spec'
 
     dependencies {
         implementation(project(":common"))
@@ -93,9 +97,12 @@ project(":api") {
         runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
         testImplementation(testFixtures(project(":common")))
-        testImplementation 'org.springframework.security:spring-security-test'
-        testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
         testImplementation 'io.findify:s3mock_2.13:0.2.6'
+        testImplementation 'org.springframework.security:spring-security-test'
+        testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+        testImplementation("com.epages:restdocs-api-spec-mockmvc:0.18.2")
+        swaggerCodegen("io.swagger.codegen.v3:swagger-codegen-cli:3.0.44")
+        swaggerUI("org.webjars:swagger-ui:3.52.1")
     }
 
     jar {
@@ -104,21 +111,30 @@ project(":api") {
 
     bootJar {
         enabled = true
-        dependsOn asciidoctor
-    }
-
-    ext {
-        snippetsDir = file(getBuildDir().name + '/generated-snippets')
     }
 
     test {
         useJUnitPlatform()
-        outputs.dir snippetsDir
     }
 
     asciidoctor {
-        dependsOn test
-        inputs.dir snippetsDir
+
+    }
+
+    openapi3 {
+        server = "http://ec2-43-201-200-26.ap-northeast-2.compute.amazonaws.com:8080"
+        title = "CodeLap User API 문서"
+        description = "Spring REST Docs with SwaggerUI."
+        version = "0.0.1"
+        outputFileNamePrefix = "open-api-3.0.1"
+        format = "json"
+    }
+
+    swaggerSources {
+        create("convert") {
+            setInputFile(file("$buildDir/api-spec/open-api-3.0.1.json"))
+            code.language = "html"
+        }
     }
 }
 

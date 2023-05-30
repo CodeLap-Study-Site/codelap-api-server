@@ -20,14 +20,19 @@ import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmation
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationReConfirmDto.StudyConfirmationReConfirmRequest;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationReConfirmDto.StudyConfirmationReConfirmRequestFileDto;
 import static com.codelap.api.controller.studyConfirmation.dto.StudyConfirmationRejectDto.StudyConfirmationRejectRequest;
-import static com.codelap.api.support.HttpMethod.POST;
+import static com.codelap.api.support.RestDocumentationUtils.getRestDocumentationResult;
+import static com.codelap.api.support.RestDocumentationUtils.postMethodRequestBuilder;
 import static com.codelap.common.studyConfirmation.domain.StudyConfirmationStatus.*;
 import static com.codelap.fixture.StudyConfirmationFixture.createStudyConfirmation;
 import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StudyConfirmationControllerTest extends ApiTest {
+
+    private static final String DOCS_TAG = "StudyConfirmation";
 
     @Autowired
     private UserRepository userRepository;
@@ -57,9 +62,22 @@ class StudyConfirmationControllerTest extends ApiTest {
         login(member);
 
         StudyConfirmationCreateRequestFileDto file = new StudyConfirmationCreateRequestFileDto("savedName", "originalName", 100L);
-        StudyConfirmationCreateRequest req = new StudyConfirmationCreateRequest(study.getId(), "title", "contents", List.of(file));
 
-        setMockMvcPerform(POST, req, "/study-confirmation", "study-confirmation/create");
+        mockMvc.perform(
+                postMethodRequestBuilder(
+                        "/study-confirmation",
+                        APPLICATION_JSON,
+                        new StudyConfirmationCreateRequest(study.getId(), "title", "contents", List.of(file)),
+                        token
+                )
+        ).andDo(
+                getRestDocumentationResult(
+                        "study-confirmation/create",
+                        DOCS_TAG,
+                        "스터디 인증 생성",
+                        null, null
+                )
+        ).andExpect(status().isOk());
 
         StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
 
@@ -77,13 +95,23 @@ class StudyConfirmationControllerTest extends ApiTest {
     void 스터디_인증_확인_성공() throws Exception {
         login(leader);
 
-        studyConfirmationRepository.save(createStudyConfirmation(study, member));
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.save(createStudyConfirmation(study, member));
 
-        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
-
-        StudyConfirmationConfirmRequest req = new StudyConfirmationConfirmRequest(studyConfirmation.getId());
-
-        setMockMvcPerform(POST, req, "/study-confirmation/confirm");
+        mockMvc.perform(
+                postMethodRequestBuilder(
+                        "/study-confirmation/confirm",
+                        APPLICATION_JSON,
+                        new StudyConfirmationConfirmRequest(studyConfirmation.getId()),
+                        token
+                )
+        ).andDo(
+                getRestDocumentationResult(
+                        "study-confirmation/confirm",
+                        DOCS_TAG,
+                        "스터디 인증 확인",
+                        null, null
+                )
+        ).andExpect(status().isOk());
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(CONFIRMED);
     }
@@ -93,13 +121,23 @@ class StudyConfirmationControllerTest extends ApiTest {
     void 스터디_인증_거절_성공() throws Exception {
         login(leader);
 
-        studyConfirmationRepository.save(createStudyConfirmation(study, member));
+        StudyConfirmation studyConfirmation = studyConfirmationRepository.save(createStudyConfirmation(study, member));
 
-        StudyConfirmation studyConfirmation = studyConfirmationRepository.findAll().get(0);
-
-        StudyConfirmationRejectRequest req = new StudyConfirmationRejectRequest(studyConfirmation.getId());
-
-        setMockMvcPerform(POST, req, "/study-confirmation/reject");
+        mockMvc.perform(
+                postMethodRequestBuilder(
+                        "/study-confirmation/reject",
+                        APPLICATION_JSON,
+                        new StudyConfirmationRejectRequest(studyConfirmation.getId()),
+                        token
+                )
+        ).andDo(
+                getRestDocumentationResult(
+                        "study-confirmation/reject",
+                        DOCS_TAG,
+                        "스터디 인증 거절",
+                        null, null
+                )
+        ).andExpect(status().isOk());
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(REJECTED);
     }
@@ -114,9 +152,22 @@ class StudyConfirmationControllerTest extends ApiTest {
         studyConfirmation.setStatus(REJECTED);
 
         StudyConfirmationReConfirmRequestFileDto refile = new StudyConfirmationReConfirmRequestFileDto("savedName", "originalName", 100L);
-        StudyConfirmationReConfirmRequest req = new StudyConfirmationReConfirmRequest(studyConfirmation.getId(), "title", "content", List.of(refile));
 
-        setMockMvcPerform(POST, req, "/study-confirmation/reconfirm");
+        mockMvc.perform(
+                postMethodRequestBuilder(
+                        "/study-confirmation/reconfirm",
+                        APPLICATION_JSON,
+                        new StudyConfirmationReConfirmRequest(studyConfirmation.getId(), "title", "content", List.of(refile)),
+                        token
+                )
+        ).andDo(
+                getRestDocumentationResult(
+                        "study-confirmation/reconfirm",
+                        DOCS_TAG,
+                        "스터디 인증 거절",
+                        null, null
+                )
+        ).andExpect(status().isOk());
 
         assertThat(studyConfirmation.getStatus()).isEqualTo(CREATED);
     }
