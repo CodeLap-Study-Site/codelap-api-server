@@ -1,11 +1,10 @@
 package com.codelap.api.service.study;
 
-import com.codelap.api.service.study.dto.GetStudiesDto;
+import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
 import com.codelap.api.service.study.support.DynamicCond;
 import com.codelap.common.bookmark.domain.QBookmark;
 import com.codelap.common.study.domain.QStudy;
 import com.codelap.common.study.domain.QStudyTechStack;
-import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.studyComment.domain.QStudyComment;
 import com.codelap.common.studyView.domain.QStudyView;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.codelap.common.study.domain.StudyStatus.DELETED;
 import static com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import static com.codelap.common.study.dto.GetStudiesCardDto.GetTechStackInfo;
 import static com.querydsl.core.types.ExpressionUtils.count;
@@ -32,15 +32,13 @@ public class DefaultStudyQueryDslAppService extends DynamicCond implements Study
 
     private final JPAQueryFactory queryFactory;
 
-    private final StudyRepository studyRepository;
-
     @Override
-    public List<GetStudiesDto.GetStudiesStudyDto> getStudies(User user) {
+    public List<GetStudiesStudyDto> getStudies(User user) {
         return null;
     }
 
     @Override
-    public List<GetStudyInfo> getAttendedStudiesByUser(User userCond, String statusCond, List<TechStack> techStackList) {
+    public List<GetStudyInfo> getAttendedStudiesByUser(User user, String statusCond, List<TechStack> techStackList) {
         return queryFactory
                 .selectDistinct(
                         constructor(
@@ -70,15 +68,26 @@ public class DefaultStudyQueryDslAppService extends DynamicCond implements Study
                                 QStudy.study.maxMembersSize))
                 .from(QStudy.study)
                 .innerJoin(QStudy.study.techStackList, QStudyTechStack.studyTechStack)
+                .where(QStudy.study.members.contains(user))
+                .where(QStudy.study.status.ne(DELETED))
                 .where(checkStatus(statusCond))
-                .where(userContains(userCond))
                 .where(techStackFilter(techStackList))
                 .fetch();
     }
 
     @Override
     public List<GetTechStackInfo> getTechStacks(List<Long> studyIds) {
-        return studyRepository.getTechStacks(studyIds);
+        return queryFactory
+                .select(
+                        constructor(
+                                GetTechStackInfo.class,
+                                QStudy.study.id,
+                                QStudyTechStack.studyTechStack.techStack
+                        )
+                )
+                .from(QStudy.study)
+                .innerJoin(QStudy.study.techStackList, QStudyTechStack.studyTechStack)
+                .fetch();
     }
 
     @Override
