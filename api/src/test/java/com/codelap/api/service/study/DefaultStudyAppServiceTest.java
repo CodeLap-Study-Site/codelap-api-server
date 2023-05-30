@@ -1,11 +1,13 @@
 package com.codelap.api.service.study;
 
+import com.codelap.common.bookmark.domain.BookmarkRepository;
 import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.study.dto.GetStudiesCardDto;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.studyView.service.StudyViewService;
+import com.codelap.common.support.TechStack;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
 import org.assertj.core.api.Assertions;
@@ -34,6 +36,9 @@ class DefaultStudyAppServiceTest {
 
     @Autowired
     StudyRepository studyRepository;
+
+    @Autowired
+    BookmarkRepository bookmarkRepository;
 
     @Autowired
     StudyAppService studyAppService;
@@ -67,6 +72,27 @@ class DefaultStudyAppServiceTest {
                         .anyMatch(techStack -> techStack.getTechStack().equals(React)))
                 .collect(Collectors.toList());
 
+        Assertions.assertThat(studies.size()).isEqualTo(allStudies.size());
+    }
+
+    @Test
+    void 유저가_즐겨찾기한_스터디_조회_성공() {
+        leader = userRepository.save(createActivateUser());
+        member = userRepository.save(createActivateUser());
+
+        유저가_참여한_스터디_조회_스터디_생성(leader);
+
+        List<GetStudiesCardDto.GetStudyInfo> allStudies = studyAppService.getBookmarkedStudiesByUser(member.getId());
+
+        List<Study> studies = studyRepository.findAll()
+                .stream()
+                .filter(study -> study.getStatus() == OPENED)
+                .filter(study -> study.getTechStackList()
+                        .stream()
+                        .anyMatch(techStack -> techStack.getTechStack().equals(React)))
+                        .collect(Collectors.toList());
+
+        System.out.println(allStudies);
         Assertions.assertThat(studies.size()).isEqualTo(allStudies.size());
     }
 

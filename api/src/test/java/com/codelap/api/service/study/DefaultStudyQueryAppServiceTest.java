@@ -1,5 +1,7 @@
 package com.codelap.api.service.study;
 
+import com.codelap.common.bookmark.domain.Bookmark;
+import com.codelap.common.bookmark.domain.BookmarkRepository;
 import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyRepository;
@@ -12,10 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.lang.reflect.Member;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Filter;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static com.codelap.common.study.domain.StudyStatus.OPENED;
 import static com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
@@ -46,6 +51,9 @@ class DefaultStudyQueryAppServiceTest {
 
     @Autowired
     BookmarkService bookmarkService;
+
+    @Autowired
+    BookmarkRepository bookmarkRepository;
 
     private User leader;
     private User member;
@@ -87,6 +95,47 @@ class DefaultStudyQueryAppServiceTest {
                         assertThat(study.getTechStackList().get(j).getTechStack()).isEqualTo(studyList.get(index).getTechStackList().get(j).getTechStack());
                     });
                 });
+    }
+
+    @Test
+    void 유저가_즐겨찾기한_스터디_조회_성공(){
+        leader = userRepository.save(createActivateUser());
+        member = userRepository.save(createActivateUser());
+
+        유저가_참여한_스터디_조회_스터디_생성(leader);
+
+        List<GetStudyInfo> allStudies = studyQueryDslAppService.getBookmarkedStudiesByUser(북마크_유저_조회_리스트_가져오기(member));
+
+        Map<Long, List<GetTechStackInfo>> techstackMap = studyQueryDslAppService.getTechStacks(스터디_아이디_리스트_가져오기(allStudies))
+                .stream()
+                .collect(Collectors.groupingBy(GetTechStackInfo::getStudyId));
+
+        allStudies.forEach(it -> it.setTechStackList(techstackMap.get(it.getStudyId())));
+
+        List<Bookmark> bookmarkList = bookmarkRepository.findAll()
+                .stream()
+                .filter(study -> study.getStudy().getId() == allStudies.get(0).getStudyId()).collect(Collectors.toList());
+
+        IntStream.range(0, allStudies.size())
+                .forEach(index -> {
+                    GetStudyInfo study = allStudies.get(index);
+
+                    assertThat(study.getStudyId()).isEqualTo(bookmarkList.get(index).getStudy().getId());
+                    assertThat(study.getBookmarkCount()).isEqualTo(bookmarkList.get(index).getStudy().getBookmarks().size());
+                    assertThat(study.getCommentCount()).isEqualTo(bookmarkList.get(index).getStudy().getComments().size());
+                    assertThat(study.getViewCount()).isEqualTo(bookmarkList.get(index).getStudy().getViews().size());
+
+                    IntStream.range(0, study.getTechStackList().size()).forEach(j ->{
+                        assertThat(study.getTechStackList().get(j).getTechStack()).isEqualTo(bookmarkList.get(index).getStudy().getTechStackList().get(j).getTechStack());
+                    });
+                });
+    }
+
+    private List<Long> 북마크_유저_조회_리스트_가져오기(User member){
+        return  bookmarkRepository.findByUser(member)
+                .stream()
+                .map(bookmark -> bookmark.getStudy().getId()).
+                collect(Collectors.toList());
     }
 
     private List<Long> 스터디_아이디_리스트_가져오기(List<GetStudyInfo> allStudies) {

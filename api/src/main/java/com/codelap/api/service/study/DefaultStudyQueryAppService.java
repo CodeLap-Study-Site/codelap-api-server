@@ -36,4 +36,9 @@ public class DefaultStudyQueryAppService implements StudyQueryAppService {
     public List<GetOpenedStudiesDto> getOpenedStudies() {
         return null;
     }
+
+    @Override
+    public List<GetStudiesCardDto.GetStudyInfo> getBookmarkedStudiesByUser(List<Long> studyIds) {
+        return null;
+    }
 }
