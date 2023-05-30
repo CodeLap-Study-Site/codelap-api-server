@@ -37,10 +37,10 @@ public class StudyController {
         studyService.create(user.getId(), req.name(), req.info(), req.maxMembersSize(), req.difficulty(), req.period().toStudyPeriod(), req.career().toStudyNeedCareer(), req.techStackList());
     }
 
-    @PostMapping("/image-upload")
+    @PostMapping("/image-upload/{studyId}")
     public void imageUpload(
             @RequestPart(value = "multipartFile") MultipartFile multipartFile,
-            @RequestParam Long studyId,
+            @PathVariable Long studyId,
             @AuthenticationPrincipal DefaultCodeLapUser leader
     ) throws IOException {
         studyAppService.imageUpload(leader.getId(), studyId, multipartFile);
@@ -86,7 +86,7 @@ public class StudyController {
         studyService.leave(req.studyId(), member.getId());
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public void delete(
             @AuthenticationPrincipal DefaultCodeLapUser leader,
             @RequestBody StudyDeleteRequest req

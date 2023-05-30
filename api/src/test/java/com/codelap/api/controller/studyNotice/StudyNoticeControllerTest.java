@@ -19,16 +19,19 @@ import static com.codelap.api.controller.studyNotice.dto.StudyNoticeCreateDto.St
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeDeleteDto.StudyNoticeDeleteRequest;
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeUpdateDto.StudyNoticeUpdateRequest;
 import static com.codelap.api.controller.studyNotice.dto.StudyNoticeUpdateDto.StudyNoticeUpdateRequestFileDto;
-import static com.codelap.api.support.HttpMethod.DELETE;
-import static com.codelap.api.support.HttpMethod.POST;
+import static com.codelap.api.support.RestDocumentationUtils.*;
 import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.CREATED;
 import static com.codelap.common.studyNotice.domain.StudyNoticeStatus.DELETED;
 import static com.codelap.fixture.StudyFixture.createStudy;
 import static com.codelap.fixture.StudyNoticeFixture.createStudyNotice;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StudyNoticeControllerTest extends ApiTest {
+
+    private static final String DOCS_TAG = "StudyNotice";
 
     @Autowired
     private UserRepository userRepository;
@@ -56,16 +59,29 @@ class StudyNoticeControllerTest extends ApiTest {
         login(leader);
 
         StudyNoticeCreateRequestFileDto file = new StudyNoticeCreateRequestFileDto("s3ImageURL", "originalName");
-        StudyNoticeCreateRequest req = new StudyNoticeCreateRequest(study.getId(), "title", "contents", List.of(file));
 
-        setMockMvcPerform(POST, req, "/study-notice", "study-notice/create");
+        mockMvc.perform(
+                postMethodRequestBuilder(
+                        "/study-notice",
+                        APPLICATION_JSON,
+                        new StudyNoticeCreateRequest(study.getId(), "title", "contents", List.of(file)),
+                        token
+                )
+        ).andDo(
+                getRestDocumentationResult(
+                        "study-notice/create",
+                        DOCS_TAG,
+                        "스터디 공지 생성",
+                        null, null
+                )
+        ).andExpect(status().isOk());
 
         StudyNotice studyNotice = studyNoticeRepository.findAll().get(1);
 
         assertThat(studyNotice.getId()).isNotNull();
         assertThat(studyNotice.getStudy()).isSameAs(study);
-        assertThat(studyNotice.getTitle()).isEqualTo(req.title());
-        assertThat(studyNotice.getContents()).isEqualTo(req.contents());
+        assertThat(studyNotice.getTitle()).isEqualTo("title");
+        assertThat(studyNotice.getContents()).isEqualTo("contents");
         assertThat(studyNotice.getCreatedAt()).isNotNull();
         assertThat(studyNotice.getStatus()).isEqualTo(CREATED);
     }
@@ -76,14 +92,27 @@ class StudyNoticeControllerTest extends ApiTest {
         login(leader);
 
         StudyNoticeUpdateRequestFileDto file = new StudyNoticeUpdateRequestFileDto("s3ImageURL", "originalName");
-        StudyNoticeUpdateRequest req = new StudyNoticeUpdateRequest(studyNotice.getId(), "title", "contents", List.of(file));
 
-        setMockMvcPerform(POST, req, "/study-notice/update");
+        mockMvc.perform(
+                postMethodRequestBuilder(
+                        "/study-notice/update",
+                        APPLICATION_JSON,
+                        new StudyNoticeUpdateRequest(studyNotice.getId(), "title", "contents", List.of(file)),
+                        token
+                )
+        ).andDo(
+                getRestDocumentationResult(
+                        "study-notice/update",
+                        DOCS_TAG,
+                        "스터디 공지 수정",
+                        null, null
+                )
+        ).andExpect(status().isOk());
 
         StudyNotice foundStudyNotice = studyNoticeRepository.findAll().get(0);
 
-        assertThat(foundStudyNotice.getTitle()).isEqualTo(req.title());
-        assertThat(foundStudyNotice.getContents()).isEqualTo(req.contents());
+        assertThat(foundStudyNotice.getTitle()).isEqualTo("title");
+        assertThat(foundStudyNotice.getContents()).isEqualTo("contents");
         assertThat(foundStudyNotice.getCreatedAt()).isNotNull();
         assertThat(foundStudyNotice.getStatus()).isEqualTo(CREATED);
     }
@@ -93,9 +122,21 @@ class StudyNoticeControllerTest extends ApiTest {
     void 스터디_공지_삭제_성공() throws Exception {
         login(leader);
 
-        StudyNoticeDeleteRequest req = new StudyNoticeDeleteRequest(studyNotice.getId());
-
-        setMockMvcPerform(DELETE, req, "/study-notice", "study-notice/delete");
+        mockMvc.perform(
+                deleteMethodRequestBuilder(
+                        "/study-notice",
+                        APPLICATION_JSON,
+                        new StudyNoticeDeleteRequest(studyNotice.getId()),
+                        token
+                )
+        ).andDo(
+                getRestDocumentationResult(
+                        "study-notice/delete",
+                        DOCS_TAG,
+                        "스터디 공지 삭제",
+                        null, null
+                )
+        ).andExpect(status().isOk());
 
         StudyNotice studyNotice = studyNoticeRepository.findAll().get(0);
 

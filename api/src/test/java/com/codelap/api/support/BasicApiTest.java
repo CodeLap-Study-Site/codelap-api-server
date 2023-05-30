@@ -1,5 +1,6 @@
 package com.codelap.api.support;
 
+import com.codelap.api.security.component.JwtComponent;
 import com.codelap.api.security.user.DefaultCodeLapUser;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import static com.codelap.api.security.component.JwtType.ACCESS;
 import static com.codelap.fixture.UserFixture.createActivateUser;
 import static com.codelap.fixture.UserFixture.createUser;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -29,6 +31,8 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @ExtendWith(RestDocumentationExtension.class)
 public abstract class BasicApiTest {
 
+    protected String token;
+
     @Autowired
     protected MockMvc mockMvc;
 
@@ -38,8 +42,12 @@ public abstract class BasicApiTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtComponent jwtComponent;
+
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
+        this.token = jwtComponent.issue(1L, ACCESS);
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .addFilter(new CharacterEncodingFilter("UTF-8", true))
                 .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation))
