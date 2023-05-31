@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.codelap.common.study.domain.StudyStatus.CLOSED;
 import static com.codelap.common.study.domain.StudyStatus.DELETED;
 import static com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import static com.codelap.common.study.dto.GetStudiesCardDto.GetTechStackInfo;
@@ -52,7 +53,7 @@ public class DefaultStudyQueryDslAppService extends DynamicCond implements Study
     public List<GetStudyInfo> getBookmarkedStudiesByUser(List<Long> studyIds) {
         return getGetStudyInfoJPAQuery()
                 .where(QStudy.study.id.in(studyIds))
-                .where(QStudy.study.status.ne(DELETED))
+                .where(QStudy.study.status.notIn(DELETED, CLOSED))
                 .fetch();
     }
 

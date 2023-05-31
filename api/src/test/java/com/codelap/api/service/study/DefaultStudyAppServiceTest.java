@@ -5,6 +5,7 @@ import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.study.dto.GetStudiesCardDto;
+import com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.studyView.service.StudyViewService;
 import com.codelap.common.user.domain.User;
@@ -61,7 +62,7 @@ class DefaultStudyAppServiceTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        List<GetStudiesCardDto.GetStudyInfo> allStudies = studyAppService.getAttendedStudiesByUser(member.getId(), "open", List.of((Java)));
+        List<GetStudyInfo> allStudies = studyAppService.getAttendedStudiesByUser(member.getId(), "open", List.of((Java)));
         List<Study> studies = studyRepository.findAll()
                 .stream()
                 .filter(study -> study.getStatus() == OPENED)
@@ -102,6 +103,13 @@ class DefaultStudyAppServiceTest {
         studyAppService.imageUpload(leader.getId(), study.getId(), file);
 
         assertThat(study.getFiles()).isNotNull();
+    }
+
+    private List<Long> 유저가_북마크한_스터디_아이디_리스트(User member) {
+        return bookmarkRepository.findByUser(member)
+                .stream()
+                .map(bookmark -> bookmark.getStudy().getId())
+                .collect(Collectors.toList());
     }
 
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
