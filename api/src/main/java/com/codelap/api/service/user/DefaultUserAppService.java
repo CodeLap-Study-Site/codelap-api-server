@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 import static com.codelap.common.user.domain.UserFile.create;
@@ -37,7 +36,7 @@ public class DefaultUserAppService implements UserAppService {
     }
 
     @Override
-    public void imageUpload(Long userId, MultipartFile multipartFile) throws IOException {
+    public void imageUpload(Long userId, MultipartFile multipartFile) {
         User user = userRepository.findById(userId).orElseThrow();
         user.changeImage(List.of((UserFile) fileUpload.upload(multipartFile, dirName, create())));
     }

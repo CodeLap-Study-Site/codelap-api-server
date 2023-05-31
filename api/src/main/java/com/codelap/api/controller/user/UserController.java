@@ -9,8 +9,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -31,7 +29,7 @@ public class UserController {
     public void imageUpload(
             @RequestPart(value = "multipartFile") MultipartFile multipartFile,
             @AuthenticationPrincipal DefaultCodeLapUser user
-    ) throws IOException {
+    ) {
         userAppService.imageUpload(user.getId(), multipartFile);
     }
 
@@ -39,7 +37,7 @@ public class UserController {
     public void update(
             @RequestBody UserUpdateRequest req,
             @AuthenticationPrincipal DefaultCodeLapUser user
-    ) throws IOException {
+    ) {
         userService.update(user.getId(), req.name(), req.career().toCareer(), req.techStacks());
     }
 
