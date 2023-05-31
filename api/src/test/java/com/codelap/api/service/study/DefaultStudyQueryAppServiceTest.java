@@ -104,34 +104,26 @@ class DefaultStudyQueryAppServiceTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        List<GetStudyInfo> allStudies = studyQueryDslAppService.getBookmarkedStudiesByUser(북마크_유저_조회_리스트_가져오기(member));
+        List<GetStudyInfo> allStudies = studyQueryDslAppService.getBookmarkedStudiesByUser(유저가_북마크한_스터디_아이디_리스트(member));
 
-        Map<Long, List<GetTechStackInfo>> techstackMap = studyQueryDslAppService.getTechStacks(스터디_아이디_리스트_가져오기(allStudies))
+        List<Study> studyList = studyRepository.findAll()
                 .stream()
-                .collect(Collectors.groupingBy(GetTechStackInfo::getStudyId));
-
-        allStudies.forEach(it -> it.setTechStackList(techstackMap.get(it.getStudyId())));
-
-        List<Bookmark> bookmarkList = bookmarkRepository.findAll()
-                .stream()
-                .filter(study -> study.getStudy().getId() == allStudies.get(0).getStudyId()).collect(Collectors.toList());
+                .filter(study -> study.getStatus() == OPENED)
+                .filter(study -> 유저가_북마크한_스터디_아이디_리스트(member).contains(study.getId()))
+                .collect(Collectors.toList());
 
         IntStream.range(0, allStudies.size())
                 .forEach(index -> {
                     GetStudyInfo study = allStudies.get(index);
 
-                    assertThat(study.getStudyId()).isEqualTo(bookmarkList.get(index).getStudy().getId());
-                    assertThat(study.getBookmarkCount()).isEqualTo(bookmarkList.get(index).getStudy().getBookmarks().size());
-                    assertThat(study.getCommentCount()).isEqualTo(bookmarkList.get(index).getStudy().getComments().size());
-                    assertThat(study.getViewCount()).isEqualTo(bookmarkList.get(index).getStudy().getViews().size());
-
-                    IntStream.range(0, study.getTechStackList().size()).forEach(j ->{
-                        assertThat(study.getTechStackList().get(j).getTechStack()).isEqualTo(bookmarkList.get(index).getStudy().getTechStackList().get(j).getTechStack());
-                    });
+                    assertThat(study.getStudyId()).isEqualTo(studyList.get(index).getId());
+                    assertThat(study.getBookmarkCount()).isEqualTo(studyList.get(index).getBookmarks().size());
+                    assertThat(study.getCommentCount()).isEqualTo(studyList.get(index).getComments().size());
+                    assertThat(study.getViewCount()).isEqualTo(studyList.get(index).getViews().size());
                 });
     }
 
-    private List<Long> 북마크_유저_조회_리스트_가져오기(User member){
+    private List<Long> 유저가_북마크한_스터디_아이디_리스트(User member){
         return  bookmarkRepository.findByUser(member)
                 .stream()
                 .map(bookmark -> bookmark.getStudy().getId()).

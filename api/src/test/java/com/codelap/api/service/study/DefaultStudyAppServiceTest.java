@@ -7,7 +7,6 @@ import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.study.dto.GetStudiesCardDto;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.studyView.service.StudyViewService;
-import com.codelap.common.support.TechStack;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
 import org.assertj.core.api.Assertions;
@@ -82,17 +81,14 @@ class DefaultStudyAppServiceTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        List<GetStudiesCardDto.GetStudyInfo> allStudies = studyAppService.getBookmarkedStudiesByUser(member.getId());
+        List<GetStudyInfo> allStudies = studyAppService.getBookmarkedStudiesByUser(member.getId());
 
         List<Study> studies = studyRepository.findAll()
                 .stream()
                 .filter(study -> study.getStatus() == OPENED)
-                .filter(study -> study.getTechStackList()
-                        .stream()
-                        .anyMatch(techStack -> techStack.getTechStack().equals(React)))
-                        .collect(Collectors.toList());
+                .filter(study -> 유저가_북마크한_스터디_아이디_리스트(member).contains(study.getId()))
+                .collect(Collectors.toList());
 
-        System.out.println(allStudies);
         Assertions.assertThat(studies.size()).isEqualTo(allStudies.size());
     }
 
