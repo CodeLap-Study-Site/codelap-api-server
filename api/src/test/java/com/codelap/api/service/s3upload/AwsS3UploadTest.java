@@ -34,7 +34,7 @@ public class AwsS3UploadTest {
     }
 
     @Test
-    void S3_파일_업로드() throws IOException {
+    void S3_파일_업로드() {
         String path = "test.png";
         String contentType = "image/png";
         String dirName = "test";

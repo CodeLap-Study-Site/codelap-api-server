@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.codelap.common.support.FileStandard;
+import com.codelap.integration.support.RuntimeIOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -28,7 +29,7 @@ public class AwsS3Uploader implements FileUpload{
     private final S3Properties s3Properties;
 
     @Override
-    public List<FileStandard> uploads(List<MultipartFile> multipartFiles, String dirName, FileStandard file) throws IOException {
+    public List<FileStandard> uploads(List<MultipartFile> multipartFiles, String dirName, FileStandard file) {
         List<FileStandard> storeFileResult = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             if (!multipartFile.isEmpty()) {
@@ -38,7 +39,7 @@ public class AwsS3Uploader implements FileUpload{
         return storeFileResult;
     }
     @Override
-    public FileStandard upload(MultipartFile multipartFile, String dirName, FileStandard file) throws IOException {
+    public FileStandard upload(MultipartFile multipartFile, String dirName, FileStandard file) {
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패"));
         return upload(uploadFile, multipartFile.getOriginalFilename(), dirName, file);
@@ -69,13 +70,17 @@ public class AwsS3Uploader implements FileUpload{
         }
     }
 
-    private Optional<File> convert(MultipartFile file) throws IOException {
+    private Optional<File> convert(MultipartFile file) {
         File convertFile = new File(file.getOriginalFilename());
-        if (convertFile.createNewFile()) {
-            try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-                fos.write(file.getBytes());
+        try {
+            if (convertFile.createNewFile()) {
+                try (FileOutputStream fos = new FileOutputStream(convertFile)) {
+                    fos.write(file.getBytes());
+                }
+                return Optional.of(convertFile);
             }
-            return Optional.of(convertFile);
+        } catch (IOException e) {
+            throw new RuntimeIOException(e);
         }
         return Optional.empty();
     }
