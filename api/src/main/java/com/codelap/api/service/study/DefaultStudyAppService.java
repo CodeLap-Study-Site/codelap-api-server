@@ -2,13 +2,11 @@ package com.codelap.api.service.study;
 
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
-import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyFile;
 import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import com.codelap.common.study.dto.GetStudiesCardDto.GetTechStackInfo;
-import com.codelap.common.support.Preconditions;
 import com.codelap.common.support.TechStack;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
@@ -79,12 +77,7 @@ public class DefaultStudyAppService implements StudyAppService {
     }
 
     @Override
-    public void imageUpload(Long leaderId, Long studyId, MultipartFile multipartFile) {
-        User leader = userRepository.findById(leaderId).orElseThrow();
-        Study study = studyRepository.findById(studyId).orElseThrow();
-
-        Preconditions.actorValidate(study.isLeader(leader));
-
-        study.changeImage(List.of((StudyFile) fileUpload.upload(multipartFile, dirName, create())));
+    public StudyFile imageUpload(MultipartFile multipartFile) {
+        return (StudyFile) fileUpload.upload(multipartFile, dirName, create());
     }
 }

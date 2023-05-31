@@ -1,6 +1,7 @@
 package com.codelap.api.service.study;
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
+import com.codelap.common.study.domain.StudyFile;
 import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import com.codelap.common.support.TechStack;
@@ -16,5 +17,5 @@ public interface StudyAppService {
 
     List<GetOpenedStudiesDto> getOpenedStudies();
 
-    void imageUpload(Long leaderId, Long studyId, MultipartFile multipartFile);
+    StudyFile imageUpload(MultipartFile multipartFile);
 }

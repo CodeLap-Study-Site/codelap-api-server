@@ -2,6 +2,7 @@ package com.codelap.api.service.study;
 
 import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.Study;
+import com.codelap.common.study.domain.StudyFile;
 import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.study.dto.GetStudiesCardDto;
 import com.codelap.common.studyComment.service.StudyCommentService;
@@ -71,15 +72,13 @@ class DefaultStudyAppServiceTest {
     }
 
     @Test
-    void 스터디_이미지_업데이트() throws Exception {
-        leader = userRepository.save(createActivateUser("member"));
-        Study study = studyRepository.save(createStudy(leader));
-
+    void 스터디_이미지_업데이트() {
         MockMultipartFile file = new MockMultipartFile("file", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
 
-        studyAppService.imageUpload(leader.getId(), study.getId(), file);
+        StudyFile studyFile = studyAppService.imageUpload(file);
 
-        assertThat(study.getFiles()).isNotNull();
+        assertThat(studyFile.getS3ImageURL()).isNotNull();
+        assertThat(studyFile.getOriginalName()).isNotNull();
     }
 
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {

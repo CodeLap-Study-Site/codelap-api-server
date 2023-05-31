@@ -1,12 +1,10 @@
 package com.codelap.api.controller.study.dto;
 
-import com.codelap.common.study.domain.StudyDifficulty;
-import com.codelap.common.study.domain.StudyNeedCareer;
-import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.StudyTechStack;
+import com.codelap.common.study.domain.*;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StudyCreateDto {
 
@@ -17,8 +15,13 @@ public class StudyCreateDto {
             StudyDifficulty difficulty,
             StudyCreateRequestStudyPeriodDto period,
             StudyCreateRequestStudyNeedCareerDto career,
-            List<StudyTechStack> techStackList
+            List<StudyTechStack> techStackList,
+            List<StudyCreateRequestStudyFileDto> studyFiles
     ) {
+        public List<StudyFile> toStudyFiles() {
+            return studyFiles.stream().map(StudyCreateRequestStudyFileDto::toStudyFile)
+                    .collect(Collectors.toList());
+        }
     }
 
     public record StudyCreateRequestStudyPeriodDto(
@@ -36,6 +39,16 @@ public class StudyCreateDto {
     ) {
         public StudyNeedCareer toStudyNeedCareer() {
             return StudyNeedCareer.create(occupation, year);
+        }
+    }
+
+    public record StudyCreateRequestStudyFileDto(
+            String imageURL,
+            String originalName
+    ) {
+        public StudyFile toStudyFile() {
+            StudyFile studyFile = StudyFile.create();
+            return studyFile.update(imageURL, originalName);
         }
     }
 }

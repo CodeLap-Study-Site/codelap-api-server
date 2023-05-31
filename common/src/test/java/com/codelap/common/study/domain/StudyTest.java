@@ -41,8 +41,10 @@ class StudyTest {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("occupation", 1);
         List<StudyTechStack> techStacks = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
+        StudyFile studyFile = StudyFile.create();
+        studyFile.update("s3ImageURL", "originalName");
 
-        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStacks);
+        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStacks, List.of(studyFile));
 
         assertThat(study.getName()).isEqualTo("팀");
         assertThat(study.getInfo()).isEqualTo("설명");
@@ -62,8 +64,10 @@ class StudyTest {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("occupation", 1);
         List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
+        StudyFile studyFile = StudyFile.create();
+        studyFile.update("s3ImageURL", "originalName");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> create(name, "설명", 4, NORMAL, period, needCareer, leader, techStackList));
+        assertThatIllegalArgumentException().isThrownBy(() -> create(name, "설명", 4, NORMAL, period, needCareer, leader, techStackList, List.of(studyFile)));
     }
 
     @ParameterizedTest
@@ -72,8 +76,10 @@ class StudyTest {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("occupation", 1);
         List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
+        StudyFile studyFile = StudyFile.create();
+        studyFile.update("s3ImageURL", "originalName");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> create("팀", info, 4, NORMAL, period, needCareer, leader, techStackList));
+        assertThatIllegalArgumentException().isThrownBy(() -> create("팀", info, 4, NORMAL, period, needCareer, leader, techStackList, List.of(studyFile)));
     }
 
     @Test
@@ -81,8 +87,10 @@ class StudyTest {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("occupation", 1);
         List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
+        StudyFile studyFile = StudyFile.create();
+        studyFile.update("s3ImageURL", "originalName");
 
-        assertThatCodeLapException(INVALID_MEMBER_SIZE).isThrownBy(() -> create("팀", "설명", MIN_MEMBERS_SIZE - 1, NORMAL, period, needCareer, leader, techStackList));
+        assertThatCodeLapException(INVALID_MEMBER_SIZE).isThrownBy(() -> create("팀", "설명", MIN_MEMBERS_SIZE - 1, NORMAL, period, needCareer, leader, techStackList, List.of(studyFile)));
     }
 
     @Test
@@ -90,41 +98,51 @@ class StudyTest {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("occupation", 1);
         List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
+        StudyFile studyFile = StudyFile.create();
+        studyFile.update("s3ImageURL", "originalName");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> create("팀", "설명", 4, null, period, needCareer, leader, techStackList));
+        assertThatIllegalArgumentException().isThrownBy(() -> create("팀", "설명", 4, null, period, needCareer, leader, techStackList, List.of(studyFile)));
     }
 
     @Test
     void 스터디_생성_실패__기간이_널() {
         StudyNeedCareer needCareer = StudyNeedCareer.create("occupation", 1);
         List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
+        StudyFile studyFile = StudyFile.create();
+        studyFile.update("s3ImageURL", "originalName");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> create("팀", "설명", 4, NORMAL, null, needCareer, leader, techStackList));
+        assertThatIllegalArgumentException().isThrownBy(() -> create("팀", "설명", 4, NORMAL, null, needCareer, leader, techStackList, List.of(studyFile)));
     }
 
     @Test
     void 스터디_생성_실패__직무가_널() {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
+        StudyFile studyFile = StudyFile.create();
+        studyFile.update("s3ImageURL", "originalName");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> create("팀", "설명", 4, NORMAL, period, null, leader, techStackList));
+        assertThatIllegalArgumentException().isThrownBy(() -> create("팀", "설명", 4, NORMAL, period, null, leader, techStackList, List.of(studyFile)));
     }
 
     @Test
     void 스터디_생성_실패__팀장이_널() {
+        StudyFile studyFile = StudyFile.create();
+        studyFile.update("s3ImageURL", "originalName");
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("occupation", 1);
         List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> create("팀", "설명", 4, NORMAL, period, needCareer, null, techStackList));
+        assertThatIllegalArgumentException().isThrownBy(() -> create("팀", "설명", 4, NORMAL, period, needCareer, null, techStackList, List.of(studyFile)));
     }
 
     @Test
     void 스터디_생성_실패__기술스택이_널() {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("occupation", 1);
+        StudyFile studyFile = StudyFile.create();
+        studyFile.update("s3ImageURL", "originalName");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> create("팀", "설명", 4, NORMAL, period, needCareer, leader, null));
+        assertThatIllegalArgumentException().isThrownBy(() -> create("팀", "설명", 4, NORMAL, period, needCareer, leader, null, List.of(studyFile)));
     }
 
     @Test
@@ -437,7 +455,7 @@ class StudyTest {
 
     @Test
     void 스터디_이미지_변경_성공() {
-        StudyFile studyFile = (StudyFile) StudyFile.create();
+        StudyFile studyFile = StudyFile.create();
         studyFile.update("s3ImageURL", "originalName");
 
         study.changeImage(List.of(studyFile));
