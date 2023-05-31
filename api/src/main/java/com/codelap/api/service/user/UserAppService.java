@@ -9,5 +9,5 @@ public interface UserAppService {
 
     boolean isActivated(Long userId);
 
-    void imageUpload(Long userId, MultipartFile multipartFile) throws IOException;
+    void imageUpload(Long userId, MultipartFile multipartFile);
 }

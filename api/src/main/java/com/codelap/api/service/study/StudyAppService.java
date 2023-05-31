@@ -7,7 +7,6 @@ import com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import com.codelap.common.support.TechStack;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface StudyAppService {
@@ -20,5 +19,5 @@ public interface StudyAppService {
 
     List<GetOpenedStudiesDto> getOpenedStudies();
 
-    void imageUpload(Long leaderId, Long studyId, MultipartFile multipartFile) throws IOException;
+    void imageUpload(Long leaderId, Long studyId, MultipartFile multipartFile);
 }

@@ -11,8 +11,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 import static com.codelap.api.controller.study.cond.GetStudyCardsCond.GetStudyCardsRequest;
 import static com.codelap.api.controller.study.dto.StudyCreateDto.StudyCreateRequest;
 import static com.codelap.api.controller.study.dto.StudyDeleteDto.StudyDeleteRequest;
@@ -33,7 +31,7 @@ public class StudyController {
     public void create(
             @AuthenticationPrincipal DefaultCodeLapUser user,
             @RequestBody StudyCreateRequest req
-    ) throws IOException {
+    ) {
         studyService.create(user.getId(), req.name(), req.info(), req.maxMembersSize(), req.difficulty(), req.period().toStudyPeriod(), req.career().toStudyNeedCareer(), req.techStackList());
     }
 
@@ -42,7 +40,7 @@ public class StudyController {
             @RequestPart(value = "multipartFile") MultipartFile multipartFile,
             @PathVariable Long studyId,
             @AuthenticationPrincipal DefaultCodeLapUser leader
-    ) throws IOException {
+    ) {
         studyAppService.imageUpload(leader.getId(), studyId, multipartFile);
     }
 

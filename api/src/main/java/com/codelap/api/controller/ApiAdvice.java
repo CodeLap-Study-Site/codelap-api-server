@@ -3,6 +3,7 @@ package com.codelap.api.controller;
 import com.codelap.api.security.user.CodeLapUserException;
 import com.codelap.common.support.CodeLapException;
 import com.codelap.common.support.UnhandledExceptionEvent;
+import com.codelap.integration.support.RuntimeIOException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -115,6 +116,13 @@ public class ApiAdvice {
         log.info(ex.getMessage(), ex);
 
         return new ErrorResponse(new ErrorData("특정 데이터를 조회할 수 없는 오류입니다."));
+    }
+
+    @ExceptionHandler({RuntimeIOException.class})
+    public ErrorResponse uploadException(Throwable ex) {
+        log.info(ex.getMessage(), ex);
+
+        return new ErrorResponse(new ErrorData("파일 업로드에 실패했습니다."));
     }
 
     @Getter
