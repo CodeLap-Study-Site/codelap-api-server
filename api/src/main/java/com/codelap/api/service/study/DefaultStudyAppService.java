@@ -44,10 +44,10 @@ public class DefaultStudyAppService implements StudyAppService {
     }
 
     @Override
-    public List<GetStudyInfo> getAttendedStudiesByUser(Long userId, String statusCond, List<TechStack> techStackList) {
+    public List<GetStudyInfo> findStudyCardsByCond(Long userId, String statusCond, List<TechStack> techStackList) {
         User user = userRepository.findById(userId).orElseThrow();
 
-        List<GetStudyInfo> allStudies = studyQueryDslAppService.getAttendedStudiesByUser(user, statusCond, techStackList);
+        List<GetStudyInfo> allStudies = studyQueryDslAppService.findStudyCardsByCond(user, statusCond, techStackList);
 
         Map<Long, List<GetTechStackInfo>> techStacksMap = studyQueryDslAppService.getTechStacks(toStudyIds(allStudies))
                 .stream()

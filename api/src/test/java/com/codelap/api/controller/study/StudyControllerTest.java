@@ -1,6 +1,6 @@
 package com.codelap.api.controller.study;
 
-import com.codelap.api.controller.study.cond.GetStudyCardsCond.GetStudyCardsRequest;
+import com.codelap.api.controller.study.cond.GetStudyCardsCond.GetStudyCardsParam;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.Study;
@@ -14,12 +14,14 @@ import com.codelap.common.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -328,14 +330,17 @@ class StudyControllerTest extends ApiTest {
     void 유저가_참여한_스터디_조회_성공() throws Exception {
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        GetStudyCardsRequest req = new GetStudyCardsRequest(member.getId(), "", null);
+        GetStudyCardsParam req = new GetStudyCardsParam(member.getId(), "open", null);
+
+        List<Pair<String, String>> param = new ArrayList<>();
+        param.add(Pair.of("userId", req.userId().toString()));
+        param.add(Pair.of("statusCond", req.statusCond()));
 
         mockMvc.perform(
                 getMethodRequestBuilder(
                         "/study/my-study",
-                        APPLICATION_JSON,
-                        req,
-                        token
+                        token,
+                        param
                 )
         ).andDo(
                 getRestDocumentationResult(
@@ -402,7 +407,7 @@ class StudyControllerTest extends ApiTest {
         studyRepository.save(createStudy(leader, ReactNative));
     }
 
-    private ResultMatcher[] 유저가_참여한_스터디_조회_검증(GetStudyCardsRequest req) {
+    private ResultMatcher[] 유저가_참여한_스터디_조회_검증(GetStudyCardsParam req) {
         List<Study> studiesContainsMember = getStudiesByFilter(req);
 
         return IntStream.range(0, studiesContainsMember.size())
@@ -433,10 +438,10 @@ class StudyControllerTest extends ApiTest {
         return techStackList;
     }
 
-    private List<Study> getStudiesByFilter(GetStudyCardsRequest req) {
+    private List<Study> getStudiesByFilter(GetStudyCardsParam req) {
         List<Study> studiesContainsMember = studyRepository.findAll()
                 .stream()
-                .filter(it -> it.getStatus() != DELETED && it.containsMember(member))
+                .filter(it -> it.getStatus() != DELETED && it.getStatus() != CLOSED && it.containsMember(member))
                 .filter(study -> {
                     if (req.techStackList() != null) {
                         study.getTechStackList()

@@ -57,7 +57,7 @@ class DefaultStudyQueryAppServiceTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        List<GetStudyInfo> allStudies = studyQueryDslAppService.getAttendedStudiesByUser(member, "open", List.of(React));
+        List<GetStudyInfo> allStudies = studyQueryDslAppService.findStudyCardsByCond(member, "open", List.of(React));
 
         Map<Long, List<GetTechStackInfo>> techStacksMap = studyQueryDslAppService.getTechStacks(스터디_아이디_리스트_가져오기(allStudies))
                 .stream()
