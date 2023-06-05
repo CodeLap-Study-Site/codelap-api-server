@@ -62,7 +62,7 @@ class DefaultStudyAppServiceTest {
 
         유저가_참여한_스터디_조회_스터디_생성(leader);
 
-        List<GetStudyInfo> allStudies = studyAppService.getAttendedStudiesByUser(member.getId(), "open", List.of((Java)));
+        List<GetStudiesCardDto.GetStudyInfo> allStudies = studyAppService.findStudyCardsByCond(member.getId(), "open", List.of((Java)));
         List<Study> studies = studyRepository.findAll()
                 .stream()
                 .filter(study -> study.getStatus() == OPENED)

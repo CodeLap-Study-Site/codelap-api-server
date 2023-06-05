@@ -1,13 +1,11 @@
 package com.codelap.api.controller.study.cond;
 
 import com.codelap.common.support.TechStack;
-import com.codelap.common.user.domain.User;
-import jakarta.annotation.Nullable;
 
 import java.util.List;
 
 public class GetStudyCardsCond {
-    public record GetStudyCardsRequest (
+    public record GetStudyCardsParam (
             Long userId,
             String statusCond,
             List<TechStack> techStackList

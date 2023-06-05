@@ -11,7 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.codelap.api.controller.study.cond.GetStudyCardsCond.GetStudyCardsRequest;
+import static com.codelap.api.controller.study.cond.GetStudyCardsCond.GetStudyCardsParam;
 import static com.codelap.api.controller.study.dto.StudyCreateDto.StudyCreateRequest;
 import static com.codelap.api.controller.study.dto.StudyDeleteDto.StudyDeleteRequest;
 import static com.codelap.api.controller.study.dto.StudyOpenDto.StudyOpenRequest;
@@ -101,9 +101,9 @@ public class StudyController {
     }
 
     @GetMapping("/my-study")
-    public GetMyStudiesResponse findStudyListByUserId(
-            @RequestBody GetStudyCardsRequest req
+    public GetMyStudiesResponse findStudyCardsByCond(
+            GetStudyCardsParam param
     ) {
-        return GetMyStudiesResponse.create(studyAppService.getAttendedStudiesByUser(req.userId(), req.statusCond(), req.techStackList()));
+        return GetMyStudiesResponse.create(studyAppService.findStudyCardsByCond(param.userId(), param.statusCond(), param.techStackList()));
     }
 }

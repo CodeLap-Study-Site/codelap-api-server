@@ -47,10 +47,19 @@ public class DefaultStudyAppService implements StudyAppService {
     }
 
     @Override
-    public List<GetStudyInfo> getAttendedStudiesByUser(Long userId, String statusCond, List<TechStack> techStackList) {
+    public List<GetStudyInfo> findStudyCardsByCond(Long userId, String statusCond, List<TechStack> techStackList) {
         User user = userRepository.findById(userId).orElseThrow();
 
-        return getGetStudyInfo(studyQueryDslAppService.getAttendedStudiesByUser(user, statusCond, techStackList));
+        List<GetStudyInfo> allStudies = studyQueryDslAppService.findStudyCardsByCond(user, statusCond, techStackList);
+
+        Map<Long, List<GetTechStackInfo>> techStacksMap = studyQueryDslAppService.getTechStacks(toStudyIds(allStudies))
+                .stream()
+                .collect(Collectors
+                        .groupingBy(GetTechStackInfo::getStudyId));
+
+        allStudies.forEach(study -> study.setTechStackList(techStacksMap.get(study.getStudyId())));
+
+        return allStudies;
     }
 
     @Override
@@ -63,6 +72,13 @@ public class DefaultStudyAppService implements StudyAppService {
                 .collect(Collectors.toList());
 
         return getGetStudyInfo(studyQueryDslAppService.getBookmarkedStudiesByUser(studyIds));
+    }
+
+    private static List<Long> toStudyIds(List<GetStudyInfo> allStudies) {
+        return allStudies
+                .stream()
+                .map(GetStudyInfo::getStudyId)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -82,13 +98,6 @@ public class DefaultStudyAppService implements StudyAppService {
 
     private static Long getId(Bookmark bookmark) {
         return bookmark.getStudy().getId();
-    }
-
-    private List<Long> toStudyIds(List<GetStudyInfo> allStudies) {
-        return allStudies
-                .stream()
-                .map(GetStudyInfo::getStudyId)
-                .collect(Collectors.toList());
     }
 
     private List<GetStudyInfo> getGetStudyInfo(List<GetStudyInfo> allStudies) {
