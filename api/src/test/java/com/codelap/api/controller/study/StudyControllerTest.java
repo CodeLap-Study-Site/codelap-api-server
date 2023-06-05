@@ -487,12 +487,12 @@ class StudyControllerTest extends ApiTest {
                 )
         ).andExpect(
                 status().isOk()
-        ).andExpectAll(유저가_참여한_스터디_조회_검증(req)
+        ).andExpectAll(유저가_즐겨찾기한_스터디_조회_검증()
         );
     }
 
-    private ResultMatcher[] 유저가_즐겨찾기한_스터디_조회_검증(GetStudyCardsParam req){
-        List<Study> bookmarkstudies = getBookmarkStudiesByFilter(req);
+    private ResultMatcher[] 유저가_즐겨찾기한_스터디_조회_검증(){
+        List<Study> bookmarkstudies = getBookmarkStudiesByFilter();
 
         return  IntStream.range(0, bookmarkstudies.size())
                 .mapToObj(index -> {
@@ -512,7 +512,7 @@ class StudyControllerTest extends ApiTest {
                 .toArray(ResultMatcher[]::new);
     }
 
-    private List<Study> getBookmarkStudiesByFilter(GetStudyCardsParam req) {
+    private List<Study> getBookmarkStudiesByFilter() {
         
         List<Study> studiesContainsMember = studyRepository.findAll()
                 .stream()
