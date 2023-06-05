@@ -106,4 +106,11 @@ public class StudyController {
     ) {
         return GetMyStudiesResponse.create(studyAppService.findStudyCardsByCond(param.userId(), param.statusCond(), param.techStackList()));
     }
+
+    @GetMapping("/my-bookmark-study")
+    public GetMyStudiesResponse getBookmarkedStudiesByUser(
+            GetStudyCardsParam param
+    ){
+        return GetMyStudiesResponse.create(studyAppService.getBookmarkedStudiesByUser(param.userId()));
+    }
 }
