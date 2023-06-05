@@ -6,12 +6,14 @@ import com.codelap.common.bookmark.domain.QBookmark;
 import com.codelap.common.study.domain.QStudy;
 import com.codelap.common.study.domain.QStudyTechStack;
 import com.codelap.common.study.dto.GetOpenedStudiesDto;
+import com.codelap.common.study.dto.GetStudiesCardDto;
 import com.codelap.common.studyComment.domain.QStudyComment;
 import com.codelap.common.studyView.domain.QStudyView;
 import com.codelap.common.support.TechStack;
 import com.codelap.common.user.domain.User;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
@@ -39,6 +41,43 @@ public class DefaultStudyQueryAppService extends DynamicCond implements StudyQue
 
     @Override
     public List<GetStudyInfo> findStudyCardsByCond(User user, String statusCond, List<TechStack> techStackList) {
+        return getGetStudyInfoJPAQuery()
+                .where(QStudy.study.members.contains(user))
+                .where(QStudy.study.status.ne(DELETED))
+                .where(checkStatus(statusCond))
+                .where(techStackFilter(techStackList))
+                .fetch();
+    }
+
+    @Override
+    public List<GetTechStackInfo> getTechStacks(List<Long> studyIds) {
+        return queryFactory
+                .select(
+                        constructor(
+                                GetTechStackInfo.class,
+                                QStudy.study.id,
+                                QStudyTechStack.studyTechStack.techStack
+                        )
+                )
+                .from(QStudy.study)
+                .innerJoin(QStudy.study.techStackList, QStudyTechStack.studyTechStack)
+                .fetch();
+    }
+
+    @Override
+    public List<GetOpenedStudiesDto> getOpenedStudies() {
+        return null;
+    }
+
+    @Override
+    public List<GetStudyInfo> getBookmarkedStudiesByUser(List<Long> studyIds) {
+        return getGetStudyInfoJPAQuery()
+                .where(QStudy.study.id.in(studyIds))
+                .where(QStudy.study.status.ne(DELETED))
+                .fetch();
+    }
+
+    private JPAQuery<GetStudyInfo> getGetStudyInfoJPAQuery() {
         return queryFactory
                 .selectDistinct(
                         constructor(
@@ -67,31 +106,6 @@ public class DefaultStudyQueryAppService extends DynamicCond implements StudyQue
                                 ),
                                 QStudy.study.maxMembersSize))
                 .from(QStudy.study)
-                .innerJoin(QStudy.study.techStackList, QStudyTechStack.studyTechStack)
-                .where(QStudy.study.members.contains(user))
-                .where(QStudy.study.status.ne(DELETED))
-                .where(checkStatus(statusCond))
-                .where(techStackFilter(techStackList))
-                .fetch();
-    }
-
-    @Override
-    public List<GetTechStackInfo> getTechStacks(List<Long> studyIds) {
-        return queryFactory
-                .select(
-                        constructor(
-                                GetTechStackInfo.class,
-                                QStudy.study.id,
-                                QStudyTechStack.studyTechStack.techStack
-                        )
-                )
-                .from(QStudy.study)
-                .innerJoin(QStudy.study.techStackList, QStudyTechStack.studyTechStack)
-                .fetch();
-    }
-
-    @Override
-    public List<GetOpenedStudiesDto> getOpenedStudies() {
-        return null;
+                .innerJoin(QStudy.study.techStackList, QStudyTechStack.studyTechStack);
     }
 }

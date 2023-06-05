@@ -5,7 +5,7 @@ import com.codelap.common.support.TechStack;
 import java.util.List;
 
 public class GetStudyCardsCond {
-    public record GetStudyCardsParam(
+    public record GetStudyCardsParam (
             Long userId,
             String statusCond,
             List<TechStack> techStackList

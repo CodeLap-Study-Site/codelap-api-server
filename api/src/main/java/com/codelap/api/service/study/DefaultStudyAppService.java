@@ -2,6 +2,8 @@ package com.codelap.api.service.study;
 
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
+import com.codelap.common.bookmark.domain.Bookmark;
+import com.codelap.common.bookmark.domain.BookmarkRepository;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyFile;
 import com.codelap.common.study.domain.StudyRepository;
@@ -34,6 +36,7 @@ public class DefaultStudyAppService implements StudyAppService {
     private final StudyQueryAppService studyQueryDslAppService;
     private final UserRepository userRepository;
     private final StudyRepository studyRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final FileUpload fileUpload;
 
     @Override
@@ -59,11 +62,16 @@ public class DefaultStudyAppService implements StudyAppService {
         return allStudies;
     }
 
-    private static List<GetStudiesStudyDto> getGetStudiesStudyDto(List<GetStudyInfo> allStudies) {
-        return allStudies
+    @Override
+    public List<GetStudyInfo> getBookmarkedStudiesByUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+
+        List<Long> studyIds = bookmarkRepository.findByUser(user)
                 .stream()
-                .map(GetStudiesStudyDto::new)
+                .map(DefaultStudyAppService::getId)
                 .collect(Collectors.toList());
+
+        return getGetStudyInfo(studyQueryDslAppService.getBookmarkedStudiesByUser(studyIds));
     }
 
     private static List<Long> toStudyIds(List<GetStudyInfo> allStudies) {
@@ -86,5 +94,20 @@ public class DefaultStudyAppService implements StudyAppService {
         Preconditions.actorValidate(study.isLeader(leader));
 
         study.changeImage(List.of((StudyFile) fileUpload.upload(multipartFile, dirName, create())));
+    }
+
+    private static Long getId(Bookmark bookmark) {
+        return bookmark.getStudy().getId();
+    }
+
+    private List<GetStudyInfo> getGetStudyInfo(List<GetStudyInfo> allStudies) {
+        Map<Long, List<GetTechStackInfo>> techStacksMap = studyQueryDslAppService.getTechStacks(toStudyIds(allStudies))
+                .stream()
+                .collect(Collectors
+                        .groupingBy(GetTechStackInfo::getStudyId));
+
+        allStudies.forEach(study -> study.setTechStackList(techStacksMap.get(study.getStudyId())));
+
+        return allStudies;
     }
 }

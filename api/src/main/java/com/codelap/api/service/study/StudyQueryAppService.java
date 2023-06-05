@@ -16,6 +16,8 @@ public interface StudyQueryAppService {
 
     List<GetStudyInfo> findStudyCardsByCond(User userCond, String statusCond, List<TechStack> techStackList);
 
+    List<GetStudyInfo> getBookmarkedStudiesByUser(List<Long> studyIds);
+
     List<GetTechStackInfo> getTechStacks(List<Long> studyIds);
 
     List<GetOpenedStudiesDto> getOpenedStudies();

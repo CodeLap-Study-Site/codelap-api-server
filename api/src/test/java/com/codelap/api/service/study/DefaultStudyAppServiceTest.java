@@ -1,9 +1,11 @@
 package com.codelap.api.service.study;
 
+import com.codelap.common.bookmark.domain.BookmarkRepository;
 import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.study.dto.GetStudiesCardDto;
+import com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import com.codelap.common.studyComment.service.StudyCommentService;
 import com.codelap.common.studyView.service.StudyViewService;
 import com.codelap.common.user.domain.User;
@@ -34,6 +36,9 @@ class DefaultStudyAppServiceTest {
 
     @Autowired
     StudyRepository studyRepository;
+
+    @Autowired
+    BookmarkRepository bookmarkRepository;
 
     @Autowired
     StudyAppService studyAppService;
@@ -71,6 +76,24 @@ class DefaultStudyAppServiceTest {
     }
 
     @Test
+    void 유저가_즐겨찾기한_스터디_조회_성공() {
+        leader = userRepository.save(createActivateUser());
+        member = userRepository.save(createActivateUser());
+
+        유저가_참여한_스터디_조회_스터디_생성(leader);
+
+        List<GetStudyInfo> allStudies = studyAppService.getBookmarkedStudiesByUser(member.getId());
+
+        List<Study> studies = studyRepository.findAll()
+                .stream()
+                .filter(study -> study.getStatus() == OPENED)
+                .filter(study -> 유저가_북마크한_스터디_아이디_리스트(member).contains(study.getId()))
+                .collect(Collectors.toList());
+
+        Assertions.assertThat(studies.size()).isEqualTo(allStudies.size());
+    }
+
+    @Test
     void 스터디_이미지_업데이트() throws Exception {
         leader = userRepository.save(createActivateUser("member"));
         Study study = studyRepository.save(createStudy(leader));
@@ -80,6 +103,13 @@ class DefaultStudyAppServiceTest {
         studyAppService.imageUpload(leader.getId(), study.getId(), file);
 
         assertThat(study.getFiles()).isNotNull();
+    }
+
+    private List<Long> 유저가_북마크한_스터디_아이디_리스트(User member) {
+        return bookmarkRepository.findByUser(member)
+                .stream()
+                .map(bookmark -> bookmark.getStudy().getId())
+                .collect(Collectors.toList());
     }
 
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {

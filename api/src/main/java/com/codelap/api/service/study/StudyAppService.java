@@ -14,6 +14,8 @@ public interface StudyAppService {
 
     List<GetStudyInfo> findStudyCardsByCond(Long userId, String statusCond, List<TechStack> techStackList);
 
+    List<GetStudyInfo> getBookmarkedStudiesByUser(Long userId);
+
     List<GetOpenedStudiesDto> getOpenedStudies();
 
     void imageUpload(Long leaderId, Long studyId, MultipartFile multipartFile);
