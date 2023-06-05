@@ -41,35 +41,7 @@ public class DefaultStudyQueryAppService extends DynamicCond implements StudyQue
 
     @Override
     public List<GetStudyInfo> findStudyCardsByCond(User user, String statusCond, List<TechStack> techStackList) {
-        return queryFactory
-                .selectDistinct(
-                        constructor(
-                                GetStudyInfo.class,
-                                QStudy.study.id,
-                                QStudy.study.name,
-                                QStudy.study.period,
-                                QStudy.study.leader.name,
-                                ExpressionUtils.as(JPAExpressions
-                                                .select(count(QStudyComment.studyComment.id))
-                                                .from(QStudyComment.studyComment)
-                                                .where(QStudyComment.studyComment.study.id.eq(QStudy.study.id)),
-                                        "commentCount"
-                                ),
-                                ExpressionUtils.as(JPAExpressions
-                                                .select(count(QStudyView.studyView.id))
-                                                .from(QStudyView.studyView)
-                                                .where(QStudyView.studyView.study.id.eq(QStudy.study.id)),
-                                        "viewCount"
-                                ),
-                                ExpressionUtils.as(JPAExpressions
-                                                .select(count(QBookmark.bookmark.id))
-                                                .from(QBookmark.bookmark)
-                                                .where(QBookmark.bookmark.study.id.eq(QStudy.study.id)),
-                                        "bookmarkCount"
-                                ),
-                                QStudy.study.maxMembersSize))
-                .from(QStudy.study)
-                .innerJoin(QStudy.study.techStackList, QStudyTechStack.studyTechStack)
+        return getGetStudyInfoJPAQuery()
                 .where(QStudy.study.members.contains(user))
                 .where(QStudy.study.status.ne(DELETED))
                 .where(checkStatus(statusCond))
