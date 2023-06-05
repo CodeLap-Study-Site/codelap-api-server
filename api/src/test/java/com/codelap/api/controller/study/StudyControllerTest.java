@@ -1,5 +1,7 @@
 package com.codelap.api.controller.study;
 
+import com.codelap.api.controller.study.cond.GetBookmarkStudyCardsCond;
+import com.codelap.api.controller.study.cond.GetBookmarkStudyCardsCond.GetBookmarkStudyCardsParam;
 import com.codelap.api.controller.study.cond.GetStudyCardsCond.GetStudyCardsParam;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.bookmark.domain.Bookmark;
@@ -392,6 +394,34 @@ class StudyControllerTest extends ApiTest {
         assertThat(study.getFiles().get(0).getOriginalName()).isNotNull();
     }
 
+    @Test
+    @WithUserDetails
+    void 유저가_즐겨찾기한_스터디_조회_성공() throws Exception{
+
+        GetBookmarkStudyCardsParam req = new GetBookmarkStudyCardsParam(member.getId());
+
+        List<Pair<String, String>> param = new ArrayList<>();
+        param.add(Pair.of("userId", req.userId().toString()));
+
+        mockMvc.perform(
+                getMethodRequestBuilder(
+                        "/study/my-bookmark-study",
+                        token,
+                        param
+                )
+        ).andDo(
+                getRestDocumentationResult(
+                        "study/my-bookmark-study",
+                        DOCS_TAG,
+                        "유저가 즐겨찾기한 스터디 조회",
+                        null, null
+                )
+        ).andExpect(
+                status().isOk()
+        ).andExpectAll(유저가_즐겨찾기한_스터디_조회_검증()
+        );
+    }
+
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
         Study study1 = studyRepository.save(createStudy(leader, Spring, Java));
         study1.addMember(member);
@@ -462,41 +492,12 @@ class StudyControllerTest extends ApiTest {
         return studiesContainsMember;
     }
 
-    @Test
-    @WithUserDetails
-    void 유저가_즐겨찾기한_스터디_조회_성공() throws Exception{
-
-        GetStudyCardsParam req = new GetStudyCardsParam(member.getId(), "open", null);
-
-        List<Pair<String, String>> param = new ArrayList<>();
-        param.add(Pair.of("userId", req.userId().toString()));
-        param.add(Pair.of("statusCond", req.statusCond()));
-
-        mockMvc.perform(
-                getMethodRequestBuilder(
-                        "/study/my-bookmark-study",
-                        token,
-                        param
-                )
-        ).andDo(
-                getRestDocumentationResult(
-                        "study/my-bookmark-study",
-                        DOCS_TAG,
-                        "유저가 즐겨찾기한 스터디 조회",
-                        null, null
-                )
-        ).andExpect(
-                status().isOk()
-        ).andExpectAll(유저가_즐겨찾기한_스터디_조회_검증()
-        );
-    }
-
     private ResultMatcher[] 유저가_즐겨찾기한_스터디_조회_검증(){
-        List<Study> bookmarkstudies = getBookmarkStudiesByFilter();
+        List<Study> bookmarkStudies = getBookmarkStudiesByFilter();
 
-        return  IntStream.range(0, bookmarkstudies.size())
+        return  IntStream.range(0, bookmarkStudies.size())
                 .mapToObj(index -> {
-                    Study indexStudy = bookmarkstudies.get(index);
+                    Study indexStudy = bookmarkStudies.get(index);
 
                     return Map.entry(index, List.of(
                             jsonPath("$.studies.[" + index + "].studyName").value(indexStudy.getName()),
@@ -512,6 +513,14 @@ class StudyControllerTest extends ApiTest {
                 .toArray(ResultMatcher[]::new);
     }
 
+    private List<Long> 유저가_북마크한_스터디_아이디_리스트(User member){
+
+        return  bookmarkRepository.findByUser(member)
+                .stream()
+                .map(bookmark -> bookmark.getStudy().getId()).
+                collect(Collectors.toList());
+    }
+
     private List<Study> getBookmarkStudiesByFilter() {
         
         List<Study> studiesContainsMember = studyRepository.findAll()
@@ -521,12 +530,5 @@ class StudyControllerTest extends ApiTest {
                 .collect(Collectors.toList());
         
         return studiesContainsMember;
-    }
-
-    private List<Long> 유저가_북마크한_스터디_아이디_리스트(User member){
-        return  bookmarkRepository.findByUser(member)
-                .stream()
-                .map(bookmark -> bookmark.getStudy().getId()).
-                collect(Collectors.toList());
     }
 }
