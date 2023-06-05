@@ -33,7 +33,7 @@ import static com.codelap.common.study.domain.StudyFile.dirName;
 @RequiredArgsConstructor
 public class DefaultStudyAppService implements StudyAppService {
 
-    private final StudyQueryAppService studyQueryDslAppService;
+    private final StudyQueryAppService studyQueryAppService;
     private final UserRepository userRepository;
     private final StudyRepository studyRepository;
     private final BookmarkRepository bookmarkRepository;
@@ -43,16 +43,16 @@ public class DefaultStudyAppService implements StudyAppService {
     public List<GetStudiesStudyDto> getStudies(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
 
-        return studyQueryDslAppService.getStudies(user);
+        return studyQueryAppService.getStudies(user);
     }
 
     @Override
     public List<GetStudyInfo> findStudyCardsByCond(Long userId, String statusCond, List<TechStack> techStackList) {
         User user = userRepository.findById(userId).orElseThrow();
 
-        List<GetStudyInfo> allStudies = studyQueryDslAppService.findStudyCardsByCond(user, statusCond, techStackList);
+        List<GetStudyInfo> allStudies = studyQueryAppService.findStudyCardsByCond(user, statusCond, techStackList);
 
-        Map<Long, List<GetTechStackInfo>> techStacksMap = studyQueryDslAppService.getTechStacks(toStudyIds(allStudies))
+        Map<Long, List<GetTechStackInfo>> techStacksMap = studyQueryAppService.getTechStacks(toStudyIds(allStudies))
                 .stream()
                 .collect(Collectors
                         .groupingBy(GetTechStackInfo::getStudyId));
@@ -71,7 +71,7 @@ public class DefaultStudyAppService implements StudyAppService {
                 .map(DefaultStudyAppService::getId)
                 .collect(Collectors.toList());
 
-        return getGetStudyInfo(studyQueryDslAppService.getBookmarkedStudiesByUser(studyIds));
+        return getGetStudyInfo(studyQueryAppService.getBookmarkedStudiesByUser(studyIds));
     }
 
     private static List<Long> toStudyIds(List<GetStudyInfo> allStudies) {
@@ -83,7 +83,7 @@ public class DefaultStudyAppService implements StudyAppService {
 
     @Override
     public List<GetOpenedStudiesDto> getOpenedStudies() {
-        return studyQueryDslAppService.getOpenedStudies();
+        return studyQueryAppService.getOpenedStudies();
     }
 
     @Override
@@ -101,7 +101,7 @@ public class DefaultStudyAppService implements StudyAppService {
     }
 
     private List<GetStudyInfo> getGetStudyInfo(List<GetStudyInfo> allStudies) {
-        Map<Long, List<GetTechStackInfo>> techStacksMap = studyQueryDslAppService.getTechStacks(toStudyIds(allStudies))
+        Map<Long, List<GetTechStackInfo>> techStacksMap = studyQueryAppService.getTechStacks(toStudyIds(allStudies))
                 .stream()
                 .collect(Collectors
                         .groupingBy(GetTechStackInfo::getStudyId));
