@@ -1,5 +1,7 @@
 package com.codelap.api.controller.study;
 
+import com.codelap.api.controller.study.cond.GetBookmarkStudyCardsCond;
+import com.codelap.api.controller.study.cond.GetBookmarkStudyCardsCond.GetBookmarkStudyCardsParam;
 import com.codelap.api.controller.study.dto.GetMyStudiesDto.GetMyStudiesResponse;
 import com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import com.codelap.api.controller.study.dto.StudyLeaveDto.StudyLeaveRequest;
@@ -105,5 +107,12 @@ public class StudyController {
             GetStudyCardsParam param
     ) {
         return GetMyStudiesResponse.create(studyAppService.findStudyCardsByCond(param.userId(), param.statusCond(), param.techStackList()));
+    }
+
+    @GetMapping("/my-bookmark-study")
+    public GetMyStudiesResponse getBookmarkedStudiesByUser(
+            GetBookmarkStudyCardsParam param
+    ) {
+        return GetMyStudiesResponse.create(studyAppService.getBookmarkedStudiesByUser(param.userId()));
     }
 }

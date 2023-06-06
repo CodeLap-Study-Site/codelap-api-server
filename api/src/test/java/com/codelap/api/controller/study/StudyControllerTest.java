@@ -1,7 +1,11 @@
 package com.codelap.api.controller.study;
 
+import com.codelap.api.controller.study.cond.GetBookmarkStudyCardsCond;
+import com.codelap.api.controller.study.cond.GetBookmarkStudyCardsCond.GetBookmarkStudyCardsParam;
 import com.codelap.api.controller.study.cond.GetStudyCardsCond.GetStudyCardsParam;
 import com.codelap.api.support.ApiTest;
+import com.codelap.common.bookmark.domain.Bookmark;
+import com.codelap.common.bookmark.domain.BookmarkRepository;
 import com.codelap.common.bookmark.service.BookmarkService;
 import com.codelap.common.study.domain.Study;
 import com.codelap.common.study.domain.StudyRepository;
@@ -58,6 +62,9 @@ class StudyControllerTest extends ApiTest {
     StudyRepository studyRepository;
 
     @Autowired
+    BookmarkRepository bookmarkRepository;
+
+    @Autowired
     StudyService studyService;
 
     @Autowired
@@ -72,6 +79,8 @@ class StudyControllerTest extends ApiTest {
     private User leader;
     private User member;
     private Study study;
+
+    private Bookmark bookmark;
 
 
     @BeforeEach
@@ -385,6 +394,34 @@ class StudyControllerTest extends ApiTest {
         assertThat(study.getFiles().get(0).getOriginalName()).isNotNull();
     }
 
+    @Test
+    @WithUserDetails
+    void 유저가_즐겨찾기한_스터디_조회_성공() throws Exception{
+
+        GetBookmarkStudyCardsParam req = new GetBookmarkStudyCardsParam(member.getId());
+
+        List<Pair<String, String>> param = new ArrayList<>();
+        param.add(Pair.of("userId", req.userId().toString()));
+
+        mockMvc.perform(
+                getMethodRequestBuilder(
+                        "/study/my-bookmark-study",
+                        token,
+                        param
+                )
+        ).andDo(
+                getRestDocumentationResult(
+                        "study/my-bookmark-study",
+                        DOCS_TAG,
+                        "유저가 즐겨찾기한 스터디 조회",
+                        null, null
+                )
+        ).andExpect(
+                status().isOk()
+        ).andExpectAll(유저가_즐겨찾기한_스터디_조회_검증()
+        );
+    }
+
     private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
         Study study1 = studyRepository.save(createStudy(leader, Spring, Java));
         study1.addMember(member);
@@ -452,6 +489,46 @@ class StudyControllerTest extends ApiTest {
                     return false;
                 })
                 .collect(Collectors.toList());
+        return studiesContainsMember;
+    }
+
+    private ResultMatcher[] 유저가_즐겨찾기한_스터디_조회_검증(){
+        List<Study> bookmarkStudies = getBookmarkStudiesByFilter();
+
+        return  IntStream.range(0, bookmarkStudies.size())
+                .mapToObj(index -> {
+                    Study indexStudy = bookmarkStudies.get(index);
+
+                    return Map.entry(index, List.of(
+                            jsonPath("$.studies.[" + index + "].studyName").value(indexStudy.getName()),
+                            jsonPath("$.studies.[" + index + "].studyPeriod").isNotEmpty(),
+                            jsonPath("$.studies.[" + index + "].leaderName").value(indexStudy.getLeader().getName()),
+                            jsonPath("$.studies.[" + index + "].commentCount").value(indexStudy.getComments().size()),
+                            jsonPath("$.studies.[" + index + "].viewCount").value(indexStudy.getViews().size()),
+                            jsonPath("$.studies.[" + index + "].bookmarkCount").value(indexStudy.getBookmarks().size()),
+                            jsonPath("$.studies.[" + index + "].maxMemberSize").value(indexStudy.getMaxMembersSize())
+                    ));
+                })
+                .flatMap(entry -> entry.getValue().stream())
+                .toArray(ResultMatcher[]::new);
+    }
+
+    private List<Long> 유저가_북마크한_스터디_아이디_리스트(User member){
+
+        return  bookmarkRepository.findByUser(member)
+                .stream()
+                .map(bookmark -> bookmark.getStudy().getId()).
+                collect(Collectors.toList());
+    }
+
+    private List<Study> getBookmarkStudiesByFilter() {
+        
+        List<Study> studiesContainsMember = studyRepository.findAll()
+                .stream()
+                .filter(it -> it.getStatus() != DELETED && it.getStatus() != CLOSED)
+                .filter(study -> 유저가_북마크한_스터디_아이디_리스트(member).contains(study.getId()))
+                .collect(Collectors.toList());
+        
         return studiesContainsMember;
     }
 }
