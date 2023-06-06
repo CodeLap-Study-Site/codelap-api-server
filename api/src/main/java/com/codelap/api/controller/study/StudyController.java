@@ -112,7 +112,7 @@ public class StudyController {
     @GetMapping("/my-bookmark-study")
     public GetMyStudiesResponse getBookmarkedStudiesByUser(
             GetBookmarkStudyCardsParam param
-    ){
+    ) {
         return GetMyStudiesResponse.create(studyAppService.getBookmarkedStudiesByUser(param.userId()));
     }
 }
