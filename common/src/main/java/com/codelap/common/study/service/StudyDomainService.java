@@ -20,10 +20,10 @@ public class StudyDomainService implements StudyService {
     private final UserRepository userRepository;
 
     @Override
-    public void create(Long leaderId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<StudyTechStack> techStackList) {
+    public void create(Long leaderId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<StudyTechStack> techStackList, List<StudyFile> studyFiles) {
         User leader = userRepository.findById(leaderId).orElseThrow();
 
-        Study study = Study.create(name, info, maxMembersSize, difficulty, period, needCareer, leader, techStackList);
+        Study study = Study.create(name, info, maxMembersSize, difficulty, period, needCareer, leader, techStackList, studyFiles);
 
         studyRepository.save(study);
     }

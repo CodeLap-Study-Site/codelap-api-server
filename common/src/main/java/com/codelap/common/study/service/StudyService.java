@@ -1,15 +1,12 @@
 package com.codelap.common.study.service;
 
-import com.codelap.common.study.domain.StudyDifficulty;
-import com.codelap.common.study.domain.StudyNeedCareer;
-import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.StudyTechStack;
+import com.codelap.common.study.domain.*;
 
 import java.util.List;
 
 public interface StudyService {
 
-    void create(Long leaderId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<StudyTechStack> techStackList);
+    void create(Long leaderId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<StudyTechStack> techStackList, List<StudyFile> studyFiles);
 
     void update(Long studyId, Long userId, String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<StudyTechStack> techStackList);
 

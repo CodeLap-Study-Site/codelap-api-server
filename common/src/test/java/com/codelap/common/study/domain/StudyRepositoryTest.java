@@ -43,8 +43,10 @@ class StudyRepositoryTest {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
         List<StudyTechStack> techStackList = Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
+        StudyFile studyFile = StudyFile.create();
+        studyFile.update("s3ImageURL", "originalName");
 
-        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList);
+        Study study = create("팀", "설명", 4, NORMAL, period, needCareer, leader, techStackList, List.of(studyFile));
 
         studyRepository.save(study);
 

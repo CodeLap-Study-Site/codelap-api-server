@@ -1,7 +1,7 @@
 package com.codelap.api.controller.study;
 
-import com.codelap.api.controller.study.cond.GetBookmarkStudyCardsCond;
 import com.codelap.api.controller.study.cond.GetBookmarkStudyCardsCond.GetBookmarkStudyCardsParam;
+import com.codelap.api.controller.study.dto.GetImageDto.GetImageResponse;
 import com.codelap.api.controller.study.dto.GetMyStudiesDto.GetMyStudiesResponse;
 import com.codelap.api.controller.study.dto.StudyCloseDto.StudyCloseRequest;
 import com.codelap.api.controller.study.dto.StudyLeaveDto.StudyLeaveRequest;
@@ -34,16 +34,14 @@ public class StudyController {
             @AuthenticationPrincipal DefaultCodeLapUser user,
             @RequestBody StudyCreateRequest req
     ) {
-        studyService.create(user.getId(), req.name(), req.info(), req.maxMembersSize(), req.difficulty(), req.period().toStudyPeriod(), req.career().toStudyNeedCareer(), req.techStackList());
+        studyService.create(user.getId(), req.name(), req.info(), req.maxMembersSize(), req.difficulty(), req.period().toStudyPeriod(), req.career().toStudyNeedCareer(), req.techStackList(), req.toStudyFiles());
     }
 
-    @PostMapping("/image-upload/{studyId}")
-    public void imageUpload(
-            @RequestPart(value = "multipartFile") MultipartFile multipartFile,
-            @PathVariable Long studyId,
-            @AuthenticationPrincipal DefaultCodeLapUser leader
+    @PostMapping("/image-upload")
+    public GetImageResponse imageUpload(
+            @RequestPart(value = "multipartFile") MultipartFile multipartFile
     ) {
-        studyAppService.imageUpload(leader.getId(), studyId, multipartFile);
+        return GetImageResponse.create(studyAppService.imageUpload(multipartFile));
     }
 
     @PostMapping("/update")

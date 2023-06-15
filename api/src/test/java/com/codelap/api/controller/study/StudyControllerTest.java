@@ -98,12 +98,13 @@ class StudyControllerTest extends ApiTest {
         StudyTechStack studyTechStack = new StudyTechStack(Java);
         StudyCreateRequestStudyPeriodDto periodDto = new StudyCreateRequestStudyPeriodDto(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyCreateRequestStudyNeedCareerDto careerDto = new StudyCreateRequestStudyNeedCareerDto("직무", 10);
+        StudyCreateRequestStudyFileDto fileDto = new StudyCreateRequestStudyFileDto("imageURL", "originalName");
 
         mockMvc.perform(
                 postMethodRequestBuilder(
                         "/study",
                         APPLICATION_JSON,
-                        new StudyCreateRequest("팀", "정보", 4, HARD, periodDto, careerDto, List.of(studyTechStack)),
+                        new StudyCreateRequest("팀", "정보", 4, HARD, periodDto, careerDto, List.of(studyTechStack), List.of(fileDto)),
                         token
                 )
         ).andDo(
@@ -130,6 +131,7 @@ class StudyControllerTest extends ApiTest {
         assertThat(foundStudy.getCreatedAt()).isNotNull();
         assertThat(foundStudy.getLeader()).isSameAs(leader);
         assertThat(foundStudy.getMembers()).containsExactly(leader);
+        assertThat(foundStudy.getFiles()).isNotNull();
     }
 
     @Test
@@ -367,19 +369,16 @@ class StudyControllerTest extends ApiTest {
 
     @Test
     @WithUserDetails
-    void 스터디_이미지_수정_성공() throws Exception {
-        login(leader);
-
+    void 스터디_이미지_업로드_성공() throws Exception {
         MockMultipartFile multipartFile = new MockMultipartFile("multipartFile", "hello.txt", MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
 
         mockMvc.perform(
                 multipartRequestBuilder(
-                        "/study/image-upload/{studyId}",
+                        "/study/image-upload",
                         List.of(
                                 multipartFile
                         ),
-                        token,
-                        study.getId()
+                        token
                 )
         ).andDo(
                 getRestDocumentationResult(
@@ -389,9 +388,6 @@ class StudyControllerTest extends ApiTest {
                         null, null
                 )
         ).andExpect(status().isOk());
-
-        assertThat(study.getFiles().get(0).getS3ImageURL()).isNotNull();
-        assertThat(study.getFiles().get(0).getOriginalName()).isNotNull();
     }
 
     @Test

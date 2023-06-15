@@ -53,8 +53,10 @@ class StudyDomainServiceTest {
     void 스터디_생성_성공() {
         StudyPeriod period = StudyPeriod.create(OffsetDateTime.now(), OffsetDateTime.now().plusMinutes(10));
         StudyNeedCareer needCareer = StudyNeedCareer.create("직무", 1);
+        StudyFile studyFile = StudyFile.create();
+        studyFile.update("s3ImageURL", "originalName");
 
-        studyService.create(leader.getId(), "팀", "설명", 4, NORMAL, period, needCareer, List.of(new StudyTechStack(Java)));
+        studyService.create(leader.getId(), "팀", "설명", 4, NORMAL, period, needCareer, List.of(new StudyTechStack(Java)), List.of(studyFile));
 
         Study foundStudy = studyRepository.findAll().get(0);
 
