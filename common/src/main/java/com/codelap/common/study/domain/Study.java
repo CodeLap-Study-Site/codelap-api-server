@@ -91,7 +91,7 @@ public class Study {
         return this.bookmarks.contains(bookmark);
     }
 
-    private Study(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader, List<StudyTechStack> techStackList) {
+    private Study(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader, List<StudyTechStack> techStackList, List<StudyFile> files) {
         this.name = name;
         this.info = info;
         this.maxMembersSize = maxMembersSize;
@@ -101,9 +101,10 @@ public class Study {
         this.leader = leader;
         this.members.add(leader);
         this.techStackList = techStackList;
+        this.files = files;
     }
 
-    public static Study create(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader, List<StudyTechStack> techStackList) {
+    public static Study create(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, User leader, List<StudyTechStack> techStackList, List<StudyFile> studyFiles) {
         require(Strings.isNotBlank(name));
         require(Strings.isNotBlank(info));
         require(nonNull(difficulty));
@@ -113,7 +114,7 @@ public class Study {
         require(nonNull(techStackList));
         validate(maxMembersSize >= MIN_MEMBERS_SIZE, INVALID_MEMBER_SIZE);
 
-        return new Study(name, info, maxMembersSize, difficulty, period, needCareer, leader, techStackList);
+        return new Study(name, info, maxMembersSize, difficulty, period, needCareer, leader, techStackList, studyFiles);
     }
 
     public void update(String name, String info, int maxMembersSize, StudyDifficulty difficulty, StudyPeriod period, StudyNeedCareer needCareer, List<StudyTechStack> techStackList) {

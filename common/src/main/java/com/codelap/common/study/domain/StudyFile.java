@@ -29,7 +29,7 @@ public class StudyFile extends FileStandard {
         return this;
     }
 
-    public static FileStandard create() {
+    public static StudyFile create() {
         return new StudyFile();
     }
 }

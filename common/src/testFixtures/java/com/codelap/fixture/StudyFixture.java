@@ -1,9 +1,6 @@
 package com.codelap.fixture;
 
-import com.codelap.common.study.domain.Study;
-import com.codelap.common.study.domain.StudyNeedCareer;
-import com.codelap.common.study.domain.StudyPeriod;
-import com.codelap.common.study.domain.StudyTechStack;
+import com.codelap.common.study.domain.*;
 import com.codelap.common.support.TechStack;
 import com.codelap.common.user.domain.User;
 
@@ -22,7 +19,7 @@ public class StudyFixture {
         return Study.create(
                 "name", "info", 4, NORMAL,
                 createStudyPeriod(), createStudyNeedCareer(),
-                createUser(), createStudyTechStacks()
+                createUser(), createStudyTechStacks(), createStudyFiles()
         );
     }
 
@@ -30,7 +27,7 @@ public class StudyFixture {
         return Study.create(
                 "name", "info", maxMemberSize, NORMAL,
                 createStudyPeriod(), createStudyNeedCareer(),
-                createUser(), createStudyTechStacks()
+                createUser(), createStudyTechStacks(), createStudyFiles()
         );
     }
 
@@ -38,7 +35,7 @@ public class StudyFixture {
         return Study.create(
                 "name", "info", 4, NORMAL,
                 createStudyPeriod(), createStudyNeedCareer(),
-                leader, createStudyTechStacks()
+                leader, createStudyTechStacks(), createStudyFiles()
         );
     }
 
@@ -49,6 +46,7 @@ public class StudyFixture {
                 leader, Arrays.stream(techStacks)
                         .map(StudyTechStack::new)
                         .collect(Collectors.toList())
+                , createStudyFiles()
         );
     }
 
@@ -62,5 +60,10 @@ public class StudyFixture {
 
     public static List<StudyTechStack> createStudyTechStacks() {
         return Arrays.asList(new StudyTechStack(Java), new StudyTechStack(Spring));
+    }
+
+    public static List<StudyFile> createStudyFiles() {
+        StudyFile studyFile = StudyFile.create();
+        return Arrays.asList(studyFile.update("s3ImageURL", "originalName"));
     }
 }
