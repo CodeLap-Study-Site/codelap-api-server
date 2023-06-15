@@ -1,7 +1,6 @@
 package com.codelap.api.controller.study;
 
 import com.codelap.api.controller.study.cond.GetBookmarkStudyCardsCond;
-import com.codelap.api.controller.study.cond.GetBookmarkStudyCardsCond.GetBookmarkStudyCardsParam;
 import com.codelap.api.controller.study.cond.GetStudyCardsCond.GetStudyCardsParam;
 import com.codelap.api.support.ApiTest;
 import com.codelap.common.bookmark.domain.Bookmark;
@@ -394,7 +393,7 @@ class StudyControllerTest extends ApiTest {
     @WithUserDetails
     void 유저가_즐겨찾기한_스터디_조회_성공() throws Exception{
 
-        GetBookmarkStudyCardsParam req = new GetBookmarkStudyCardsParam(member.getId());
+        GetBookmarkStudyCardsCond.GetBookmarkStudyCardsParam req = new GetBookmarkStudyCardsCond.GetBookmarkStudyCardsParam(member.getId());
 
         List<Pair<String, String>> param = new ArrayList<>();
         param.add(Pair.of("userId", req.userId().toString()));

@@ -93,20 +93,20 @@ class DefaultStudyAppServiceTest {
                     .collect(Collectors.toList());
         }
 
-        private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
-            Study study1 = studyRepository.save(createStudy(leader, Spring, Java));
+    private void 유저가_참여한_스터디_조회_스터디_생성(User leader) {
+        Study study1 = studyRepository.save(createStudy(leader, Spring, Java));
 
-            study1.addMember(member);
+        study1.addMember(member);
 
-            studyCommentService.create(study1.getId(), member.getId(), "message");
-            studyViewService.create(study1.getId(), "1.1.1.1");
-            bookmarkService.create(study1.getId(), member.getId());
+        studyCommentService.create(study1.getId(), member.getId(), "message");
+        studyViewService.create(study1.getId(), "1.1.1.1");
+        bookmarkService.create(study1.getId(), member.getId());
 
-            Study study2 = studyRepository.save(createStudy(leader, JavaScript, React));
+        Study study2 = studyRepository.save(createStudy(leader, JavaScript, React));
 
-            study2.addMember(member);
+        study2.addMember(member);
 
-            studyCommentService.create(study2.getId(), member.getId(), "message");
-            studyViewService.create(study2.getId(), "1.1.1.2");
-        }
+        studyCommentService.create(study2.getId(), member.getId(), "message");
+        studyViewService.create(study2.getId(), "1.1.1.2");
     }
+}

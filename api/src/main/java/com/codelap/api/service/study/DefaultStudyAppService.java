@@ -2,13 +2,13 @@ package com.codelap.api.service.study;
 
 
 import com.codelap.api.service.study.dto.GetStudiesDto.GetStudiesStudyDto;
-import com.codelap.common.bookmark.domain.Bookmark;
-import com.codelap.common.bookmark.domain.BookmarkRepository;
 import com.codelap.common.study.domain.StudyFile;
 import com.codelap.common.study.domain.StudyRepository;
 import com.codelap.common.study.dto.GetOpenedStudiesDto;
 import com.codelap.common.study.dto.GetStudiesCardDto.GetStudyInfo;
 import com.codelap.common.study.dto.GetStudiesCardDto.GetTechStackInfo;
+import com.codelap.common.bookmark.domain.Bookmark;
+import com.codelap.common.bookmark.domain.BookmarkRepository;
 import com.codelap.common.support.TechStack;
 import com.codelap.common.user.domain.User;
 import com.codelap.common.user.domain.UserRepository;
